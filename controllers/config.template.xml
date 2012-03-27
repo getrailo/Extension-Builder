@@ -14,7 +14,8 @@
 		<image>${image}</image>
 		<mailinglist>${mailinglist}</mailinglist>
 		<support>${support}</support>
-		<documentation>${support}</documentation>		
+		<documentation>${support}</documentation>
+		<paypal>${paypal}</paypal>		
 	</info>
 
 </config>

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Extension Builder SDK</title>
-	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="/css/bootstrap.css">
 	
 	<style>
 		BODY {
