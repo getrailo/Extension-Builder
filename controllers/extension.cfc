@@ -3,7 +3,6 @@ component {
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
-		abort;
 	}
 	
 	void function before(any rc){
