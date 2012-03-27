@@ -31,6 +31,9 @@ component output="false"{
 				var label = XMLElemNew(xmlConfig, "label");
 					label.XMLText = extensionLabel;
 			ArrayAppend(infoEl.XMLChildren, label);
+				var id = XMLElemNew(xmlConfig, "id");
+					id.XMLText = CreateUUID();
+			ArrayAppend(infoEl.XMLChildren, id);
 						
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
