@@ -3,77 +3,93 @@
 <script>
 	$(function(){
 		var myregexp = new RegExp("[\W]");
-		$("#label").keydown(function(){
+		$("#label").keyup(function(){
 			$("#name").val($(this).val().toLowerCase().replace(/ /g,"-"));
 		});
 		
+		//Setup the error handling for items that have a data-required attribute
+		
+		$("input[data-required='true']").each(function(){
+
+				$(this).change(function(){
+					if(!$(this).val().length){
+						$(":parent", this).addClass("error");
+					}	
+					else{
+						$(":parent", this).removeClass("error");
+								
+					}			
+				});
+				
+		});
+		
+		
+		<cfloop array="#rc.errors#" index="e">
+			<cfoutput>
+				$("###e.field#").parent().addClass("error");
+				$("###e.field#_help").text("#e.error#").show();
+			</cfoutput>
+		</cfloop>
+		
+		
+		<!--- $("#mainForm").submit(function(e){
+			var errors = false;
+				e.preventDefault();
+				if(!$("#label").val().length){
+					$("#lab"el_control").addClass("error");
+					$("#label_help").show();
+					errors = true;
+				}	
+				else{
+					$("#label_control").removeClass("error");
+					$("#label_help").hide();
+								
+				}
+					
+				if(!$("#name").val().length){
+					$("#name_control").addClass("error");
+					$("#name_help").show();
+					errors = true;
+				}	
+				else{
+					$("#name_control").removeClass("error");
+					$("#name_help").hide();
+								
+				}
+
+				if(!errors){
+					$("#mainForm").unbind();
+					$("#mainForm").submit();			
+				}
+
+		}); --->
 	});
 </script>
 </cfsavecontent>
 <cfset ArrayAppend(rc.js, pageScripts)>
 <h1>New Extension</h1>
 <cfoutput>
-<form action="#buildURL("builder.step1")#" method="post">
+<form action="#buildURL("extension.create")#" id="mainForm" method="post">
  <fieldset>
  	<legend>Extension Information</legend>
- 	<div>
-		<label for="label">Display Name</label>
-		<input type="text" name="label" value="" id="label" placeholder="My Great Extension">
+
+ 	<div class="control-group" id="label_control">
+		<label for="label" class="control-label">Display Name</label>
+		<input type="text" name="label" value="" id="label" placeholder="My Great Extension" data-required="true" data-error="Please enter a label for your extension, this will be the displayed name in the extension store">
+		<span class="help-inline hide" id="name_help"></span>	
 	</div>
-	<div>
+	
+	
+	<div class="control-group" id="name_control">
  		<label>Short Name:</label>
- 		<input type="text" name="name" id="Name" placeholder="MyExtension"/>	
+ 		<input type="text" name="name" id="name" placeholder="MyExtension" data-required="true" data-error="Please enter a name for your extension"/>
+		<span class="help-inline hide" id="label_help"></span>	
  	</div>
-	<div>
-		<label for="author">Author</label>
-		<input type="text" name="author" value="" id="author" placeholder="John Smith">
-	</div>
-	<div>
-		<label for="version">Version</label>
-		<input type="text" name="version" value="" id="version" placeholder="1.0.0">
-	</div>
- 	<div>
-		<label for="type">Type</label>
-		<select name="type" id="type">
-			<option value="all">All</option>
-			<option value="server">Server</option>
-			<option value="web">Web</option>			
-		</select>
-		 <p class="help-block">If this extension should be availbel to the whole server, or a specific web context</p>
- 	</div>
-
-	<div>
-		<label for="description">Description</label>
-		<textarea name="description" rows="8" cols="40"></textarea>
-	</div>
 	
-	<div>
-		<label for="category">Category</label>
-		<input type="text" name="category" value="" id="category" placeholder="Gateway">
-	</div>
-
-	<div>
-		<label for="imgurl">Image URL</label>
-		<input type="text" name="image" value="" id="image" placeholder="http://mydomain.com/image.png">
-	</div>
- 	<div>
-		<label for="mailinglist">Mailing List</label>
-		<input type="text" name="mailinglist" value="" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
-	</div>
-	
-	<div>
-		<label for="supportURL">Support URL</label>
-		<input type="text" name="supportURL" value="" id="supportURL" placeholder="http://groups.google.com/group/railo-beta">
-	</div>
-	
-	<div>
-		<label for="documentationURL">Documentation URL</label>
-		<input type="text" name="documentationURL" value="" id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
-	</div>
 	<div class="form-actions">
-            <button type="submit" class="btn btn-primary">Create Extension</button>
-            <button class="btn" type="reset">Cancel</button>
-          </div>
+       <button type="submit" class="btn btn-primary">Create Extension</button>
+       <button class="btn" type="reset">Cancel</button>
+     </div>
  </fieldset>
 
 </form>	
