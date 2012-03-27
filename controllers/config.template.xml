@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<config>
+
+	<info>
+		<id>${id}</id>
+		<version>${version}</version>
+		<name>${shortname}</name>
+		<type>${type}</type>
+		<label>${label}</label>
+		<description><![CDATA[ ${description} ]]></description>
+		<created>${created}</created> 
+		<category>${category}</category>
+		<author>${author}</author>
+		<image>${image}</image>
+		<mailinglist>${mailinglist}</mailinglist>
+		<support>${support}</support>
+		<documentation>${support}</documentation>		
+	</info>
+
+</config>
