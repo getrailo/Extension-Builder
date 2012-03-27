@@ -1,3 +1,16 @@
+<cfparam name="rc.js" default="#[]#">
+<cfsavecontent variable="pageScripts">
+<script>
+	$(function(){
+		var myregexp = new RegExp("[\W]");
+		$("#label").keydown(function(){
+			$("#name").val($(this).val().toLowerCase().replace(/ /g,"-"));
+		});
+		
+	});
+</script>
+</cfsavecontent>
+<cfset ArrayAppend(rc.js, pageScripts)>
 <cfoutput>
 	<h1>Extension  Builder</h1>
 <form action="#buildURL("builder.step1")#" method="post">
@@ -9,7 +22,7 @@
 	</div>
 	<div>
  		<label>Short Name:</label>
- 		<input type="text" name="name" id="Name" placeholder="MyExtension"/>	
+ 		<input type="text" name="name" id="name" placeholder="MyExtension"/>	
  	</div>
 	<div>
 		<label for="author">Author</label>

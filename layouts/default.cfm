@@ -3,7 +3,7 @@
 <head>
 	<title>Extension Builder SDK</title>
 	<link rel="stylesheet" href="/css/bootstrap.css">
-	
+	<cfparam name="rc.js" default="#[]#">
 	<style>
 		BODY {
 			padding-top:60px;
@@ -19,10 +19,10 @@
           <div class="nav-collapse">
             <ul class="nav">
              <li class="">
-                <a href="#buildURL("extensions.list")#">My Extensions</a>
+                <a href="#buildURL("extension.list")#">My Extensions</a>
               </li>
              <li class="<!--- active --->">
-                <a href="#buildURL("extensions.provider")#">Extension Provider</a>
+                <a href="#buildURL("extension.provider")#">Extension Provider</a>
               </li>
             </ul>
           </div>
@@ -52,6 +52,8 @@
     <script src="/js/bootstrap-collapse.js"></script>
     <script src="/js/bootstrap-carousel.js"></script>
     <script src="/js/bootstrap-typeahead.js"></script>
-
+	<cfloop array="#rc.js#" index="js">
+	<cfoutput>#js#</cfoutput>
+	</cfloop>
 </body>
 </html>
