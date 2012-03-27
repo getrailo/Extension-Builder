@@ -11,6 +11,9 @@
 				config = XMLParse(config);
 			var infoXML = XMLSearch(config, "//info");
 
+
+
+
 				for(inf in infoXML[1].XmlChildren){
 					info[inf.xmlName] = Trim(inf.xmlText);
 				}

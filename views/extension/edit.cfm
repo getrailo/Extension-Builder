@@ -2,9 +2,9 @@
 <h1>Edit Extension</h1>
 <cfoutput>
 	
-<cffunction name="v">
+<cffunction name="v" output="false">
 	<cfargument name="f">
-	<cfreturn StructKeyExists(rc.info, f) ? rc.info[f] : "">
+	<cfreturn StructKeyExists(rc.info, f) ? Trim(rc.info[f]) : "">
 </cffunction>	
 	
 	
@@ -39,31 +39,31 @@
 
 	<div>
 		<label for="description">Description</label>
-		<textarea name="description" rows="8" cols="40"></textarea>
+		<textarea name="description" rows="8" cols="40">#v("description")#</textarea>
 	</div>
 	
 	<div>
 		<label for="category">Category</label>
-		<input type="text" name="category" value="" id="category" placeholder="Gateway">
+		<input type="text" name="category" value="#v("category")#" id="category" placeholder="Gateway">
 	</div>
 
 	<div>
 		<label for="imgurl">Image URL</label>
-		<input type="text" name="image" value="" id="image" placeholder="http://mydomain.com/image.png">
+		<input type="text" name="image" value="#v("image")#" id="image" placeholder="http://mydomain.com/image.png">
 	</div>
  	<div>
 		<label for="mailinglist">Mailing List</label>
-		<input type="text" name="mailinglist" value="" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
+		<input type="text" name="mailinglist" value="#v("mailinglist")#" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
 	</div>
 	
 	<div>
 		<label for="supportURL">Support URL</label>
-		<input type="text" name="supportURL" value="" id="supportURL" placeholder="http://groups.google.com/group/railo-beta">
+		<input type="text" name="support" value="#v("support")#" id="supportURL" placeholder="http://groups.google.com/group/railo-beta">
 	</div>
 	
 	<div>
 		<label for="documentationURL">Documentation URL</label>
-		<input type="text" name="documentationURL" value="" id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
+		<input type="text" name="documentation"value="#v("documentation")#"id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
 	</div>
 	<div class="form-actions">
             <button type="submit" class="btn btn-primary">Create Extension</button>

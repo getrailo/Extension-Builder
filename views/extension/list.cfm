@@ -1,9 +1,14 @@
 <cfparam name="rc.extensions"  default="#QueryNew("blank")#">
 <cfset me = getSection()>
 <h1>My Extensions</h1>
+<cfoutput>
+<div>
 
+	<a href="#buildURL("#me#.new")#" class="btn btn-success">New Extension</a> Create a new extension 
 
-<cfoutput><table class="table table-striped">
+</div>
+
+<table class="table table-striped">
 	<thead>
 		<tr>
 			<th>Short Name</th>

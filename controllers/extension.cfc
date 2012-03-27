@@ -19,6 +19,15 @@ component {
 		rc.extensions = ep.listApplications();
 	}
 	
+	function new(any rc) {
+		rc.info = {};
+		variables.fw.setView("extension.edit");
+	}
+	
+	function saveInfo(any rc) {
+		
+	}
+	
 	function edit(any rc) {
 		var man = application.di.getBean("ExtensionManager");
 		rc.info = man.getInfo(rc.name);
