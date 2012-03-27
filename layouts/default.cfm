@@ -33,7 +33,15 @@
 	
 	<div class="container">
 		<cfoutput>#body#</cfoutput>	
+		
+	 <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>Designed and built by <a href="http://www.getrailo.org" target="_blank">Railo Technologies GMBH</a></p>
+     </footer>
+		
 	</div>
+	
+	
 	  <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
