@@ -7,8 +7,7 @@
 	<cfreturn StructKeyExists(rc.info, f) ? Trim(rc.info[f]) : "">
 </cffunction>	
 	
-	
-<form action="#buildURL("builder.step1")#" method="post">
+<form action="#buildURL("extension.saveinfo")#" method="post">
  <fieldset>
  	<legend>Extension Information</legend>
  	<div>

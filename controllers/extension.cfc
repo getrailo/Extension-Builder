@@ -2,6 +2,8 @@ component {
 
 	function init(any fw){
 		variables.fw  = fw;
+		variables.man =  application.di.getBean("ExtensionManager");
+		abort;
 	}
 	
 	void function before(any rc){
@@ -44,15 +46,32 @@ component {
 		
 		if(ArrayLen(rc.errors)){
 				variables.fw.setView("extension.new");
+				return;
 		}
 		var man = application.di.getBean("ExtensionManager");
 		rc.info = man.createNewExtension( rc.name, rc.label);
 		
+		//All going well so far, redirect them to the edit page
+		variables.fw.redirect("extension.edit?name=#rc.name#");
 		
 	}
 	
 	function saveInfo(any rc) {
+		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version";
 		
+		var dataToSend = Duplicate(rc);
+		
+		
+		for(c in dataToSend){
+				if(!ListFindNoCase(validFields,c)){
+						StructDelete(dataToSend, c);
+				}
+		}
+		
+		var info = variables.man.saveInfo(rc.name, dataToSend);
+		
+		dump(info);
+		abort;
 	}
 	
 	function edit(any rc) {

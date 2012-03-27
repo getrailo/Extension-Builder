@@ -45,6 +45,8 @@ component output="false"{
 	
 	function saveInfo(String extensionName, Struct info){
 		
+		dump(arguments);
+		abort;
 	}
 	
 	
