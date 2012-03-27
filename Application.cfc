@@ -66,13 +66,21 @@ component extends="org.corfield.framework" {
 	*/
 	
 	
+/*
 	function setupApplication(){
 		
 		
 	}
+*/
 	function setupRequest() {
 		// use setupRequest to do initialization per request
-		request.context.startTime = getTickCount();
+		//request.context.startTime = getTickCount();
+		
+		loadBeans();
 	}
 	
+	
+	function loadBeans(){
+		application.di = new org.corfield.ioc("/services");
+	}
 }
