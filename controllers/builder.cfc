@@ -1,4 +1,11 @@
 component {
+
+	function init(any fw){
+		
+		variables.fw  = fw;
+	}
+	
+
 	
 	function step1(any rc){
 		//Need to create the config.xml from the information provided
@@ -17,12 +24,14 @@ component {
 		
 		}
 		
-			
-		dump(xmlConfig);		
-	
-		dump(rc);
-		abort;
-	
+		//Create a new file name after the name
+		zip action="zip" file="#expandpath("/ext/#rc.name#.zip")#"{
+			zipparam content=xmlConfig entrypath="config.xml";
+		}
+		//Now forward to the edit screen... 
+		variables.fw.redirect("extension.edit?extension=#rc.name#");
+		
+		
 	}
 
 }
