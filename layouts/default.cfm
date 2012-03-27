@@ -21,7 +21,7 @@
              <li class="">
                 <a href="#buildURL("extensions.list")#">My Extensions</a>
               </li>
-             <li class="active">
+             <li class="<!--- active --->">
                 <a href="#buildURL("extensions.provider")#">Extension Provider</a>
               </li>
             </ul>

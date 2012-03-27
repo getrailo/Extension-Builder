@@ -20,4 +20,9 @@
             <button class="btn" type="reset">Cancel</button>
      </div>
 
-</form></cfoutput>
+</form>
+
+<h2>Provider URL</h2>
+
+The provider url for this SDK is: <code>#rc.extproviderURL#</code>
+</cfoutput>
