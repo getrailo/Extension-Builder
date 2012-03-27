@@ -1,5 +1,9 @@
 component {
 
+	function init(any fw){
+		variables.fw  = fw;
+	}
+	
 	
 	function provider(any rc){
 	
@@ -16,8 +20,9 @@ component {
 	}
 	
 	function edit(any rc) {
-	
-	
+		var man = application.di.getBean("ExtensionManager");
+		rc.info = man.getInfo(rc.name);
+		
 	}
 	
 	function installprovider(any rc){
