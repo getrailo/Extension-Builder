@@ -4,7 +4,7 @@
 	<info>
 		<id>${id}</id>
 		<version>${version}</version>
-		<name>${shortname}</name>
+		<name>${name}</name>
 		<type>${type}</type>
 		<label>${label}</label>
 		<description><![CDATA[ ${description} ]]></description>

@@ -9,7 +9,7 @@
 	</div>
 	<div>
  		<label>Short Name:</label>
- 		<input name="Name" id="Name" type="text" label="Name" placeholder="MyExtension"/>	
+ 		<input type="text" name="name" id="Name" placeholder="MyExtension"/>	
  	</div>
 	<div>
 		<label for="author">Author</label>
@@ -41,7 +41,7 @@
 
 	<div>
 		<label for="imgurl">Image URL</label>
-		<input type="text" name="imgurl" value="" id="image" placeholder="http://mydomain.com/image.png">
+		<input type="text" name="image" value="" id="image" placeholder="http://mydomain.com/image.png">
 	</div>
  	<div>
 		<label for="mailinglist">Mailing List</label>
