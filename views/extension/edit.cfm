@@ -1,5 +1,5 @@
 <cfparam name="rc.info" default="#{}#">
-
+<cfparam name="rc.message" default="">
 <cfoutput>
 	
 <cffunction name="v" output="false">
@@ -8,12 +8,17 @@
 </cffunction>	
 <div class="row-fluid">
 	<div class="span2">
-		
 		<cfinclude template="localnav.cfm">
-
 	</div>
 	<div class="span10">
 	<h1>Edit #v("label")#</h1>
+	
+	<cfif Len(rc.message)>
+		<div class="alert alert-success">
+		<a class="close" data-dismiss="alert">x</a>
+		#rc.message#</div>
+	</cfif>
+	
 	<form action="#buildURL("extension.saveinfo")#" method="post">
  <fieldset>
  	<legend>Extension Information</legend>
@@ -73,7 +78,7 @@
 		<input type="text" name="documentation"value="#v("documentation")#"id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
 	</div>
 	<div class="form-actions">
-            <button type="submit" class="btn btn-primary">Create Extension</button>
+            <button type="submit" class="btn btn-primary">Save Information</button>
             <button class="btn" type="reset">Cancel</button>
           </div>
  </fieldset>
@@ -81,20 +86,6 @@
 
 	</div>
 </div>	
-<hr>
-<section>
-	<h1>Add Tags</h1>
-	<p>You can add custom tags that will be part of the core Railo Server. These custom tags will be called as <code>&lt;cfcustomtag&gt;</code> rather than <code>&lt;f_customtag&gt;</code> </p>
-	<form action="#buildURL("extension.addtag")#" class="well" id="form_upload_tag" method="post" enctype="multipart/form-data">
-	<label>Tag to upload</label>
-	  <input type="hidden" name="name" value="#v("name")#">
-	<input type="submit" class="btn" value="Add Tag">
-	  <input type="file" class="span3" name="tagUpload" placeholder="Select a custom tag">
-	  <div class="progress progress-striped active hide" id="upload_tag_progress">
-	  	<div class="bar" style="width: 0%;"></div>
-	  </div>
-	</form>
 
-</section>
 
 </cfoutput>
