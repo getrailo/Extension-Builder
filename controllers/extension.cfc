@@ -94,10 +94,19 @@ component {
 		admin action="updateExtensionProvider" type="server" password="#rc.serverpass#" url="#extproviderURL#";
 		
 		admin action="updateExtensionProvider" type="web" password="#rc.webpass#" url="#extproviderURL#";
-
-
-	dump(rc);
-	abort;	
 	}
+	
+	
+	/*
+	 * Add Items to an extension 	
+	 */
+	 
+	 function addApplication(rc){
+	 	 
+	 }
+	 
+	 function addTags(rc){
+	 	 
+	 }
 
 }
