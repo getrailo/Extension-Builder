@@ -1,12 +1,10 @@
 <cfparam name="rc.extensions"  default="#QueryNew("blank")#">
 <cfset me = getSection()>
+<div class="row-fluid">
+	
+	<div class="span12">
 <h1>My Extensions</h1>
 <cfoutput>
-<div>
-
-	<a href="#buildURL("#me#.new")#" class="btn btn-success">New Extension</a> Create a new extension 
-
-</div>
 
 <table class="table table-striped">
 	<thead>
@@ -14,7 +12,9 @@
 			<th>Short Name</th>
 			<th>Display Name</th>
 			<th>Version</th>
-			<th colspan="2"></th>
+			<th colspan="2" width="20%">
+			<a href="#buildURL("#me#.new")#" class="btn btn-success">New Extension</a>
+			</th>
 		</tr>
 	</thead>
 
@@ -32,3 +32,5 @@
 
 </table>
 </cfoutput>
+</div>
+</div>
