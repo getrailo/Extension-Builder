@@ -14,16 +14,17 @@
 <cfoutput>
 	<div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container">
+        <div class="container-fluid">
           <a class="brand" href="#buildURL("main.default")#">Extension Builder SDK</a>
           <div class="nav-collapse">
             <ul class="nav">
              <li class="">
-                <a href="#buildURL("extension.list")#">My Extensions</a>
+                <a href="#buildURL("extension")#">My Extensions</a>
               </li>
              <li class="<!--- active --->">
-                <a href="#buildURL("extension.provider")#">Extension Provider</a>
+                <a href="#buildURL("provider")#">Extension Provider</a>
               </li>
+			  <li><a href="#buildURL("documentation")#">Documentation</a></li>
             </ul>
           </div>
         </div>
