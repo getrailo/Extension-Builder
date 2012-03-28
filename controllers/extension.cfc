@@ -12,19 +12,13 @@ component {
 		
 		
 	}
-	
-	function provider(any rc){
-		rc.extproviderURL = "http://#CGI.http_host#";
-		if(CGI.server_port != "80"){
-			rc.extproviderURL &= ":#CGI.SERVER_PORT#";
-		}
-		rc.extproviderURL &= "/ExtensionProvider.cfc";
-	}
-	
-	function list(any rc){
+
+	function default(any rc){
 		var ep = new ExtensionProvider();
 		rc.extensions = ep.listApplications();
 	}
+	
+	
 	
 	function new(any rc) {
 		rc.info = {};
@@ -60,17 +54,15 @@ component {
 		
 		var dataToSend = Duplicate(rc);
 		
-		
 		for(c in dataToSend){
 				if(!ListFindNoCase(validFields,c)){
 						StructDelete(dataToSend, c);
 				}
 		}
 		
-		var info = variables.man.saveInfo(rc.name, dataToSend);
-		
-		dump(info);
-		abort;
+		rc.info = variables.man.saveInfo(rc.name, dataToSend);
+		rc.message = "The information has been saved to the extension";
+		variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#");
 	}
 	
 	function edit(any rc) {
@@ -79,22 +71,6 @@ component {
 		
 	}
 	
-	function installprovider(any rc){
-		param name="rc.serverpass" default="";
-		param name="rc.webpass" default="";
-
-		var extproviderURL = "http://#CGI.http_host#";
-		
-		if(CGI.server_port != "80"){
-			extproviderURL &= ":#CGI.SERVER_PORT#";
-		}
-		
-		extproviderURL &= "/ExtensionProvider.cfc";
-			
-		admin action="updateExtensionProvider" type="server" password="#rc.serverpass#" url="#extproviderURL#";
-		
-		admin action="updateExtensionProvider" type="web" password="#rc.webpass#" url="#extproviderURL#";
-	}
 	
 	
 	/*
@@ -106,7 +82,30 @@ component {
 	 }
 	 
 	 function addTags(rc){
+	 	 rc.tags = variables.man.listFolderContents(rc.name, "tags");
+
+	 }
+	 function addFunctions(rc){
+	 	 rc.functions = variables.man.listFolderContents(rc.name, "functions");	
+	 }
+	 
+	 function addTag(rc){
+		file action="upload" destination="#expandPath("/upload")#" filefield="tagUpload" result="local.uploadresult" nameconflict="overwrite";
+		var tagname = uploadresult.serverfile;
+		var extensionName = rc.name;
+		var content = FileRead(expandPath("/upload/#uploadresult.serverfile#"));
+		variables.man.addTextFile(extensionName, "tags", tagname, content);
+		rc.response = "Tag #tagname# has been added";
 	 	 
+	 }
+	 
+	 function addFunction(rc){
+	 	file action="upload" destination="#expandPath("/upload")#" filefield="functionUpload" result="local.uploadresult" nameconflict="overwrite";
+		var funcname = uploadresult.serverfile;
+		var extensionName = rc.name;
+		var content = FileRead(expandPath("/upload/#uploadresult.serverfile#"));
+		variables.man.addTextFile(extensionName, "functions", funcname, content);
+		rc.response = "Function #funcname# has been added";
 	 }
 
 }
