@@ -15,6 +15,26 @@ component output="false"{
 		return info;
 	}
 	
+	function saveInfo(String extensionName, Struct info){
+		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml";
+		var extXML = XMLParse(FileRead(extPath));
+			
+			if(info['name'] EQ extensionName){
+					StructDelete(info, "name");
+			}
+		var infoItem = extXML.config.info;
+
+		loop collection="#info#" item="local.i"{
+			var itemIndex = XMLChildPos(infoItem, i, 1);
+			var item = infoItem.XMLChildren[itemIndex];
+				item.XMLText = info[i];
+		}		
+				
+		FileWrite(extPath, toString(extXML));
+		
+		return getInfo(extensionName);
+	}
+	
 	
 	function createNewExtension(String extensionName, String extensionLabel){
 		//Need to create the config.xml from the information provided
@@ -64,16 +84,46 @@ component output="false"{
 		return xmlConfig;
 	}
 	
+	function listFolderContents(String extensionName, String folder){
+		var items = [];
+		
+		var itemdir = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
+		
+		if(!DirectoryExists(itemdir)){
+				return items;
+		}
+		
+		var qItems = DirectoryList(itemdir,false,"query");
+		
+		loop query="qItems"{
+				ArrayAppend(items, qItems.name);
+		}
+		
+		return items;	
+	}
+	
+	function addTextFile(String extensionName, String folder, String filename, String Content){
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
+		if(!DirectoryExists(itemPath)){
+				Directorycreate(itemPath);
+		}
+		FileWrite(itemPath & "/" & filename, content);
+	}
+	
+	function addBinaryFile(String extensionName, String source, String folder){
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
+		if(!DirectoryExists(itemPath)){
+				Directorycreate(itemPath);
+		}
+		FileCopy(source, itemPath);
+	}
+	
+	
 	
 	function addInfoNode(xmlItem, name, value=""){
 		
 	}
 	
-	function saveInfo(String extensionName, Struct info){
-		
-		dump(arguments);
-		abort;
-	}
 	
 	
 }
