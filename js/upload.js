@@ -1,18 +1,21 @@
 $(function(){
 			
-	 $('#form_upload_tag').ajaxForm({
+	 $('.progressuploader').ajaxForm({
 	 		beforeSend: function() {
-				  $("#upload_tag_progress").show();	
-				  $("#upload_tag_progress .bar").css("width", "0%");
+	 			  $(".progress").show();	
+				  $(".progress .bar").css("width", "0%");
 			},
 		    uploadProgress: function(event, position, total, percentComplete) {
 			     var percentVal = percentComplete + '%';
-		         $("#upload_tag_progress .bar").css("width", percentVal);
+		         $(".progress .bar").css("width", percentVal);
 		    },
 			complete: function(xhr) {
 				//status.html(xhr.responseText);
-				$("#upload_tag_progress .bar").css("width", "100%");
-				$("#upload_tag_progress").hide();	
+				$(".uploadfield").val("");
+				$("#upload_success").show();
+				$("#upload_success").text(xhr.responseText);
+				$(".progress .bar").css("width", "100%");
+				$(".progress").hide();	
 					
 			}
         }); 
