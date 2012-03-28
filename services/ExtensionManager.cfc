@@ -21,6 +21,7 @@ component output="false"{
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XMML config
+		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image");
 		var xmlConfig = XMLNew(true);
 		xmlConfig.XMLRoot = XMLElemNew(xmlConfig, "config");
 		
@@ -34,7 +35,25 @@ component output="false"{
 				var id = XMLElemNew(xmlConfig, "id");
 					id.XMLText = CreateUUID();
 			ArrayAppend(infoEl.XMLChildren, id);
-						
+			
+				var type = XMLElemNew(xmlConfig, "type");
+					type.XMLText = "all";
+			ArrayAppend(infoEl.XMLChildren, type);
+			
+				var version = XMLElemNew(xmlConfig, "version");
+					version.XMLText = "1.0.0";
+			ArrayAppend(infoEl.XMLChildren, version);
+
+				var created = XMLElemNew(xmlConfig, "created");
+					created.XMLText = Now();
+			ArrayAppend(infoEl.XMLChildren, created);
+
+			//Now add the rest of the tags
+			loop array="#validFields#" index="v"{
+				var field = XMLElemNew(xmlConfig, v);
+				ArrayAppend(infoEl.XMLChildren, field);
+			}
+
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
 		//Create a new file name after the name
@@ -45,6 +64,10 @@ component output="false"{
 		return xmlConfig;
 	}
 	
+	
+	function addInfoNode(xmlItem, name, value=""){
+		
+	}
 	
 	function saveInfo(String extensionName, Struct info){
 		
