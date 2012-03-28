@@ -31,9 +31,10 @@
     </div>
 	</cfoutput>
 	
-	<div class="container">
+	<div class="container-fluid">
 		<cfoutput>#body#</cfoutput>	
 		
+	 <hr>
 	 <footer class="footer">
         <p class="pull-right"><a href="#">Back to top</a></p>
         <p>Designed and built by <a href="http://www.getrailo.org" target="_blank">Railo Technologies GMBH</a></p>
@@ -60,6 +61,9 @@
     <script src="/js/bootstrap-collapse.js"></script>
     <script src="/js/bootstrap-carousel.js"></script>
     <script src="/js/bootstrap-typeahead.js"></script>
+    <script src="/js/jquery.form.js"></script>
+    <script src="/js/tooltips.js"></script>
+    <script src="/js/upload.js"></script>
 	<cfloop array="#rc.js#" index="js">
 	<cfoutput>#js#</cfoutput>
 	</cfloop>
