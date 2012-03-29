@@ -13,9 +13,18 @@ component {
 		
 	}
 
-	function default(any rc){
+	void function default(any rc){
 		var ep = new ExtensionProvider();
-		rc.extensions = ep.listApplications();
+		var remoteExtensions = ep.listApplications();
+
+		rc.extensions = [];
+
+		loop query="remoteExtensions"{
+				var ext = {};
+					ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
+					ext.capabilities = variables.man.getCapability(ext.info.name);
+				ArrayAppend(rc.extensions, ext);
+		}
 	}
 	
 	
