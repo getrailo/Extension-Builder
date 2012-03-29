@@ -77,6 +77,7 @@
 				<div>
 					<label for="category">Category</label>
 					<input type="text" name="category" class="typeahead" value="#v("category")#" id="category" placeholder="Gateway">
+					<i class="icon-question-sign" data-content="You can define the category that your extension belongs to" title="Category"></i>
 				</div>
 				</fieldset>
 		</div>
@@ -86,6 +87,7 @@
 				<div>
 					<label for="imgurl">Image URL</label>
 					<input type="text" name="image" value="#v("image")#" id="image" placeholder="http://mydomain.com/image.png">
+					<i class="icon-question-sign" data-content="An absolute URL to the image that is the logo for your Extension" title="ImageURL"></i>
 				</div>
 			 	<div>
 					<label for="mailinglist">Mailing List</label>
@@ -108,6 +110,7 @@
 				<div>
 					<label for="paypal">Paypal Address</label>
 					<input type="text" name="paypal" value="#v("paypal")#" id="paypal" placeholder="joe.user@mydomain.com">
+
 				</div>			
 			</fieldset>
 		</div>
