@@ -5,7 +5,7 @@
 		<cfinclude template="localnav.cfm">
 
 	</div>
-	<div class="span19">
+	<div class="span10">
 
 	<h1>Add Tags</h1>
 	<p>You can add custom tags that will be part of the core Railo Server. These custom tags will be called as <code>&lt;cfcustomtag&gt;</code> rather than <code>&lt;f_customtag&gt;</code> </p>

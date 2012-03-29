@@ -1,11 +1,9 @@
 <cfoutput><cfparam name="rc.functions" default="#[]#">
-<section class="row">
-	<div class="span3">
-		
+<section class="row-fluid">
+	<div class="span2">
 		<cfinclude template="localnav.cfm">
-
 	</div>
-	<div class="span19">
+	<div class="span10">
 
 	<h1>Add Functions</h1>
 	<p>You can add your own functions  that will then be treated like Built-in Functions in Railo Server.</p>
@@ -23,7 +21,7 @@
 	
 		
 	<cfif ArrayLen(rc.functions)>
-	<h2>Currently added Functoins</h2>
+	<h2>Currently added functions</h2>
 		
 	<table class="table table-bordered table-striped">
 		<thead>

@@ -13,7 +13,7 @@
 			<th>Display Name</th>
 			<th>Version</th>
 			<th colspan="3" width="20%">
-			<a href="#buildURL("#me#.new")#" class="btn btn-success">New Extension</a>
+			<a href="#buildURL("#me#.new")#" class="btn btn-success"><i class="icon-pencil icon-white"></i> New Extension</a>
 			</th>
 		</tr>
 	</thead>
