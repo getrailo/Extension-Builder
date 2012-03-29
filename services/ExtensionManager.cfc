@@ -23,15 +23,20 @@ component output="false"{
 					StructDelete(info, "name");
 			}
 		var infoItem = extXML.config.info;
-
+		
+		
 		loop collection="#info#" item="local.i"{
 			var itemIndex = XMLChildPos(infoItem, i, 1);
+			dump(itemIndex);
 			var item = infoItem.XMLChildren[itemIndex];
+			if(itemIndex LT 0){
+				addElementsToInfo(infoItem, i, info[i]);
+			}
+			else{
 				item.XMLText = info[i];
+			}
 		}		
-				
 		FileWrite(extPath, toString(extXML));
-		
 		updateInstaller(extensionName);
 		
 		return getInfo(extensionName);
@@ -72,7 +77,7 @@ component output="false"{
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XMML config
-		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal");
+		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal,packaged-by");
 		var xmlConfig = XMLNew(true);
 		xmlConfig.XMLRoot = XMLElemNew(xmlConfig, "config");
 		var infoel = XMLElemNew(xmlConfig.XMLRoot, "info");
@@ -126,6 +131,11 @@ component output="false"{
 		updateInstaller(extensionName);
 	}
 	
+	function getFileContent(String extensionName, String folder, String filename){
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		return FileRead(itemPath);
+	}
+	
 	function addBinaryFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
 		if(!DirectoryExists(itemPath)){
@@ -139,9 +149,18 @@ component output="false"{
 	
 	//TODO: Change the adding and setting of nodes to use this function so it's cleaner
 	function addElementsToInfo(xmlItem, name, value=""){
+		
+		//Instead of just creating it, we should check it, then it can always work!
 			var item = XMLElemNew(xmlItem, name);
 				item.XMLText = value;
 			ArrayAppend(xmlItem.XMLChildren, item);
+	}
+	
+	function removeTextFile(String extensionName, String folder, String filename){
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		if(FileExists(itemPath)){
+			FileDelete(itemPath);
+		}
 	}
 	
 	

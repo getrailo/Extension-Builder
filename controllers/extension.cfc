@@ -9,7 +9,7 @@ component {
 		//Called on every request before anything happens
 		param name="rc.errors" default=[];
 		param name="rc.js" default=[];
-		
+		param name="rc.message" default="";
 		
 	}
 
@@ -50,7 +50,7 @@ component {
 	}
 	
 	function saveInfo(any rc) {
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
+		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by";
 		
 		var dataToSend = Duplicate(rc);
 		
@@ -71,6 +71,10 @@ component {
 		
 	}
 	
+	
+	function license(any rc){
+		rc.license = variables.man.getFileContent(rc.name, "", "license.txt");
+	}
 	
 	
 	/*
@@ -107,5 +111,29 @@ component {
 		variables.man.addTextFile(extensionName, "functions", funcname, content);
 		rc.response = "Function #funcname# has been added";
 	 }
+	 
+	 function addLicense(rc){
+	 	variables.man.addTextFile(rc.name, "", "license.txt", rc.license);
+	 	rc.message = "License has been added";
+ 		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+	 }
 
+	function edittag(any rc){
+		rc.tagcontent = variables.man.getFileContent(rc.name, "tags", rc.tag);
+	}
+	function savetag(any rc){
+		rc.tagcontent = variables.man.addTextFile(rc.name, "tags", rc.tag, rc.content);
+		rc.message = "Tag file saved";
+		variables.fw.redirect("extension.edittag?name=#rc.name#&tag=#rc.tag#&message=#rc.message#");
+	}
+	
+	/* 
+	 	Delete items from an extension	
+	 */
+	 function removefunction(any rc){
+	 	 variables.man.removeTextFile(rc.name, "functions", rc.function);
+	 	 rc.message = "Function removed";
+	 	 variables.fw.redirect("extension.addFunctions?name=#rc.name#&message=#rc.message#");
+	 }
+	
 }
