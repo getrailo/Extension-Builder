@@ -44,7 +44,7 @@
 			 	<legend>Extension Information</legend>
 			 	<div>
 					<label for="label">Display Name</label>
-					<input type="text" name="label" value="#v("label")#" id="label" placeholder="My Great Extension">
+					<input type="text" name="label" value="#v("label")#" class="span4" id="label" placeholder="My Great Extension">
 				</div>
 				<div>
 			 		<label>Short Name:</label>
@@ -56,8 +56,12 @@
 					<input type="text" name="author" value="#v("author")#" id="author" placeholder="John Smith">
 				</div>
 				<div>
+					<label for="email">Email</label>
+					<input type="text" name="email" value="#v("email")#" id="email" placeholder="John.Smith@getrailo.org">
+				</div>
+				<div>
 					<label for="version">Version</label>
-					<input type="text" name="version" value="#v("version")#" id="version" placeholder="1.0.0">
+					<input type="text" name="version" value="#v("version")#" class="span1" id="version" placeholder="1.0.0">
 				</div>
 			 	<div>
 					<label for="type">Type (was #v("type")#)</label>
@@ -71,7 +75,7 @@
 			
 				<div>
 					<label for="description">Description</label>
-					<textarea name="description" rows="8" cols="40">#v("description")#</textarea>
+					<textarea name="description" rows="8" class="span5">#v("description")#</textarea>
 				</div>
 				
 				<div>
@@ -86,22 +90,22 @@
 				<legend>Resources</legend>	
 				<div>
 					<label for="imgurl">Image URL</label>
-					<input type="text" name="image" value="#v("image")#" id="image" placeholder="http://mydomain.com/image.png">
+					<input type="text" name="image" value="#v("image")#" id="image" class="span4" placeholder="http://mydomain.com/image.png">
 					<i class="icon-question-sign" data-content="An absolute URL to the image that is the logo for your Extension" title="ImageURL"></i>
 				</div>
 			 	<div>
 					<label for="mailinglist">Mailing List</label>
-					<input type="text" name="mailinglist" value="#v("mailinglist")#" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
+					<input type="text" name="mailinglist" value="#v("mailinglist")#" class="span4" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
 				</div>
 				
 				<div>
 					<label for="supportURL">Support URL</label>
-					<input type="text" name="support" value="#v("support")#" id="supportURL" placeholder="http://groups.google.com/group/railo-beta">
+					<input type="text" name="support" value="#v("support")#" id="supportURL" class="span4" placeholder="http://groups.google.com/group/railo-beta">
 				</div>
 				
 				<div>
 					<label for="documentationURL">Documentation URL</label>
-					<input type="text" name="documentation" value="#v("documentation")#"id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
+					<input type="text" name="documentation" value="#v("documentation")#" class="span4" id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
 				</div>
 			</fieldset>
 			
