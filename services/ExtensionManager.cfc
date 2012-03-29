@@ -32,7 +32,42 @@ component output="false"{
 				
 		FileWrite(extPath, toString(extXML));
 		
+		updateInstaller(extensionName);
+		
 		return getInfo(extensionName);
+	}
+	
+	function updateInstaller(String extensionName){
+		var installString = FileRead("/services/templates/Install.cfc");
+		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!";
+		var lTags = "";
+		var lFunc = "";
+		var lJars = "";
+		
+		if(DirectoryExists(extPath & "/tags/")){
+		var qTAGS = DirectoryList(extPath & "/tags/",false,"query");
+			lTags = ValueList(qTAGS.name);
+		}
+		if(DirectoryExists(extPath & "/functions/")){
+		var qFUNC = DirectoryList(extPath & "/functions/",false,"query");
+			lFunc = ValueList(qFUNC.name);
+		}	
+		
+		if(DirectoryExists(extPath & "/jars/")){		
+		var qJARS = DirectoryList(extPath & "/jars/",false,"query");
+			lJars = ValueList(qJARS.name);
+		}
+		
+		installString = Replace(installString, "__NAME__", extensionName, "all");
+		installString = Replace(installString, "__TAGS__", lTags, "all");
+		installString = Replace(installString, "__FUNCTIONS__", lFunc, "all");
+		installString = Replace(installString, "__JARS__", lJars, "all");
+		
+		FileWrite(extPath & "/Install.cfc", installString);
+		
+		dump(installString)
+		abort;
+		
 	}
 	
 	

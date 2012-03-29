@@ -2,12 +2,9 @@
 	
 	<cfscript>
 		variables.name = "__NAME__";
-		
-		//OR! we create a list of items that are hardcoded in here
-		
-		variables.jars = "__JARS__";
-		variables.tags = "__TAGS__";
-		variables.functions = "__FUNCTIONS__";
+		variables.tags = ListToArray("__TAGS__");
+		variables.functions = ListToArray("__FUNCTIONS__");
+		variables.jars = ListToArray("__JARS__");
 	</cfscript>
     
     <cffunction name="validate" returntype="void" output="no"
@@ -26,29 +23,28 @@
         <cfargument name="config" type="struct">
 
 		<!--- Copy all tags to the right folder --->
-		<cfset var TAGS = DirectoryList(path & "tags",false,"query")>
-		<cfloop query="TAGS">
+		<cfloop array="#variables.tags#" index="local.tag" >
 			<cffile action="copy"
-				source="#path#tags/#TAGS.name#"
+				source="#path#tags/#tag#"
 				destination="#getContextPath()#/library/tag/">
 		</cfloop>
+		
 		<!--- Copy all functions to the right folder --->
-		<cfset var FUNCS = DirectoryList(path & "functions",false,"query")>
-		<cfloop query="FUNCS">
+		<cfloop array="#variables.functions#" index="local.func">
 			<cffile action="copy"
-				source="#path#functions/#FUNCS.name#"
+				source="#path#functions/#func#"
 				destination="#getContextPath()#/library/function/">
 		</cfloop>
 		
-		<cfset var JARS = DirectoryList(path & "jars",false,"query")>
-		<cfloop query="JARS">
+		
+		<cfloop array="#variables.jars#" index="local.jar">
 			<cffile action="copy"
-				source="#path#jars/#JARS.name#"
+				source="#path#jars/#jar#"
 				destination="#getContextPath()#/lib/">
 		</cfloop>
 		
 
-        
+        <!---__INSTALL__--->
         <cfreturn '#variables.name# is now successfully installed'>
 
 	</cffunction>
@@ -59,6 +55,7 @@
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
         <cfset uninstall(path,config)>
+		 <!---__UPDATE__--->
 		<cfreturn install(argumentCollection=arguments)>
     </cffunction>
 
@@ -74,7 +71,25 @@
             file="#getContextPath()#/lib/#i#">
 		</cfloop>
 
-
+<!--- Copy all tags to the right folder --->
+		<cfloop array="#variables.tags#" index="local.tag" >
+			<cffile action="delete"
+				file="#getContextPath()#/library/tag/#tag#">
+		</cfloop>
+		
+		<!--- Copy all functions to the right folder --->
+		<cfloop array="#variables.functions#" index="local.func">
+			<cffile action="delete"
+				file="#getContextPath()#/library/function/#func#">
+		</cfloop>
+		
+		
+		<cfloop array="#variables.jars#" index="local.jar">
+			<cffile action="delete"
+				file="#getContextPath()#/lib/#jar#">
+		</cfloop>
+		
+			<!---__UNINSTALL__--->
         <cfreturn '#variables.name# is now successfully removed'>
 
     </cffunction>
