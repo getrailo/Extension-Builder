@@ -15,6 +15,16 @@ component output="false"{
 		return info;
 	}
 	
+	function getCapability(String extensionName){
+		var capability = {};
+		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/";
+			capability.tags = DirectoryExists(extPath & "tags") ? ArrayLen(DirectoryList(extPath & "tags",false,"name")) : 0;
+			capability.functions = DirectoryExists(extPath & "functions") ? ArrayLen(DirectoryList(extPath & "functions",false,"name")) : 0;	
+			capability.applications = DirectoryExists(extPath & "applications") ? ArrayLen(DirectoryList(extPath & "applications",false,"name")) : 0;	
+			capability.jars = DirectoryExists(extPath & "jars") ? ArrayLen(DirectoryList(extPath & "jars",false,"name")) : 0;	
+		return capability;
+	}
+	
 	function saveInfo(String extensionName, Struct info){
 		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml";
 		var extXML = XMLParse(FileRead(extPath));
@@ -48,7 +58,7 @@ component output="false"{
 		var lTags = "";
 		var lFunc = "";
 		var lJars = "";
-		
+		var configXML = XMLParse(FileRead(extPath & "/config.xml"));
 		if(DirectoryExists(extPath & "/tags/")){
 		var qTAGS = DirectoryList(extPath & "/tags/",false,"query");
 			lTags = ValueList(qTAGS.name);
@@ -64,6 +74,7 @@ component output="false"{
 		}
 		
 		installString = Replace(installString, "__NAME__", extensionName, "all");
+		installString = Replace(installString, "__LABEL__", configXML.config.info.label.XMLText, "all");
 		installString = Replace(installString, "__TAGS__", lTags, "all");
 		installString = Replace(installString, "__FUNCTIONS__", lFunc, "all");
 		installString = Replace(installString, "__JARS__", lJars, "all");
@@ -142,7 +153,6 @@ component output="false"{
 				Directorycreate(itemPath);
 		}
 		FileCopy(source, itemPath);
-
 		updateInstaller(extensionName);
 	}
 	
