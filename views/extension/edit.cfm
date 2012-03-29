@@ -2,11 +2,11 @@
 <cfparam name="rc.message" default="">
 <cfoutput>
 	
+<!--- JavaScript --->
 <cffunction name="v" output="false">
 	<cfargument name="f">
 	<cfreturn StructKeyExists(rc.info, f) ? Trim(rc.info[f]) : "">
 </cffunction>	
-
 <cfsavecontent variable="js">
 	<script>
 		var categories ="Framework,CMS,Core,Gateway,Database,Forum,E-Commerce,Demo".split(",");
@@ -16,29 +16,12 @@
 		});
 	</script>
 </cfsavecontent>
-
 <cfset arrayAppend(rc.js, js)>
 
-
-
-
-
-<div class="row-fluid">
-	<div class="span2">
-		<cfinclude template="localnav.cfm">
-	</div>
-	<div class="span10">
+<form action="#buildURL("extension.saveinfo")#" method="post">
 	<h1>Edit #v("label")#</h1>
-	
-	<cfif Len(rc.message)>
-		<div class="alert alert-success">
-		<a class="close" data-dismiss="alert">x</a>
-		#rc.message#</div>
-	</cfif>
-	
-	<form action="#buildURL("extension.saveinfo")#" method="post">
-		
-	<div class="row">
+	<hr>
+	<div class="row-fluid">
 		<div class="span6">
 			<fieldset>
 			 	<legend>Extension Information</legend>
@@ -59,6 +42,11 @@
 					<label for="email">Email</label>
 					<input type="text" name="email" value="#v("email")#" id="email" placeholder="John.Smith@getrailo.org">
 				</div>
+				<div>
+					<label for="packaged-by">Packaged By</label>
+					<input type="text" name="packaged-by" value="#v("packaged-by")#" id="email" placeholder="John.Smith@getrailo.org">
+				</div>				
+				
 				<div>
 					<label for="version">Version</label>
 					<input type="text" name="version" value="#v("version")#" class="span1" id="version" placeholder="1.0.0">
@@ -118,16 +106,16 @@
 				</div>			
 			</fieldset>
 		</div>
-	
 	</div>
-		<div class="form-actions">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="form-actions">
             <button type="submit" class="btn btn-primary">Save Information</button>
             <button class="btn" type="reset">Cancel</button>
-          </div>
-</form>	
-
+ 	        </div>
+		</div>
 	</div>
-</div>	
+</form>	
 
 
 </cfoutput>

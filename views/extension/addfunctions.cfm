@@ -1,10 +1,4 @@
 <cfoutput><cfparam name="rc.functions" default="#[]#">
-<section class="row-fluid">
-	<div class="span2">
-		<cfinclude template="localnav.cfm">
-	</div>
-	<div class="span10">
-
 	<h1>Add Functions</h1>
 	<p>You can add your own functions  that will then be treated like Built-in Functions in Railo Server.</p>
 	<form action="#buildURL("extension.addfunction")#" class="well form-inline <!--- progressuploader --->" method="post" enctype="multipart/form-data">
@@ -37,5 +31,4 @@
 		</tbody>
 	</table>	
 	</cfif>
-	</div>
-</section></cfoutput>
+</cfoutput>
