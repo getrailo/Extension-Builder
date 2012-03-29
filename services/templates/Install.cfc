@@ -2,6 +2,7 @@
 	
 	<cfscript>
 		variables.name = "__NAME__";
+		variables.label = "__LABEL__";
 		variables.tags = ListToArray("__TAGS__");
 		variables.functions = ListToArray("__FUNCTIONS__");
 		variables.jars = ListToArray("__JARS__");
@@ -65,28 +66,21 @@
     	<cfargument name="path" type="string">
         <cfargument name="config" type="struct">
 
-		<cfloop list="#variables.jars#" index="i">
-            <cffile
-            action="delete"
-            file="#getContextPath()#/lib/#i#">
-		</cfloop>
-
-<!--- Copy all tags to the right folder --->
+		<!--- Delete any tags we may have installed --->
 		<cfloop array="#variables.tags#" index="local.tag" >
 			<cffile action="delete"
 				file="#getContextPath()#/library/tag/#tag#">
 		</cfloop>
 		
-		<!--- Copy all functions to the right folder --->
+		<!--- Delete any tags we may have installed --->
 		<cfloop array="#variables.functions#" index="local.func">
 			<cffile action="delete"
 				file="#getContextPath()#/library/function/#func#">
 		</cfloop>
 		
-		
+		<!--- Delete any jars we may have installed --->
 		<cfloop array="#variables.jars#" index="local.jar">
-			<cffile action="delete"
-				file="#getContextPath()#/lib/#jar#">
+			<cffile action="delete" file="#getContextPath()#/lib/#jar#">
 		</cfloop>
 		
 			<!---__UNINSTALL__--->
