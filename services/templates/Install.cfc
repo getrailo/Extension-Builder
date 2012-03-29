@@ -44,9 +44,14 @@
 				destination="#getContextPath()#/lib/">
 		</cfloop>
 		
+		<cfset message ="#variables.label# has been successfully installed">
+		
+		<cfif ArrayLen(variables.jars) OR ArrayLen(variables.tags) OR ArrayLen(variables.functions)>
+			<cfset message &="<br> <strong>You need to restart Railo Server for the changes to take effect</strong>">
+		</cfif>
 
         <!---__INSTALL__--->
-        <cfreturn '#variables.name# is now successfully installed'>
+        <cfreturn message>
 
 	</cffunction>
 
@@ -83,8 +88,9 @@
 			<cffile action="delete" file="#getContextPath()#/lib/#jar#">
 		</cfloop>
 		
+		
 			<!---__UNINSTALL__--->
-        <cfreturn '#variables.name# is now successfully removed'>
+        <cfreturn '#variables.name# has been uninstalled'>
 
     </cffunction>
 
