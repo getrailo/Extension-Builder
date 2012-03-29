@@ -50,7 +50,7 @@ component {
 	}
 	
 	function saveInfo(any rc) {
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version";
+		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
 		
 		var dataToSend = Duplicate(rc);
 		
