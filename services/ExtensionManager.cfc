@@ -1,6 +1,6 @@
 component output="false"{
 <!--- This component provides some nice functions to be able to read from the extension zip files --->
-
+	variables.validinfotags = "name,label,id,version,created,author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
 	function getInfo(extensionName){
 		//Read the config.xml/config/info xml from the /ext/#extensionName#.zip file
 
@@ -64,10 +64,6 @@ component output="false"{
 		installString = Replace(installString, "__JARS__", lJars, "all");
 		
 		FileWrite(extPath & "/Install.cfc", installString);
-		
-		dump(installString)
-		abort;
-		
 	}
 	
 	
@@ -76,39 +72,24 @@ component output="false"{
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XMML config
-		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image");
+		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal");
 		var xmlConfig = XMLNew(true);
 		xmlConfig.XMLRoot = XMLElemNew(xmlConfig, "config");
-		
 		var infoel = XMLElemNew(xmlConfig.XMLRoot, "info");
-				var name = XMLElemNew(infoel, "name");
-				name.XMLText = extensionName;
-			ArrayAppend(infoEl.XMLChildren, name);
-				var label = XMLElemNew(xmlConfig, "label");
-					label.XMLText = extensionLabel;
-			ArrayAppend(infoEl.XMLChildren, label);
-				var id = XMLElemNew(xmlConfig, "id");
-					id.XMLText = CreateUUID();
-			ArrayAppend(infoEl.XMLChildren, id);
-			
-				var type = XMLElemNew(xmlConfig, "type");
-					type.XMLText = "all";
-			ArrayAppend(infoEl.XMLChildren, type);
-			
-				var version = XMLElemNew(xmlConfig, "version");
-					version.XMLText = "1.0.0";
-			ArrayAppend(infoEl.XMLChildren, version);
+		
+			//Add some default values
+			addElementsToInfo(infoel, "name", extensionName);
+			addElementsToInfo(infoel, "label", extensionLabel);
+			addElementsToInfo(infoel, "id", CreateUUID());
+			addElementsToInfo(infoel, "type", "server");
+			addElementsToInfo(infoel, "version", "1.0.0");
+			addElementsToInfo(infoel, "created", Now());
 
-				var created = XMLElemNew(xmlConfig, "created");
-					created.XMLText = Now();
-			ArrayAppend(infoEl.XMLChildren, created);
 
 			//Now add the rest of the tags
 			loop array="#validFields#" index="v"{
-				var field = XMLElemNew(xmlConfig, v);
-				ArrayAppend(infoEl.XMLChildren, field);
+				addElementsToInfo(infoel, v, "");
 			}
-
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
 		//Create a new file name after the name
@@ -143,6 +124,8 @@ component output="false"{
 				Directorycreate(itemPath);
 		}
 		FileWrite(itemPath & "/" & filename, content);
+		
+		updateInstaller(extensionName);
 	}
 	
 	function addBinaryFile(String extensionName, String source, String folder){
@@ -151,12 +134,16 @@ component output="false"{
 				Directorycreate(itemPath);
 		}
 		FileCopy(source, itemPath);
+
+		updateInstaller(extensionName);
 	}
 	
 	
-	
-	function addInfoNode(xmlItem, name, value=""){
-		
+	//TODO: Change the adding and setting of nodes to use this function so it's cleaner
+	function addElementsToInfo(xmlItem, name, value=""){
+			var item = XMLElemNew(xmlItem, name);
+				item.XMLText = value;
+			ArrayAppend(xmlItem.XMLChildren, item);
 	}
 	
 	
