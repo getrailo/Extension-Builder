@@ -84,8 +84,6 @@ component output="false"{
 			addElementsToInfo(infoel, "type", "server");
 			addElementsToInfo(infoel, "version", "1.0.0");
 			addElementsToInfo(infoel, "created", Now());
-
-
 			//Now add the rest of the tags
 			loop array="#validFields#" index="v"{
 				addElementsToInfo(infoel, v, "");

@@ -1,7 +1,7 @@
 <cfoutput>	<div class="well sidebar-nav">
 		<ul class="nav nav-list">
 			<li class="nav-header">Extension</li>
-			<li><a href="#buildURL("extension.edit?name=#rc.name#")#">Extension Info <i class="icon-question-sign" data-content="Allows you to edit the main information about this extension" title="Information"></i></a></li>
+			<li><a href="#buildURL("extension.edit?name=#rc.name#")#">Main Info <i class="icon-question-sign" data-content="Allows you to edit the main information about this extension" title="Information"></i></a></li>
 			<li><a href="#buildURL("extension.license?name=#rc.name#")#">License <i class="icon-question-sign" data-content="Allows you to set what kind of license this extension should be released under" title="License"></i></a></li>
 			<li class="nav-header">Add Items</li>
 			<li><a href="#buildURL("extension.addApplication?name=#rc.name#")#">Applications <i class="icon-question-sign" data-content="Allows you to deploy a whole application to a web context" title="Applications"></i></a></li>
