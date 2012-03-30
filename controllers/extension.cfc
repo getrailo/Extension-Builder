@@ -139,7 +139,6 @@ component {
 	 }
 	 
 	 function addLicense(rc){
-	 	 
 	 	//Check if we are choosing one..
 	 	var licensetext = rc.license;
 	 	if(Len(rc.license_link)){
