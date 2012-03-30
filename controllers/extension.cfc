@@ -11,6 +11,10 @@ component {
 		param name="rc.js" default=[];
 		param name="rc.message" default="";
 		
+		//test if we are getting a specific extension
+		if(StructKeyExists(rc, "name")){
+			rc.info = variables.man.getInfo(rc.name);
+		}
 	}
 
 	void function default(any rc){
