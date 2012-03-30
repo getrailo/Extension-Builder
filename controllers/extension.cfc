@@ -126,7 +126,15 @@ component {
 	 }
 	 
 	 function addLicense(rc){
-	 	variables.man.addTextFile(rc.name, "", "license.txt", rc.license);
+	 	 
+	 	//Check if we are choosing one..
+	 	var licensetext = rc.license;
+	 	if(Len(rc.license_link)){
+	 		 var licenseinfo = ListToArray(rc.license_link, "|");
+	 		 licensetext = licenseinfo[2] & Chr(13) & licenseinfo[1];
+	 	}
+	 	 
+	 	variables.man.addTextFile(rc.name, "", "license.txt", licensetext);
 	 	rc.message = "License has been added";
  		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
 	 }
