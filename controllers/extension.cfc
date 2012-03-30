@@ -106,6 +106,10 @@ component {
 	 	 rc.functions = variables.man.listFolderContents(rc.name, "functions");	
 	 }
 	 
+	 function addApplication(rc){
+	 	 rc.application = variables.man.listFolderContents(rc.name, "application");	
+	 }
+	 
 	 function addTag(rc){
 		file action="upload" destination="#expandPath("/upload")#" filefield="tagUpload" result="local.uploadresult" nameconflict="overwrite";
 		var tagname = uploadresult.serverfile;
@@ -123,6 +127,15 @@ component {
 		var content = FileRead(expandPath("/upload/#uploadresult.serverfile#"));
 		variables.man.addTextFile(extensionName, "functions", funcname, content);
 		rc.response = "Function #funcname# has been added";
+	 }
+	 
+	 function uploadapplication(any rc) {
+	 	 file action="upload" destination="#expandPath("/upload")#" filefield="appzip" result="local.uploadresult" nameconflict="overwrite";
+	 	 var appname = uploadresult;
+	 	 
+	 	 
+	 	 dump(uploadresult);
+	 	 abort;
 	 }
 	 
 	 function addLicense(rc){
