@@ -1,6 +1,7 @@
 component output="false"{
 <!--- This component provides some nice functions to be able to read from the extension zip files --->
 	variables.validinfotags = "name,label,id,version,created,author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
+	variables.cdata = "description"; //In case we add more
 	function getInfo(extensionName){
 		//Read the config.xml/config/info xml from the /ext/#extensionName#.zip file
 
@@ -37,15 +38,18 @@ component output="false"{
 		
 		loop collection="#info#" item="local.i"{
 			var itemIndex = XMLChildPos(infoItem, i, 1);
-			dump(itemIndex);
 			var item = infoItem.XMLChildren[itemIndex];
 			if(itemIndex LT 0){
-				addElementsToInfo(infoItem, i, info[i]);
+				addElementsToInfo(infoItem, i, info[i], ListFindNoCase(variables.cdata, i));
 			}
-			else{
+			else if(ListFindNoCase(variables.cdata, i)){
+				item.XMLText = ""; //clear it for upgraders, I would guess this wouldn't ever happen but it does in my tests so fix it.
+				item.XmlCData = info[i];			
+			}
+			else {
 				item.XMLText = info[i];
 			}
-		}		
+		}	
 		FileWrite(extPath, toString(extXML));
 		updateInstaller(extensionName);
 		
@@ -158,11 +162,17 @@ component output="false"{
 	
 	
 	//TODO: Change the adding and setting of nodes to use this function so it's cleaner
-	function addElementsToInfo(xmlItem, name, value=""){
+	function addElementsToInfo(xmlItem, name, value="", isCDATA=false){
 		
 		//Instead of just creating it, we should check it, then it can always work!
 			var item = XMLElemNew(xmlItem, name);
-				item.XMLText = value;
+			
+				if(isCDATA){
+					item.XmlCData = value;		
+				}
+				else{
+					item.XMLText = value;
+				}
 			ArrayAppend(xmlItem.XMLChildren, item);
 	}
 	
