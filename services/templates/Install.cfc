@@ -72,20 +72,24 @@
         <cfargument name="config" type="struct">
 
 		<!--- Delete any tags we may have installed --->
-		<cfloop array="#variables.tags#" index="local.tag" >
-			<cffile action="delete"
-				file="#getContextPath()#/library/tag/#tag#">
+		<cfloop array="#variables.tags#" index="local.tag">
+			<cfif FileExists("#getContextPath()#/library/tag/#tag#")>
+				<cfset FileDelete("#getContextPath()#/library/tag/#tag#")>
+			</cfif>
 		</cfloop>
 		
 		<!--- Delete any tags we may have installed --->
 		<cfloop array="#variables.functions#" index="local.func">
-			<cffile action="delete"
-				file="#getContextPath()#/library/function/#func#">
+			<cfif FileExists("#getContextPath()#/library/function/#func#")>
+				<cfset FileDelete("#getContextPath()#/library/function/#func#")>
+			</cfif>
 		</cfloop>
 		
 		<!--- Delete any jars we may have installed --->
 		<cfloop array="#variables.jars#" index="local.jar">
-			<cffile action="delete" file="#getContextPath()#/lib/#jar#">
+			<cfif FileExists("#getContextPath()#/lib/#jar#")>
+				<cfset FileDelete("#getContextPath()#/lib/#jar#")>
+			</cfif>
 		</cfloop>
 		
 		
