@@ -130,10 +130,19 @@ component {
 	function edittag(any rc){
 		rc.tagcontent = variables.man.getFileContent(rc.name, "tags", rc.tag);
 	}
+	function editfunction(any rc){
+		rc.functioncontent = variables.man.getFileContent(rc.name, "functions", rc.function);
+	}
 	function savetag(any rc){
 		rc.tagcontent = variables.man.addTextFile(rc.name, "tags", rc.tag, rc.content);
 		rc.message = "Tag file saved";
 		variables.fw.redirect("extension.edittag?name=#rc.name#&tag=#rc.tag#&message=#rc.message#");
+	}
+	
+	function savefunction(any rc){
+		rc.tagcontent = variables.man.addTextFile(rc.name, "functions", rc.function, rc.content);
+		rc.message = "Function file saved";
+		variables.fw.redirect("extension.editfunction?name=#rc.name#&function=#rc.function#&message=#rc.message#");
 	}
 	
 	/* 
@@ -144,5 +153,9 @@ component {
 	 	 rc.message = "Function removed";
 	 	 variables.fw.redirect("extension.addFunctions?name=#rc.name#&message=#rc.message#");
 	 }
-	
+	function removetag(any rc){
+	 	 variables.man.removeTextFile(rc.name, "tags", rc.tag);
+	 	 rc.message = "Tag #rc.tag# removed";
+	 	 variables.fw.redirect("extension.addtags?name=#rc.name#&message=#rc.message#");
+	 }
 }

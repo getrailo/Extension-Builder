@@ -24,7 +24,7 @@
 		<tbody>
 		<cfloop array="#rc.functions#" index="func">
 			<tr>
-				<td>#func#</td>
+				<td><a href="#buildURL("extension.editfunction?name=" & rc.name& "&function=" & func)#">#func#</a></td>
 				<td width="20%"><a class="btn btn-danger" href="#buildURL("extension.removefunction?name=#rc.name#&function=#func#")#"><i class="icon-remove-sign icon-white"></i> Remove</a></td>
 			</tr>
 		</cfloop>
