@@ -6,6 +6,7 @@
 		variables.tags = ListToArray("__TAGS__");
 		variables.functions = ListToArray("__FUNCTIONS__");
 		variables.jars = ListToArray("__JARS__");
+		variables.appl = "__APPS__";
 	</cfscript>
     
     <cffunction name="validate" returntype="void" output="no"
@@ -43,6 +44,11 @@
 				source="#path#jars/#jar#"
 				destination="#getContextPath()#/lib/">
 		</cfloop>
+		
+		
+		<!--- Extract an application if it exists to the {web-context} Need a param for this!--->
+		
+
 		
 		<cfset message ="#variables.label# has been successfully installed">
 		

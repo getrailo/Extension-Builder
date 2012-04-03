@@ -2,6 +2,16 @@ component output="false"{
 <!--- This component provides some nice functions to be able to read from the extension zip files --->
 	variables.validinfotags = "name,label,id,version,created,author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
 	variables.cdata = "description"; //In case we add more
+	
+	function getConfig(String extensionName){
+		var config = FileRead("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml")
+		return XMLParse(config);
+	}
+	
+	private function setConfig(String extensionName, XML xmlDocument){
+		FileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", toString(xmlDocument));
+	}
+	
 	function getInfo(extensionName){
 		//Read the config.xml/config/info xml from the /ext/#extensionName#.zip file
 
@@ -62,6 +72,7 @@ component output="false"{
 		var lTags = "";
 		var lFunc = "";
 		var lJars = "";
+		var lApps = "";
 		var configXML = XMLParse(FileRead(extPath & "/config.xml"));
 		if(DirectoryExists(extPath & "/tags/")){
 		var qTAGS = DirectoryList(extPath & "/tags/",false,"query");
@@ -77,11 +88,18 @@ component output="false"{
 			lJars = ValueList(qJARS.name);
 		}
 		
+		
+		if(DirectoryExists(extPath & "/applications/")){
+		var qApps = DirectoryList(extPath & "/applications/", false, "query");
+			lApps = ValueList(qApps.name);
+		}
 		installString = Replace(installString, "__NAME__", extensionName, "all");
 		installString = Replace(installString, "__LABEL__", configXML.config.info.label.XMLText, "all");
 		installString = Replace(installString, "__TAGS__", lTags, "all");
 		installString = Replace(installString, "__FUNCTIONS__", lFunc, "all");
 		installString = Replace(installString, "__JARS__", lJars, "all");
+		installString = Replace(installString, "__APPS__", lApps, "all");		
+		
 		
 		FileWrite(extPath & "/Install.cfc", installString);
 	}
@@ -151,20 +169,40 @@ component output="false"{
 		return FileRead(itemPath);
 	}
 	
+	function saveStep(String extensionName, Numeric step=0, String label, description=""){
+		var configXML = getConfig(extensionName);
+		var steps = XMLSearch(configXML, "//steps");
+		
+		dump(arguments);
+		
+		if(step == 0){ // we are just adding this should be easier
+			var item = XMLElemNew(configXML, "step");
+				item.XMLAttributes["label"] = label;
+				item.XMLAttributes["description"] = description;
+			ArrayAppend(configXML.config.XMLChildren, item);
+		}
+		setConfig(extensionName, configXML)
+		return getConfig(extensionName);		
+	}
+	
+
+	
 	function addBinaryFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
 		if(!DirectoryExists(itemPath)){
 				Directorycreate(itemPath);
 		}
-		FileCopy(source, itemPath);
+		//Has to have the full name
+			itemPath  = itemPath & ListLast(source, "/");
+		
+		FileMove(source, itemPath);
 		updateInstaller(extensionName);
 	}
 	
+
 	
-	//TODO: Change the adding and setting of nodes to use this function so it's cleaner
+	
 	function addElementsToInfo(xmlItem, name, value="", isCDATA=false){
-		
-		//Instead of just creating it, we should check it, then it can always work!
 			var item = XMLElemNew(xmlItem, name);
 			
 				if(isCDATA){

@@ -2,16 +2,6 @@
 <cfparam name="rc.license" default="">
 
 <cfsavecontent variable="js">
-<script>
-
-	$("#license_link").change(function(){
-		var licenseURL = $(":selected",this).val().split("|")[0];
-		$.get(licenseURL, function(data){
-				$("#license").val(data);
-		});
-		
-	});
-</script>
 </cfsavecontent>
 
 <cfset ArrayAppend(rc.js, js)>
@@ -33,11 +23,17 @@
 			<p>You can choose a common open source licenses</p>
 			<div>
 			<select id="license_link" name="license_link" class="span10">
-				<optgroup label="choose">
-					<option value="custom">Other: (fill in your own text)</option>
+				<option value="custom">Other: (fill in your own text)</option>
+				<optgroup label="Common Licenses">
+					<option value="http://www.opensource.org/licenses/lgpl-2.1|GNU Library or 'Lesser' General Public License version 2.1 (LGPLv2.1)">GNU Library or "Lesser" General Public License version 2.1 (LGPLv2.1) (Like Railo)</option>
+					<option value="http://www.opensource.org/licenses/apache2.0|Apache License, 2.0">Apache License, 2.0</option>
+					<option value="http://www.opensource.org/licenses/eclipse-1.0|Eclipse Public License">Eclipse Public License</option>
+					<option value="http://www.opensource.org/licenses/lgpl-3.0|GNU Library or 'Lesser' General Public License version 3.0 (LGPLv3)">GNU Library or "Lesser" General Public License version 3.0 (LGPLv3)</option>
+					<option value="http://www.opensource.org/licenses/gpl-3.0|GNU General Public License version 3.0 (GPLv3)">GNU General Public License version 3.0 (GPLv3)</option>
+				</optgroup>
+				<optgroup label="Other Licenses">										
 					<option value="http://www.opensource.org/licenses/afl-3.0|Academic Free License 3.0 (AFL 3.0)">Academic Free License 3.0 (AFL 3.0)</option>
 					<option value="http://www.opensource.org/licenses/apl-1.0|Adaptive Public License">Adaptive Public License</option>
-					<option value="http://www.opensource.org/licenses/apache2.0|Apache License, 2.0">Apache License, 2.0</option>
 					<option value="http://www.opensource.org/licenses/apsl-2.0|Apple Public Source License">Apple Public Source License</option>
 					<option value="http://www.opensource.org/licenses/artistic-license-2.0|Artistic license 2.0">Artistic license 2.0</option>
 					<option value="http://www.opensource.org/licenses/attribution|Attribution Assurance Licenses">Attribution Assurance Licenses</option>
@@ -48,7 +44,6 @@
 					<option value="http://www.opensource.org/licenses/cpal_1.0|Common Public Attribution License 1.0 (CPAL)">Common Public Attribution License 1.0 (CPAL)</option>
 					<option value="http://www.opensource.org/licenses/cuaoffice|CUA Office Public License Version 1.0">CUA Office Public License Version 1.0</option>
 					<option value="http://www.opensource.org/licenses/eudatagrid|EU DataGrid Software License">EU DataGrid Software License</option>
-					<option value="http://www.opensource.org/licenses/eclipse-1.0|Eclipse Public License">Eclipse Public License</option>
 					<option value="http://www.opensource.org/licenses/ecl2|Educational Community License, Version 2.0">Educational Community License, Version 2.0</option>
 					<option value="http://www.opensource.org/licenses/ver2_eiffel|Eiffel Forum License V2.0">Eiffel Forum License V2.0</option>
 					<option value="http://www.opensource.org/licenses/entessa|Entessa Public License">Entessa Public License</option>
@@ -57,9 +52,6 @@
 					<option value="http://www.opensource.org/licenses/frameworx|Frameworx License">Frameworx License</option>
 					<option value="http://www.opensource.org/licenses/agpl-v3|GNU Affero General Public License v3 (AGPLv3)">GNU Affero General Public License v3 (AGPLv3)</option>
 					<option value="http://www.opensource.org/licenses/gpl-2.0|GNU General Public License version 2.0 (GPLv2)">GNU General Public License version 2.0 (GPLv2)</option>
-					<option value="http://www.opensource.org/licenses/gpl-3.0|GNU General Public License version 3.0 (GPLv3)">GNU General Public License version 3.0 (GPLv3)</option>
-					<option value="http://www.opensource.org/licenses/lgpl-2.1|GNU Library or 'Lesser' General Public License version 2.1 (LGPLv2.1)">GNU Library or "Lesser" General Public License version 2.1 (LGPLv2.1)</option>
-					<option value="http://www.opensource.org/licenses/lgpl-3.0|GNU Library or 'Lesser' General Public License version 3.0 (LGPLv3)">GNU Library or "Lesser" General Public License version 3.0 (LGPLv3)</option>
 					<option value="http://www.opensource.org/licenses/historical|Historical Permission Notice and Disclaimer">Historical Permission Notice and Disclaimer</option>
 					<option value="http://www.opensource.org/licenses/ibmpl|IBM Public License">IBM Public License</option>
 					<option value="http://www.opensource.org/licenses/ipafont|IPA Font License">IPA Font License</option>

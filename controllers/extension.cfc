@@ -107,7 +107,8 @@ component {
 	 }
 	 
 	 function addApplication(rc){
-	 	 rc.application = variables.man.listFolderContents(rc.name, "application");	
+	 	 rc.application = variables.man.listFolderContents(rc.name, "applications");	
+	 	 rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
 	 }
 	 
 	 function addTag(rc){
@@ -129,13 +130,26 @@ component {
 		rc.response = "Function #funcname# has been added";
 	 }
 	 
+	 
+	 function editStep(any rc){
+	 	 rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//step[#rc.step#]");
+	 	 rc.label = rc.stepxml[1].XMLAttributes['label'];
+	 	 rc.description = rc.stepxml[1].XMLAttributes.description;
+	 }
+	 
+	 function saveStep(any rc){
+	 	 variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
+	 	 variables.fw.redirect("extension.addApplication?name=#rc.name#");
+	 }
+	
+	 
 	 function uploadapplication(any rc) {
 	 	 file action="upload" destination="#expandPath("/upload")#" filefield="appzip" result="local.uploadresult" nameconflict="overwrite";
-	 	 var appname = uploadresult;
+	 	 var appPath = expandPath("/upload/#uploadresult.serverfile#");
 	 	 
+		 variables.man.addBinaryFile(rc.name, appPath,  "applications");
+ 		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=Application uploaded");
 	 	 
-	 	 dump(uploadresult);
-	 	 abort;
 	 }
 	 
 	 function addLicense(rc){
