@@ -169,11 +169,10 @@ component output="false"{
 		return FileRead(itemPath);
 	}
 	
-	function saveStep(String extensionName, Numeric step=0, String label, description=""){
+	function saveStep(String extensionName, Numeric step=0, String label, String description=""){
 		var configXML = getConfig(extensionName);
-		var steps = XMLSearch(configXML, "//steps");
+		var steps = XMLSearch(configXML, "//step");
 		
-		dump(arguments);
 		
 		if(step == 0){ // we are just adding this should be easier
 			var item = XMLElemNew(configXML, "step");
@@ -181,10 +180,42 @@ component output="false"{
 				item.XMLAttributes["description"] = description;
 			ArrayAppend(configXML.config.XMLChildren, item);
 		}
+		else {
+			var item = configXML.config.step[step];
+				item.XMLAttributes["label"] = label;
+				item.XMLAttributes["description"] = description;
+		}
 		setConfig(extensionName, configXML)
 		return getConfig(extensionName);		
 	}
 	
+	
+	function saveGroup(String extensionName, Numeric step=0, Numeric group=0, String label, String description=""){
+		var configXML = getConfig(extensionName);
+		var steps = XMLSearch(configXML, "//step");
+		
+		if(!Arrayisdefined(steps, step)){
+				throw("No step found!");
+		}
+		var currstep = steps[step];
+		
+		if(group == 0){
+			var groupItem  = XMLElemNew(configXML, "group") ;
+				groupItem.XMLAttributes["label"] = label;
+				groupItem.XMLAttributes["description"] = description;
+				ArrayAppend(currstep.XMLChildren, groupItem);
+		}
+		else{ // the group should exist. 
+			var groupItem	= configXML.config.step[step].group[group];
+				groupItem.XMLAttributes["label"] = label;
+				groupItem.XMLAttributes["description"] = description;
+
+			dump("DEBUG THIS!"); 
+			abort;
+		}
+		
+		setConfig(extensionName, configXML);
+	}
 
 	
 	function addBinaryFile(String extensionName, String source, String folder){

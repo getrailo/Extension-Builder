@@ -135,11 +135,30 @@ component {
 	 	 rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//step[#rc.step#]");
 	 	 rc.label = rc.stepxml[1].XMLAttributes['label'];
 	 	 rc.description = rc.stepxml[1].XMLAttributes.description;
+		 rc.groups = rc.stepxml[1].XMLChildren;
 	 }
 	 
 	 function saveStep(any rc){
 	 	 variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
 	 	 variables.fw.redirect("extension.addApplication?name=#rc.name#");
+	 }
+	 
+	 function editGroup(any rc){
+	 	var stepXML = variables.man.getConfig(rc.name);
+	 	var rc.groupxml = xmlSearch(stepXML, "//step[#rc.step#]");
+	 	//var rc.label = rc.groupxml.XMlAttributes.label;
+	 	
+	 	
+	 	Dump(rc.groupxml);
+	 	abort; 
+	 }
+	 
+	 function saveGroup(any rc){
+	 	 variables.man.saveGroup(rc.name, rc.step, rc.group, rc.label, rc.description);
+	 	 
+	 	 dump(rc);
+	 	 abort;
+	 	 variables.fw.redirect("extension.editgroup?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	 }
 	
 	 
