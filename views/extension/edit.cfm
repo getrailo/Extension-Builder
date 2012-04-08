@@ -36,7 +36,7 @@
 		#rc.message#</div>
 	</cfif>
 	
-	<form action="#buildURL("extension.saveinfo")#" method="post">
+	<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
 		
 	<div class="row">
 		<div class="span6">
@@ -64,13 +64,14 @@
 					<input type="text" name="version" value="#v("version")#" class="span1" id="version" placeholder="1.0.0">
 				</div>
 			 	<div>
-					<label for="type">Type (was #v("type")#)</label>
+					<label for="type">Admin type (was #v("type")#)</label>
 					<select name="type" id="type">
 						<cfset type= v("type")>
 						<option value="server" <cfif type EQ "server">selected</cfif>>Server</option>
 						<option value="web" <cfif type EQ "web">selected</cfif>>Web</option>			
+						<option value="all" <cfif type EQ "all">selected</cfif>>Both Web and Server</option>			
 					</select>
-					 <p class="help-block">If this extension should be availbel to the whole server, or a specific web context</p>
+					 <p class="help-block">If this extension will be available for the Server and/or Web Administrator</p>
 			 	</div>
 			
 				<div>
@@ -87,11 +88,42 @@
 		</div>
 		<div class="span6">
 			<fieldset>
-				<legend>Resources</legend>	
+				<legend>Resources</legend>
 				<div>
-					<label for="imgurl">Image URL</label>
+					<cfset imgtype = isvalid('url', v("image")) ? 'url':'file' />
+					<label for="imgurl">Image</label>
+					<cfif imgtype eq 'file' and v('image') neq "">
+						<input type="hidden" name="oldimage" value="#v('image')#" />
+						Current uploaded file: <a href="/ext#v('image')#" title="Click to view full size"><img src="/ext#v('image')#" alt="Logo file" height="30" /></a>
+						<br />
+					</cfif>
+					<div>
+						<label style="float:left;">
+							<input type="radio" name="imgtype" style="display:inline;" id="imgtypeurl" value="url"<cfif imgtype eq 'url'> checked</cfif> />
+							URL &nbsp; &nbsp;
+						</label>
+						<label style="float:left;">
+							or &nbsp; <input type="radio" name="imgtype" style="display:inline;" id="imgtypefile" value="file"<cfif imgtype eq 'file'> checked</cfif> />
+							<cfif v("image") neq "" and imgtype eq "file">New file<cfelse>File</cfif>
+						</label>
+<cfsavecontent variable="js">
+	<script type="text/javascript">
+		$(function(){
+			$('##imgtypeurl,##imgtypefile').click(function(){
+				var imgfield = $('##image');
+				var isfile = $('##imgtypefile:checked').length;
+				imgfield.prop('placeholder', isfile ? '':'http://mydomain.com/image.png')
+					.prop('type', isfile ? 'file':'text');
+			}).filter(':first').triggerHandler('click');
+		});
+	</script>
+</cfsavecontent>
+<cfparam name="rc.js" default="#[]#">
+<cfset arrayAppend(rc.js, js) />
+						<br clear="all" />
+					</div>
 					<input type="text" name="image" value="#v("image")#" id="image" class="span4" placeholder="http://mydomain.com/image.png">
-					<i class="icon-question-sign" data-content="An absolute URL to the image that is the logo for your Extension" title="ImageURL"></i>
+					<i class="icon-question-sign" data-content="Upload an image, or provide an absolute URL to the image that is the logo for your Extension" title="ImageURL"></i>
 				</div>
 			 	<div>
 					<label for="mailinglist">Mailing List</label>
@@ -110,7 +142,7 @@
 			</fieldset>
 			
 			<fieldset>
-				<legend>Payment Information</legend>
+				<legend>Payment / donation Information</legend>
 				<div>
 					<label for="paypal">Paypal Address</label>
 					<input type="text" name="paypal" value="#v("paypal")#" id="paypal" placeholder="joe.user@mydomain.com">

@@ -54,6 +54,35 @@ component {
 		
 		var dataToSend = Duplicate(rc);
 		
+		// upload image?
+		if (structKeyExists(rc, "imgtype") and rc.imgtype eq "file")
+		{
+			if (rc.image neq "")
+			{
+			 	file action="upload" destination="#gettempdirectory()#" filefield="image" result="local.uploadimage" nameconflict="makeunique";
+				dataToSend.image = getTempDirectory() & local.uploadimage.serverfile;
+				// remove old image
+				if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
+				{
+					try {
+						file action="delete" file="zip://#expandPath("/ext/#rc.name#.zip")#!#rc.oldimage#";
+						file action="delete" file="#expandpath('/ext#rc.oldimage#')#";
+					} catch(any E) {}
+				}
+			} else if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
+			{
+				dataToSend.image = rc.oldimage;
+			}
+		// remove old image
+		else if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
+			{
+				try {
+					file action="delete" file="zip://#expandPath("/ext/#rc.name#.zip")#!#rc.oldimage#";
+					file action="delete" file="#expandpath('/ext#rc.oldimage#')#";
+				} catch(any E) {}
+			}
+		}
+		
 		for(c in dataToSend){
 				if(!ListFindNoCase(validFields,c)){
 						StructDelete(dataToSend, c);

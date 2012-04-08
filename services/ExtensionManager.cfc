@@ -18,17 +18,27 @@ component output="false"{
 	function saveInfo(String extensionName, Struct info){
 		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml";
 		var extXML = XMLParse(FileRead(extPath));
-			
-			if(info['name'] EQ extensionName){
-					StructDelete(info, "name");
-			}
+		
+		// add uploaded image file info the extension zip file
+		if (structKeyExists(info, "image") and info.image neq "" and not isValid("url", info.image) and fileExists(info.image))
+		{
+			var extImageName = rereplace(getFileFromPath(info.image), "[^a-zA-Z0-9\-_\.]", "_", "all");
+			file action="copy" source="#info.image#" destination="zip://#expandPath("/ext/#extensionName#.zip")#!/#extImageName#";
+			// keep a local copy as well, for display purposes
+			file action="copy" source="#info.image#" destination="#expandPath("/ext/")##extImageName#";
+			info.image = "/" & extImageName;
+		}
+		
+		if(info['name'] EQ extensionName){
+				StructDelete(info, "name");
+		}
 		var infoItem = extXML.config.info;
 
 		loop collection="#info#" item="local.i"{
 			var itemIndex = XMLChildPos(infoItem, i, 1);
 			var item = infoItem.XMLChildren[itemIndex];
 				item.XMLText = info[i];
-		}		
+		}
 				
 		FileWrite(extPath, toString(extXML));
 		

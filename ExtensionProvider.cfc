@@ -37,8 +37,11 @@
 	        <cfset QuerySetCell(apps,'version',info.config.info.version.XMLtext)>
 	        <cfset QuerySetCell(apps,'category',info.config.info.category.XMLtext)>
 			<cfset QuerySetCell(apps,'author',info.config.info.author.XMLtext)>
-			<cfset QuerySetCell(apps,'image',info.config.info.image.XMLtext)>
-			
+			<cfif info.config.info.image.XMLtext neq "" and not isValid('url', info.config.info.image.XMLtext)>
+				<cfset QuerySetCell(apps,'image', rootURL & "ext/" & info.config.info.image.XMLtext)>
+			<cfelse>
+				<cfset QuerySetCell(apps,'image',info.config.info.image.XMLtext)>
+			</cfif>
 		</cfloop>
 		
 		
