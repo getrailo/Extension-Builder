@@ -94,7 +94,7 @@
 					<label for="imgurl">Image</label>
 					<cfif imgtype eq 'file' and v('image') neq "">
 						<input type="hidden" name="oldimage" value="#v('image')#" />
-						Current uploaded file: <a href="/ext#v('image')#" title="Click to view full size"><img src="/ext#v('image')#" alt="Logo file" height="30" /></a>
+						Current uploaded file: <a href="/ext#v('image')#" title="Click to view full size"><img src="/ext#v('image')#" alt="Logo file" style="height:30px;" /></a>
 						<br />
 					</cfif>
 					<div>
