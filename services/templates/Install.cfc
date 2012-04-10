@@ -23,6 +23,9 @@
     	<cfargument name="error" type="struct">
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
+		
+		  <!---__BEFORE_INSTALL__--->
+
 
 		<!--- Copy all tags to the right folder --->
 		<cfloop array="#variables.tags#" index="local.tag" >
@@ -56,7 +59,7 @@
 			<cfset message &="<br> <strong>You need to restart Railo Server for the changes to take effect</strong>">
 		</cfif>
 
-        <!---__INSTALL__--->
+        <!---__AFTER_INSTALL__--->
         <cfreturn message>
 
 	</cffunction>
@@ -90,7 +93,10 @@
 				<cfset FileDelete("#getContextPath()#/library/function/#func#")>
 			</cfif>
 		</cfloop>
-		
+		<!--- TODO: Add a throw exception in case it fails on Windows --->
+		<!--- Check MD5 of JAR files for replacement
+			Throw error if it can't be uninstalled, and has to be installed manually
+		 --->
 		<!--- Delete any jars we may have installed --->
 		<cfloop array="#variables.jars#" index="local.jar">
 			<cfif FileExists("#getContextPath()#/lib/#jar#")>

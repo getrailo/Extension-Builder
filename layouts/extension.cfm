@@ -5,7 +5,9 @@
 </cfif>
 <section class="row-fluid">
 	<div class="span2">
-		<cfoutput>#view("extension/localnav")#</cfoutput>
+		<cfif ListLast(rc.action, ".") NEQ "new">
+			<cfoutput>#view("extension/localnav")#</cfoutput>
+		</cfif>
 	</div>
 	<div class="span10">
 		<cfif Len(rc.message)>

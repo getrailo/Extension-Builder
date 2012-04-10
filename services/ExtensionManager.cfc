@@ -165,7 +165,11 @@ component output="false"{
 	}
 	
 	function getFileContent(String extensionName, String folder, String filename){
+		var ret = "";
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		if(!fileExists(itemPath)){
+				return "";
+		}
 		return FileRead(itemPath);
 	}
 	
@@ -209,9 +213,6 @@ component output="false"{
 			var groupItem	= configXML.config.step[step].group[group];
 				groupItem.XMLAttributes["label"] = label;
 				groupItem.XMLAttributes["description"] = description;
-
-			dump("DEBUG THIS!"); 
-			abort;
 		}
 		
 		setConfig(extensionName, configXML);

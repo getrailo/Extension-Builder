@@ -11,8 +11,9 @@ component {
 		param name="rc.js" default=[];
 		param name="rc.message" default="";
 		
+		
 		//test if we are getting a specific extension
-		if(StructKeyExists(rc, "name")){
+		if(StructKeyExists(rc, "name") AND ListLast(rc.action, ".") != "create"){
 			rc.info = variables.man.getInfo(rc.name);
 		}
 	}
@@ -145,19 +146,14 @@ component {
 	 
 	 function editGroup(any rc){
 	 	var stepXML = variables.man.getConfig(rc.name);
-	 	var rc.groupxml = xmlSearch(stepXML, "//step[#rc.step#]");
-	 	//var rc.label = rc.groupxml.XMlAttributes.label;
-	 	
-	 	
-	 	Dump(rc.groupxml);
-	 	abort; 
+		rc.groupxml = xmlSearch(stepXML, "//step[#rc.step#]/group[#rc.group#]")[1]; //first one that has been found
+		rc.label = rc.groupxml.XmlAttributes.label;
+		rc.description = rc.groupxml.XmlAttributes.description;
+		rc.fields = rc.groupXML.XMLChildren;
 	 }
 	 
 	 function saveGroup(any rc){
 	 	 variables.man.saveGroup(rc.name, rc.step, rc.group, rc.label, rc.description);
-	 	 
-	 	 dump(rc);
-	 	 abort;
 	 	 variables.fw.redirect("extension.editgroup?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	 }
 	
