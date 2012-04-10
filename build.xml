@@ -22,8 +22,16 @@
           target: default              
          ================================= -->
 	
-	<target name="deploy.testing" depends="cpd">
+	<target name="deploy.testing" depends="cpd,copy.to.webroot">
 	
+	</target>
+	
+	<target name="copy.to.webroot">
+		<copy todir="${destination}">
+			<fileset dir="./">
+				
+			</fileset>
+		</copy>
 	</target>
 	
     <target name="default" depends="gethomepage" description="Builds the extension Builder">
