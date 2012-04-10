@@ -1,3 +1,5 @@
 /docs
 /upload/*
 config.steps.xml
+/WEB-INF/
+
