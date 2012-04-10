@@ -1,5 +1,5 @@
 component output="false"{
-<!--- This component provides some nice functions to be able to read from the extension zip files --->
+/* This component provides some nice functions to be able to read from the extension zip files */
 	variables.validinfotags = "name,label,id,version,created,author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
 	variables.cdata = "description"; //In case we add more
 	
@@ -68,13 +68,8 @@ component output="false"{
 			}
 			else {
 				item.XMLText = info[i];
-<<<<<<< HEAD
-			}
-		}	
-=======
-		}
-				
->>>>>>> master
+			}	
+		}			
 		FileWrite(extPath, toString(extXML));
 		updateInstaller(extensionName);
 		
@@ -268,6 +263,5 @@ component output="false"{
 		}
 	}
 	
-	
-	
 }
+
