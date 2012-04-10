@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Apr 10, 2012 11:46:30 AM                                                        
+
+     ExtensionBuilder    
+     Builds the extension Builder
+                   
+     markdrew                                                                
+     ====================================================================== -->
+<project name="ExtensionBuilder" default="default">
+    <description>
+            Builds the extension Builder
+    </description>
+	<path id="project.classpath">
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+	</path>
+	
+	<property file="ExtensionBuilder.properties" />
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="gethomepage" description="Builds the extension Builder">
+        <echo>${destination}</echo>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="gethomepage" depends="cpd">
+    	
+    	<get src="http://extbuilder.local/index.html" dest="results/"/>
+    </target>
+
+	
+	<target name="cpd">
+		
+		<echo>Starting Copy Paste detector...</echo>
+				<!-- copy paste detector!! -->
+				<echo>for ${filePathToBuildFolder}</echo>
+				<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="project.classpath"/>
+				<cpd minimumTokenCount="200" outputFile="cpd.xml" format="xml" language="cfm" encoding="UTF-8">
+					<fileset dir="./">
+						<include name="**/*.cfm"/>
+						<include name="**/*.cfc"/>
+						<include name="**/*.cfml"/>
+						<exclude name="WEB-INF/"/>
+					</fileset>
+				</cpd>
+		
+	</target>
+</project>
