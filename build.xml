@@ -28,7 +28,7 @@
 	
 	<target name="copy.to.webroot">
 		<copy todir="${destination}">
-			<fileset dir="./">
+			<fileset dir="./" defaultexcludes="true">
 				
 			</fileset>
 		</copy>
