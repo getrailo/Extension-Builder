@@ -22,7 +22,7 @@
           target: default              
          ================================= -->
 	
-	<target name="deploy.testing" depends="cpd,copy.to.webroot">
+	<target name="deploy.testing" depends="cpd,copy.to.webroot,test.url">
 	
 	</target>
 	
@@ -37,6 +37,12 @@
 				<exclude name="results"/>
 			</fileset>
 		</copy>
+	</target>
+	
+	<target name="test.url">
+		
+		<get src="${testurl}" ignoreerrors="false" dest="pingresult.txt" />
+	
 	</target>
 	
     <target name="default" depends="gethomepage" description="Builds the extension Builder">
