@@ -21,6 +21,11 @@
     <!-- ================================= 
           target: default              
          ================================= -->
+	
+	<target name="deploy.testing" depends="cpd">
+	
+	</target>
+	
     <target name="default" depends="gethomepage" description="Builds the extension Builder">
         <echo>${destination}</echo>
     </target>
@@ -50,4 +55,6 @@
 				</cpd>
 		
 	</target>
+	
+	
 </project>
