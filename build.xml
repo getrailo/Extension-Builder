@@ -29,7 +29,12 @@
 	<target name="copy.to.webroot">
 		<copy todir="${destination}">
 			<fileset dir="./" defaultexcludes="true">
-				
+				<exclude name=".project"/>
+				<exclude name="lib/"/>
+				<exclude name="build.xml"/>
+				<exclude name="ExtensionBuilder.properties"/>
+				<exclude name="cpd.xml"/>
+				<exclude name="results"/>
 			</fileset>
 		</copy>
 	</target>
