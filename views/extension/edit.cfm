@@ -62,7 +62,7 @@
 						<option value="web" <cfif type EQ "web">selected</cfif>>Web</option>			
 						<option value="all" <cfif type EQ "all">selected</cfif>>Both Web and Server</option>			
 					</select>
-					 <p class="help-block">If this extension will be available for the Server and/or Web Administrator</p>
+					<i class="icon-question-sign" data-content="If this extension will be available for the Server and/or Web Administrator" title="Admin type"></i>
 			 	</div>
 			
 				<div>

@@ -120,7 +120,8 @@ component output="false"{
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XMML config
-		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal,packaged-by");
+
+		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal,packaged-by,licenseTemplate");
 		var xmlConfig = XMLNew(true);
 		xmlConfig.XMLRoot = XMLElemNew(xmlConfig, "config");
 		var infoel = XMLElemNew(xmlConfig.XMLRoot, "info");
@@ -263,5 +264,20 @@ component output="false"{
 		}
 	}
 	
-}
+	function getLicenseText(String extensionName)
+	{
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
+		if (fileExists(itemPath))
+		{
+			return fileRead(itemPath);
+		}
+		return "";
+	}
 
+	function setLicenseText(String extensionName, String licenseText)
+	{
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
+		file action="write" file="#itempath#" output="#licenseText#";
+	}
+
+}

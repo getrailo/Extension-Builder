@@ -104,13 +104,26 @@ component {
 		
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
 		rc.message = "The information has been saved to the extension";
-		variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#");
+		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+	}
+	
+	function saveLicense(any rc) {
+		variables.man.saveInfo(rc.name, {name:rc.name, licenseTemplate:replace(rc.licenseTemplate, '.txt', '')});
+		variables.man.setLicenseText(rc.name, rc.license);
+		rc.message = "Your license text has been saved to the extension";
+		variables.fw.redirect("extension.addApplication?name=#rc.name#&message=#rc.message#");
 	}
 	
 	function edit(any rc) {
 		var man = application.di.getBean("ExtensionManager");
 		rc.info = man.getInfo(rc.name);
 		
+	}
+	
+	function license(any rc) {
+		var man = application.di.getBean("ExtensionManager");
+		rc.info = man.getInfo(rc.name);
+		rc.info.licenseText = man.getLicenseText(rc.name);
 	}
 	
 	
