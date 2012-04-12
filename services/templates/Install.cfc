@@ -9,13 +9,20 @@
 		variables.appl = "__APPS__";
 	</cfscript>
     
+	<cfif FileExists("additional_functions.cfm")>
+		<cfinclude template="additional_functions.cfm">
+	</cfif>
+	
     <cffunction name="validate" returntype="void" output="no"
     	hint="called to validate values">
     	<cfargument name="error" type="struct">
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
         <cfargument name="step" type="numeric">
-			<!---__VALIDATION__--->        
+		
+			<cfif FileExists("validation.cfm")>
+				<cfinclude template="validation.cfm">
+			</cfif>     
     </cffunction>
 
     <cffunction name="install" returntype="string" output="no"
@@ -24,7 +31,10 @@
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
 		
-		  <!---__BEFORE_INSTALL__--->
+		
+		<cfif FileExists("before_install.cfm")>
+			<cfinclude template="before_install.cfm">
+		</cfif>
 
 
 		<!--- Copy all tags to the right folder --->
@@ -59,7 +69,11 @@
 			<cfset message &="<br> <strong>You need to restart Railo Server for the changes to take effect</strong>">
 		</cfif>
 
-        <!---__AFTER_INSTALL__--->
+		<cfif FileExists("after_install.cfm")>
+			<cfinclude template="after_install.cfm">
+		</cfif>
+
+
         <cfreturn message>
 
 	</cffunction>
@@ -70,7 +84,9 @@
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
         <cfset uninstall(path,config)>
-		 <!---__UPDATE__--->
+		<cfif FileExists("update.cfm")>
+				<cfinclude template="update.cfm">
+			</cfif>   
 		<cfreturn install(argumentCollection=arguments)>
     </cffunction>
 
@@ -79,6 +95,10 @@
     	hint="called from Railo to uninstall application">
     	<cfargument name="path" type="string">
         <cfargument name="config" type="struct">
+
+		<cfif FileExists("before_uninstall.cfm")>
+				<cfinclude template="before_uninstall.cfm">
+		</cfif>   
 
 		<!--- Delete any tags we may have installed --->
 		<cfloop array="#variables.tags#" index="local.tag">
@@ -105,7 +125,9 @@
 		</cfloop>
 		
 		
-			<!---__UNINSTALL__--->
+			<cfif FileExists("after_uninstall.cfm")>
+				<cfinclude template="after_uninstall.cfm">
+		</cfif>   
         <cfreturn '#variables.name# has been uninstalled'>
 
     </cffunction>

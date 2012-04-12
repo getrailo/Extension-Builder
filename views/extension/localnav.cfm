@@ -3,6 +3,7 @@
 			<li class="nav-header nowrap">Extension</li>
 			<li class="nowrap"><a href="#buildURL("extension.edit?name=#rc.name#")#">Main Info <i class="icon-question-sign" data-content="Allows you to edit the main information about this extension" title="Information"></i></a></li>
 			<li class="nowrap"><a href="#buildURL("extension.license?name=#rc.name#")#">License <i class="icon-question-sign" data-content="Allows you to set what kind of license this extension should be released under" title="License"></i></a></li>
+			<li class="nowrap"><a href="#buildURL("extension.installactions?name=#rc.name#")#">Installer Actions <i class="icon-question-sign" data-content="Allows you to add additional code that should be run by the installer" title="Install Actions"></i></a></li>
 			<li class="nav-header nowrap">Add Items</li>
 			<cfif rc.info.type IS "server">
 			<li class="nowrap">Applications <i class="icon-question-sign" data-content="Applications can only be installed if the extension is of type Web" title="Applications"></i></li>

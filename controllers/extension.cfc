@@ -1,5 +1,5 @@
 component {
-
+	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation, before_uninstall, after_uninstall");
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
@@ -10,7 +10,6 @@ component {
 		param name="rc.errors" default=[];
 		param name="rc.js" default=[];
 		param name="rc.message" default="";
-		
 		
 		//test if we are getting a specific extension
 		if(StructKeyExists(rc, "name") AND ListLast(rc.action, ".") != "create"){
@@ -119,6 +118,25 @@ component {
 		rc.license = variables.man.getFileContent(rc.name, "", "license.txt");
 	}
 	
+	
+	function installActions(any rc){
+		rc.availableActions = variables.availableActions;
+		loop array="#rc.availableActions#" index="local.act"{
+			rc[act] = variables.man.getFileContent(rc.name, "", "#act#.cfm");
+		}
+	}
+	
+	function saveActions(any rc){
+		
+		rc.availableActions = variables.availableActions;
+		loop array="#rc.availableActions#" index="local.act"{
+			if( StructKeyExists(rc, act)){
+				variables.man.addTextFile(rc.name, "", "#act#.cfm", rc[act]);	
+			}
+		}
+		
+		variables.fw.redirect("extension.installactions?name=#rc.name#&message=The actions have been saved");
+	}
 	
 	/*
 	 * Add Items to an extension 	
