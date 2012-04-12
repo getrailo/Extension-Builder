@@ -67,6 +67,7 @@
     <script src="/js/jquery.form.js"></script>
     <script src="/js/tooltips.js"></script>
     <script src="/js/upload.js"></script>
+    <script src="/js/jstree.js"></script>
 	<cfloop array="#rc.js#" index="js">
 	<cfoutput>#js#</cfoutput>
 	</cfloop>
