@@ -3,3 +3,7 @@
 config.steps.xml
 /WEB-INF/
 
+build.xml
+cpd.xml
+ext
+results
