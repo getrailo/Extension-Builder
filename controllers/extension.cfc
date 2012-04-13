@@ -111,7 +111,10 @@ component {
 		variables.man.saveInfo(rc.name, {name:rc.name, licenseTemplate:replace(rc.licenseTemplate, '.txt', '')});
 		variables.man.setLicenseText(rc.name, rc.license);
 		rc.message = "Your license text has been saved to the extension";
-		variables.fw.redirect("extension.addApplication?name=#rc.name#&message=#rc.message#");
+		
+		//Return to the main, since we don;t know if they are adding an application.
+		//An application only works with web type extensions
+		variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#");
 	}
 	
 	function edit(any rc) {
@@ -126,10 +129,12 @@ component {
 		rc.info.licenseText = man.getLicenseText(rc.name);
 	}
 	
-	
-	function license(any rc){
-		rc.license = variables.man.getFileContent(rc.name, "", "license.txt");
+	function licenses(any rc){
+		rc.data = variables.man.getLicense(rc.license);
+		variables.fw.setView("util.plain");
+		request.layout =false;
 	}
+	
 	
 	
 	function installActions(any rc){
@@ -167,6 +172,10 @@ component {
 	 	 rc.functions = variables.man.listFolderContents(rc.name, "functions");	
 	 }
 	 
+	 function addJars(rc){
+	 	 rc.jars = variables.man.listFolderContents(rc.name, "jars");	
+	 }
+	 
 	 function addApplication(rc){
 	 	 rc.application = variables.man.listFolderContents(rc.name, "applications");	
 	 	 rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
@@ -182,6 +191,18 @@ component {
 	 	 
 	 }
 	 
+	 function addJar(rc){
+	 	 file action="upload" destination="#expandPath("/upload")#" filefield="jarupload" result="local.uploadresult" nameconflict="overwrite";
+		var filename = uploadresult.serverfile;
+		var extensionName = rc.name;
+		variables.man.addBinaryFile(extensionName, expandPath("/upload/#filename#"), "jars")
+		rc.data = "Jar #filename# has been added";
+
+		variables.fw.setview("util.plain");
+		request.layout = false;
+		
+	 }
+	 
 	 function addFunction(rc){
 	 	file action="upload" destination="#expandPath("/upload")#" filefield="functionUpload" result="local.uploadresult" nameconflict="overwrite";
 		var funcname = uploadresult.serverfile;
@@ -189,6 +210,13 @@ component {
 		var content = FileRead(expandPath("/upload/#uploadresult.serverfile#"));
 		variables.man.addTextFile(extensionName, "functions", funcname, content);
 		rc.response = "Function #funcname# has been added";
+	 }
+	 
+	 
+	 function steps(any rc){
+	 	 //get the stepXML and rationalise it a but maybe?
+	 	 var config = variables.man.getConfig(rc.name);
+	 	 rc.stepsinfo =  XMLSearch(config, "//step");
 	 }
 	 
 	 
@@ -270,5 +298,12 @@ component {
 	 	 variables.man.removeTextFile(rc.name, "tags", rc.tag);
 	 	 rc.message = "Tag #rc.tag# removed";
 	 	 variables.fw.redirect("extension.addtags?name=#rc.name#&message=#rc.message#");
+	 }
+	 
+	 function removeJar(any rc){
+	 	 variables.man.removeBinaryFile(rc.name, "jars", rc.jar);
+	 	 	rc.message = "Jar #rc.jar# removed";
+	 	 variables.fw.redirect("extension.addjars?name=#rc.name#&message=#rc.message#");
+	 	 
 	 }
 }

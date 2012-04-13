@@ -235,11 +235,13 @@ component output="false"{
 		if(!DirectoryExists(itemPath)){
 				Directorycreate(itemPath);
 		}
+		
 		//Has to have the full name
 			itemPath  = itemPath & ListLast(source, "/");
 		
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
+		
 	}
 	
 
@@ -264,6 +266,13 @@ component output="false"{
 		}
 	}
 	
+	function removeBinaryFile(String extensionName, String folder, String filename){
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		if(FileExists(itemPath)){
+			FileDelete(itemPath);
+		}
+	}
+	
 	function getLicenseText(String extensionName)
 	{
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
@@ -278,6 +287,10 @@ component output="false"{
 	{
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
 		file action="write" file="#itempath#" output="#licenseText#";
+	}
+	
+	function getLicense(LicenseName){
+		return FileRead("/licenses/#LicenseName#");
 	}
 
 }
