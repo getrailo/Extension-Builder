@@ -1,3 +1,9 @@
 .nowrap {
   white-space: nowrap;
 }
+
+	ul li.step {
+		list-style-image: url("/img/application.png");
+	}	
+	ul li.group {list-style-image: url("/img/application_form.png");}	
+	ul li.item {list-style-image: url("/img/textfield.png");}

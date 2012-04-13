@@ -3,27 +3,43 @@
 <h1>Installation Steps</h1>
 <p>The installation steps defined here will be presented to the user as they install your extension</p>
 <cfsavecontent variable='js'>
+	<!---
 	<script>
 		$(function(){
 			$('#step_tree').jstree({
-				core : {
-								
-				}
-				, plugins : [ "themes", "html_data"]
+				 types : {
+					"step" :  { icon : { image : "/img/application.png" } }, 
+					"group" : { icon : { image : "/img/application_form.png"} },
+					"item" :  { icon : { image : "/img/textfield.png" } }
+				  }
+				, plugins : [ "themes", "html_data", "ui", "types", "contextmenu"]
 				
 			});
 				
 		});
 	
 	</script>
+	--->
+	<script type="text/javascript" charset="utf-8">
+		$(function(){
+			$("a.localedit").click(function(e){
+				e.preventDefault();
+				$("#step_target").load($(this).attr("href"));
+			});
+		});
+		
+	</script>
+		
 </cfsavecontent>
+
+
 <cfset ArrayAppend(rc.js, js)>
 
 <cfscript>
-	function displayAttribute(node, attr){
+	function displayAttribute(node, attr, defaultName = "Unnamed"){
 		var ret = "";
 		if(!StructKeyExists(node.XMLAttributes, attr) OR !Len(node.XMLAttributes[attr])){
-				return "Unnamed";
+				return defaultName;
 		}		
 		
 		return node.XMLAttributes[attr];
@@ -34,17 +50,34 @@
 <cfoutput>
 <div class="row">
 	<div class="span4" style="overflow:scroll;">
-		<button class="btn btn-mini btn-primary" data-toggle="modal" href="##addStep">Add Step</button>
+		<a class="btn btn-mini btn-primary" href="#buildURL("extension.editgroup?name=#rc.name#&step=0")#">Add Step</a>
 		<div id="step_tree">
 			<ul>
 				<cfset stepcounter = 1>
 				<cfloop array="#rc.stepsinfo#" index="step">
-					<li id="step_#stepcounter#">#displayAttribute(step, "label")#
+					<li class="step" id="step_#stepcounter#" title="#displayAttribute(step, "description", "")#">
+						<a class="localedit btn-mini btn" href="#buildURL("extension.editgroup?name=#rc.name#&step=1&group=0")#" class="btn btn-mini">+</a>
+						<a class="localedit" href="#buildURL("extension.editstep?name=#rc.name#&step=#stepcounter#")#">#displayAttribute(step, "label", "Step #stepcounter#")#</a>
 					<cfif ArrayLen(step.XMLChildren)>
 						<ul>
+								
+							<cfset groupcounter = 1>
+							<cfloop array="#step.XMLChildren#" index="s">
+								<li class="group"> 
+								<a class="localedit" href="#buildURL("extension.editgroup?name=#rc.name#&step=#stepcounter#&group=#groupcounter#")#">#displayAttribute(s, "label", "Group #groupcounter#")#</a>
+								<cfif ArrayLen(s.XMLChildren)>
+									<ul>
+									<cfset fieldCounter = 1>
+									<cfloop array="#s.XMLChildren#" index="i">
+										<li class="item">#displayAttribute(i, "name", "Field #fieldCounter#")# (#displayAttribute(i, "type")#)</li>
+										<cfset fieldCounter++>
+									</cfloop>									
+									</ul>
+								</cfif>
+								</li>
+								<cfset groupcounter++>
+							</cfloop>
 							<!--- Go through the groups --->						
-							
-							
 						</ul>
 					</cfif>
 					</li>
@@ -54,6 +87,7 @@
 		</div>
 	</div>
 	<div class="span8" id="step_target">
+
 	<cfdump var="#rc.stepsinfo#">
 	</div>
 </div></cfoutput>

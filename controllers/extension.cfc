@@ -5,7 +5,7 @@ component {
 		variables.man =  application.di.getBean("ExtensionManager");
 	}
 	
-	void function before(any rc){
+	function before(any rc){
 		//Called on every request before anything happens
 		param name="rc.errors" default=[];
 		param name="rc.js" default=[];
@@ -17,7 +17,7 @@ component {
 		}
 	}
 
-	void function default(any rc){
+	function default(any rc){
 		var ep = new ExtensionProvider();
 		var remoteExtensions = ep.listApplications();
 
@@ -30,8 +30,6 @@ component {
 				ArrayAppend(rc.extensions, ext);
 		}
 	}
-	
-	
 	
 	function new(any rc) {
 		rc.info = {};
@@ -216,11 +214,24 @@ component {
 	 function steps(any rc){
 	 	 //get the stepXML and rationalise it a but maybe?
 	 	 var config = variables.man.getConfig(rc.name);
-	 	 rc.stepsinfo =  XMLSearch(config, "//step");
+	 	 rc.stepsinfo = [];
+	 	 
+	 	 for(var c in config.config.XMLChildren){
+	 	 	 	 if(c.xmlName EQ "step"){
+	 	 	 	 	 	ArrayAppend(rc.stepsinfo, c);
+	 	 	 	 }
+	 	 }
 	 }
 	 
 	 
 	 function editStep(any rc){
+		if(rc.step EQ 0){
+			rc.label = "";
+			rc.description = "";
+			rc.groups = [];
+			return;
+		}
+		
 	 	 rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//step[#rc.step#]");
 	 	 rc.label = rc.stepxml[1].XMLAttributes['label'];
 	 	 rc.description = rc.stepxml[1].XMLAttributes.description;
@@ -229,7 +240,7 @@ component {
 	 
 	 function saveStep(any rc){
 	 	 variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
-	 	 variables.fw.redirect("extension.addApplication?name=#rc.name#");
+	 	 variables.fw.redirect("extension.steps?name=#rc.name#&message=Step Saved");
 	 }
 	 
 	 function editGroup(any rc){
