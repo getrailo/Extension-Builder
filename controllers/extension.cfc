@@ -111,7 +111,7 @@ component {
 		variables.man.saveInfo(rc.name, {name:rc.name, licenseTemplate:replace(rc.licenseTemplate, '.txt', '')});
 		variables.man.setLicenseText(rc.name, rc.license);
 		rc.message = "Your license text has been saved to the extension";
-		variables.fw.redirect("extension.addApplication?name=#rc.name#&message=#rc.message#");
+		variables.fw.redirect("extension.installactions?name=#rc.name#&message=#rc.message#");
 	}
 	
 	function delete(any rc) {
@@ -232,12 +232,24 @@ component {
 	
 	 
 	 function uploadapplication(any rc) {
-	 	 file action="upload" destination="#expandPath("/upload")#" filefield="appzip" result="local.uploadresult" nameconflict="overwrite";
-	 	 var appPath = expandPath("/upload/#uploadresult.serverfile#");
-	 	 
-		 variables.man.addBinaryFile(rc.name, appPath,  "applications");
+	 	if (rc.appzip eq "")
+		{
+	 		variables.fw.redirect("extension.addapplication?name=#rc.name#&error=You have not uploaded a zip file!");
+		}
+	 	file action="upload" destination="#GetTempDirectory()#" filefield="appzip" result="local.uploadresult" nameconflict="overwrite";
+	 	var appPath = "#uploadresult.serverdirectory##server.separator.file##uploadresult.serverfile#";
+	 	if (not isZipFile(appPath))
+		{
+			fileDelete(appPath);
+	 		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=Error: you can only add zip files!");
+		}
+		variables.man.addBinaryFile(rc.name, appPath,  "applications");
  		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=Application uploaded");
-	 	 
+	}
+	
+	function removeapplication(any rc) {
+		variables.man.removeFile(rc.name, "applications", rc.application);
+ 		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=The application is removed");
 	}
 	
 	function edittag(any rc){
@@ -262,12 +274,12 @@ component {
 	 	Delete items from an extension	
 	 */
 	 function removefunction(any rc){
-	 	 variables.man.removeTextFile(rc.name, "functions", rc.function);
+	 	 variables.man.removeFile(rc.name, "functions", rc.function);
 	 	 rc.message = "Function removed";
 	 	 variables.fw.redirect("extension.addFunctions?name=#rc.name#&message=#rc.message#");
 	 }
 	function removetag(any rc){
-	 	 variables.man.removeTextFile(rc.name, "tags", rc.tag);
+	 	 variables.man.removeFile(rc.name, "tags", rc.tag);
 	 	 rc.message = "Tag #rc.tag# removed";
 	 	 variables.fw.redirect("extension.addtags?name=#rc.name#&message=#rc.message#");
 	 }
