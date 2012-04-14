@@ -3,6 +3,7 @@
 <head>
 	<title>Extension Builder SDK</title>
 	<link rel="stylesheet" href="/css/bootstrap.css">
+	<link rel="stylesheet" href="/css/styles.css">
 	<cfparam name="rc.js" default="#[]#">
 	<style>
 		BODY {
@@ -25,6 +26,7 @@
                 <a href="#buildURL("provider")#">Extension Provider</a>
               </li>
 			  <li><a href="#buildURL("documentation")#">Documentation</a></li>
+			  <li><a href="#buildURL("resources")#">Resources</a></li>
             </ul>
           </div>
         </div>
@@ -65,6 +67,7 @@
     <script src="/js/jquery.form.js"></script>
     <script src="/js/tooltips.js"></script>
     <script src="/js/upload.js"></script>
+    <script src="/js/jstree.js"></script>
 	<cfloop array="#rc.js#" index="js">
 	<cfoutput>#js#</cfoutput>
 	</cfloop>

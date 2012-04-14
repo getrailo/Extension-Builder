@@ -5,7 +5,7 @@
 
 <hr>
 <div class="row">
-<div class="span6">
+<div class="span5">
 	<h2>Get Started</h2>
 	<p>
 	Build your own extension right off the bat! You can add custom tags, custom functions that can be used 
@@ -13,9 +13,28 @@
 	</p>
 	<p>
 	<a class="btn btn-info" href="#buildURL("extension.new")#">Create an Extension</a>
+	<a class="btn btn-info" href="#buildURL("extension")#">View your extensions</a>
 	</p>
 </div>
-
+<div class="span5">
+	<h2>Install the Provider</h2>
+	<p>
+	So that you can install your extensions, we have provided a simple way for you to add the SDK's Extension provider 
+	to your Railo Web and Server administrators.
+	</p>
+	<p>
+	<a class="btn btn-info" href="#buildURL("provider")#">Add the provider</a>
+	</p>
+</div>
+<div class="span5">
+	<h2>Dig Deeper</h2>
+	<p>
+	We have tried to provide all the functionality you need to get started, if you want to digg deeper, why not check out the documentation. 
+	</p>
+	<p>
+	<a class="btn btn-info" href="#buildURL("documentation")#">Documentation</a>
+	</p>
+</div>
 </div>
 <hr>
 </cfoutput>

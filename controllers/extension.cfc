@@ -1,5 +1,5 @@
 component {
-
+	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation, before_uninstall, after_uninstall");
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
@@ -9,13 +9,26 @@ component {
 		//Called on every request before anything happens
 		param name="rc.errors" default=[];
 		param name="rc.js" default=[];
+		param name="rc.message" default="";
 		
-		
+		//test if we are getting a specific extension
+		if(StructKeyExists(rc, "name") AND ListLast(rc.action, ".") != "create"){
+			rc.info = variables.man.getInfo(rc.name);
+		}
 	}
 
-	function default(any rc){
+	void function default(any rc){
 		var ep = new ExtensionProvider();
-		rc.extensions = ep.listApplications();
+		var remoteExtensions = ep.listApplications();
+
+		rc.extensions = [];
+
+		loop query="remoteExtensions"{
+				var ext = {};
+					ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
+					ext.capabilities = variables.man.getCapability(ext.info.name);
+				ArrayAppend(rc.extensions, ext);
+		}
 	}
 	
 	
@@ -50,7 +63,7 @@ component {
 	}
 	
 	function saveInfo(any rc) {
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
+		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by";
 		
 		var dataToSend = Duplicate(rc);
 		
@@ -138,6 +151,29 @@ component {
 	}
 	
 	
+	function license(any rc){
+		rc.license = variables.man.getFileContent(rc.name, "", "license.txt");
+	}
+	
+	
+	function installActions(any rc){
+		rc.availableActions = variables.availableActions;
+		loop array="#rc.availableActions#" index="local.act"{
+			rc[act] = variables.man.getFileContent(rc.name, "", "#act#.cfm");
+		}
+	}
+	
+	function saveActions(any rc){
+		
+		rc.availableActions = variables.availableActions;
+		loop array="#rc.availableActions#" index="local.act"{
+			if( StructKeyExists(rc, act)){
+				variables.man.addTextFile(rc.name, "", "#act#.cfm", rc[act]);	
+			}
+		}
+		
+		variables.fw.redirect("extension.installactions?name=#rc.name#&message=The actions have been saved");
+	}
 	
 	/*
 	 * Add Items to an extension 	
@@ -153,6 +189,11 @@ component {
 	 }
 	 function addFunctions(rc){
 	 	 rc.functions = variables.man.listFolderContents(rc.name, "functions");	
+	 }
+	 
+	 function addApplication(rc){
+	 	 rc.application = variables.man.listFolderContents(rc.name, "applications");	
+	 	 rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
 	 }
 	 
 	 function addTag(rc){
@@ -173,5 +214,85 @@ component {
 		variables.man.addTextFile(extensionName, "functions", funcname, content);
 		rc.response = "Function #funcname# has been added";
 	 }
+	 
+	 
+	 function editStep(any rc){
+	 	 rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//step[#rc.step#]");
+	 	 rc.label = rc.stepxml[1].XMLAttributes['label'];
+	 	 rc.description = rc.stepxml[1].XMLAttributes.description;
+		 rc.groups = rc.stepxml[1].XMLChildren;
+	 }
+	 
+	 function saveStep(any rc){
+	 	 variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
+	 	 variables.fw.redirect("extension.addApplication?name=#rc.name#");
+	 }
+	 
+	 function editGroup(any rc){
+	 	var stepXML = variables.man.getConfig(rc.name);
+		rc.groupxml = xmlSearch(stepXML, "//step[#rc.step#]/group[#rc.group#]")[1]; //first one that has been found
+		rc.label = rc.groupxml.XmlAttributes.label;
+		rc.description = rc.groupxml.XmlAttributes.description;
+		rc.fields = rc.groupXML.XMLChildren;
+	 }
+	 
+	 function saveGroup(any rc){
+	 	 variables.man.saveGroup(rc.name, rc.step, rc.group, rc.label, rc.description);
+	 	 variables.fw.redirect("extension.editgroup?name=#rc.name#&step=#rc.step#&group=#rc.group#");
+	 }
+	
+	 
+	 function uploadapplication(any rc) {
+	 	 file action="upload" destination="#expandPath("/upload")#" filefield="appzip" result="local.uploadresult" nameconflict="overwrite";
+	 	 var appPath = expandPath("/upload/#uploadresult.serverfile#");
+	 	 
+		 variables.man.addBinaryFile(rc.name, appPath,  "applications");
+ 		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=Application uploaded");
+	 	 
+	 }
+	 
+	 function addLicense(rc){
+	 	//Check if we are choosing one..
+	 	var licensetext = rc.license;
+	 	if(Len(rc.license_link)){
+	 		 var licenseinfo = ListToArray(rc.license_link, "|");
+	 		 licensetext = licenseinfo[2] & Chr(13) & licenseinfo[1];
+	 	}
+	 	 
+	 	variables.man.addTextFile(rc.name, "", "license.txt", licensetext);
+	 	rc.message = "License has been added";
+ 		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+	 }
 
+	function edittag(any rc){
+		rc.tagcontent = variables.man.getFileContent(rc.name, "tags", rc.tag);
+	}
+	function editfunction(any rc){
+		rc.functioncontent = variables.man.getFileContent(rc.name, "functions", rc.function);
+	}
+	function savetag(any rc){
+		rc.tagcontent = variables.man.addTextFile(rc.name, "tags", rc.tag, rc.content);
+		rc.message = "Tag file saved";
+		variables.fw.redirect("extension.edittag?name=#rc.name#&tag=#rc.tag#&message=#rc.message#");
+	}
+	
+	function savefunction(any rc){
+		rc.tagcontent = variables.man.addTextFile(rc.name, "functions", rc.function, rc.content);
+		rc.message = "Function file saved";
+		variables.fw.redirect("extension.editfunction?name=#rc.name#&function=#rc.function#&message=#rc.message#");
+	}
+	
+	/* 
+	 	Delete items from an extension	
+	 */
+	 function removefunction(any rc){
+	 	 variables.man.removeTextFile(rc.name, "functions", rc.function);
+	 	 rc.message = "Function removed";
+	 	 variables.fw.redirect("extension.addFunctions?name=#rc.name#&message=#rc.message#");
+	 }
+	function removetag(any rc){
+	 	 variables.man.removeTextFile(rc.name, "tags", rc.tag);
+	 	 rc.message = "Tag #rc.tag# removed";
+	 	 variables.fw.redirect("extension.addtags?name=#rc.name#&message=#rc.message#");
+	 }
 }

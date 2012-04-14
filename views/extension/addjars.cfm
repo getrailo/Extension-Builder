@@ -1,12 +1,5 @@
-<cfoutput><cfparam name="rc.jars" default="#[]#">
-<section class="row-fluid">
-	<div class="span2">
-		
-		<cfinclude template="localnav.cfm">
-
-	</div>
-	<div class="span10">
-
+<cfparam name="rc.jars" default="#[]#">
+<cfoutput>
 	<h1>Add Jars</h1>
 	<p>If your application, tags or functions need specific Java libraries, you can add them here. You can even create your own extension such as an Event Gateway or specific driver
 		and compile it into a Jar and add it to your extension here.
@@ -41,5 +34,4 @@
 		</tbody>
 	</table>	
 	</cfif>
-	</div>
-</section></cfoutput>
+</cfoutput>

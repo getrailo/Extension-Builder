@@ -1,12 +1,7 @@
-<cfoutput><cfparam name="rc.tags" default="#[]#">
-<section class="row">
-	<div class="span3">
-		
-		<cfinclude template="localnav.cfm">
+<cfoutput>
 
-	</div>
-	<div class="span10">
 
+<cfparam name="rc.tags" default="#[]#">
 	<h1>Add Tags</h1>
 	<p>You can add custom tags that will be part of the core Railo Server. These custom tags will be called as <code>&lt;cfcustomtag&gt;</code> rather than <code>&lt;f_customtag&gt;</code> </p>
 	<form action="#buildURL("extension.addtag")#" class="well form-inline <!--- progressuploader --->" method="post" enctype="multipart/form-data">
@@ -18,26 +13,23 @@
 		<div class="progress progress-striped active hide">
 	  		<div class="bar" style="width: 0%;"></div>
 	  	</div>
-	  	
 	  	<div class="alert alert-success hide" id="upload_success"></div>
-	
-		
 	<cfif ArrayLen(rc.tags)>
-	<h2>Currently added tags</h2>
-		
-	<table class="table table-bordered table-striped">
-		<thead>
-			<tr><th colspan="2">Tag</th></tr>
-		</thead>
-		<tbody>
-		<cfloop array="#rc.tags#" index="tag">
-			<tr>
-				<td>#tag#</td>
-				<td width="20%"><a class="btn btn-danger" href="#buildURL("extension.removetag?name=#rc.name#&tag=#tag#")#"><i class="icon-remove-sign icon-white"></i> Remove</a></td>
-			</tr>
-		</cfloop>
-		</tbody>
-	</table>	
+		<h2>Currently added tags</h2>
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr><th colspan="2">Tag</th></tr>
+			</thead>
+			<tbody>
+			<cfloop array="#rc.tags#" index="tag">
+				<tr>
+					<td><a href="#buildURL("extension.edittag?name=" & rc.name& "&tag=" & tag)#">#tag#</a></td>
+					<td width="20%"><a class="btn btn-danger" href="#buildURL("extension.removetag?name=#rc.name#&tag=#tag#")#"><i class="icon-remove-sign icon-white"></i> Remove</a></td>
+				</tr>
+			</cfloop>
+			</tbody>
+		</table>	
 	</cfif>
-	</div>
-</section></cfoutput>
+	
+
+</cfoutput>

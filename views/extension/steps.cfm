@@ -1,29 +1,21 @@
-<cfoutput><cfparam name="rc.steps" default="#[]#">
-<section class="row-fluid">
-	<div class="span2">
-		<cfinclude template="localnav.cfm">
-	</div>
-	<div class="span10">
-
-	<h1>Installation Screens</h1>
+<h1>Installation Steps</h1>
+<p>The installation steps defined here will be presented to the user as they install your extension</p>
+<cfsavecontent variable='js'>
+	<script>
+		$(function(){
+			$('#step_tree').jstree({
+				core : {
+								
+				}
+				, plugins : [ "themes", "html_data"]
+				
+			});
+				
+		});
 	
-		
-	<cfif ArrayLen(rc.steps)>
-	<h2>Screens</h2>
-		
-	<table class="table table-bordered table-striped">
-		<thead>
-			<tr><th colspan="2">Screen Title</th></tr>
-		</thead>
-		<tbody>
-		<cfloop array="#rc.steps#" index="func">
-			<tr>
-				<td>#func#</td>
-				<td width="20%"><a class="btn btn-danger" href="#buildURL("extension.removefunction?name=#rc.name#&function=#func#")#"><i class="icon-remove-sign icon-white"></i> Remove</a></td>
-			</tr>
-		</cfloop>
-		</tbody>
-	</table>	
-	</cfif>
-	</div>
-</section></cfoutput>
+	</script>
+</cfsavecontent>
+<cfset ArrayAppend(rc.js, js)>
+
+
+<div id="step_tree"></div>
