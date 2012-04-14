@@ -31,9 +31,6 @@
 	<cfset arrayAppend(rc.js, js) />
 	
 	<div class="row-fluid">
-		<div class="span2">
-			<cfinclude template="localnav.cfm">
-		</div>
 		<div class="span10">
 			<h1>License</h1>
 			<p>Here you can add your own license to your extension, and select a template from some common licenses.

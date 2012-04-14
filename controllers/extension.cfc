@@ -115,22 +115,16 @@ component {
 	}
 	
 	function edit(any rc) {
-		var man = application.di.getBean("ExtensionManager");
-		rc.info = man.getInfo(rc.name);
-		
+		// happens in 'before' fnc already
+		//var man = application.di.getBean("ExtensionManager");
+		//rc.info = man.getInfo(rc.name);
 	}
 	
 	function license(any rc) {
-		var man = application.di.getBean("ExtensionManager");
-		rc.info = man.getInfo(rc.name);
+		//var man = application.di.getBean("ExtensionManager");
+		//rc.info = man.getInfo(rc.name);
 		rc.info.licenseText = man.getLicenseText(rc.name);
 	}
-	
-	
-	function license(any rc){
-		rc.license = variables.man.getFileContent(rc.name, "", "license.txt");
-	}
-	
 	
 	function installActions(any rc){
 		rc.availableActions = variables.availableActions;
@@ -140,7 +134,6 @@ component {
 	}
 	
 	function saveActions(any rc){
-		
 		rc.availableActions = variables.availableActions;
 		loop array="#rc.availableActions#" index="local.act"{
 			if( StructKeyExists(rc, act)){
@@ -154,10 +147,6 @@ component {
 	/*
 	 * Add Items to an extension 	
 	 */
-	 
-	 function addApplication(rc){
-	 	 
-	 }
 	 
 	 function addTags(rc){
 	 	 rc.tags = variables.man.listFolderContents(rc.name, "tags");
@@ -225,21 +214,8 @@ component {
 		 variables.man.addBinaryFile(rc.name, appPath,  "applications");
  		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=Application uploaded");
 	 	 
-	 }
-	 
-	 function addLicense(rc){
-	 	//Check if we are choosing one..
-	 	var licensetext = rc.license;
-	 	if(Len(rc.license_link)){
-	 		 var licenseinfo = ListToArray(rc.license_link, "|");
-	 		 licensetext = licenseinfo[2] & Chr(13) & licenseinfo[1];
-	 	}
-	 	 
-	 	variables.man.addTextFile(rc.name, "", "license.txt", licensetext);
-	 	rc.message = "License has been added";
- 		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
-	 }
-
+	}
+	
 	function edittag(any rc){
 		rc.tagcontent = variables.man.getFileContent(rc.name, "tags", rc.tag);
 	}
