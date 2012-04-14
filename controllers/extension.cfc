@@ -114,6 +114,30 @@ component {
 		variables.fw.redirect("extension.addApplication?name=#rc.name#&message=#rc.message#");
 	}
 	
+	function delete(any rc) {
+		// do not delete? 
+		if (structKeyExists(rc, "notsure"))
+		{
+			variables.fw.redirect("extension");
+			return;
+		}
+		
+		// get info
+		rc.info = variables.man.getInfo(rc.name);
+		// yes, delete
+		if (structKeyExists(rc, "sure"))
+		{
+			// check for the accompanying img
+			if (rc.info.image neq "" and not isValid('url', rc.info.image) and fileExists(expandPath('/ext/#rc.info.image#')))
+			{
+				fileDelete(expandPath('/ext/#rc.info.image#'));
+			}
+			fileDelete(expandPath('/ext/#rc.name#.zip'));
+			rc.message = "The extension has been deleted.";
+			variables.fw.redirect("extension?message=#rc.message#");
+		}
+	}
+	
 	function edit(any rc) {
 		// happens in 'before' fnc already
 		//var man = application.di.getBean("ExtensionManager");
