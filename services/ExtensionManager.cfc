@@ -232,13 +232,13 @@ component output="false"{
 	}
 
 	
-	function addBinaryFile(String extensionName, String source, String folder){
+	function addFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
 		if(!DirectoryExists(itemPath)){
 				Directorycreate(itemPath);
 		}
 		//Has to have the full name
-			itemPath  = itemPath & ListLast(source, "/");
+		itemPath  = itemPath & ListLast(source, "/");
 		
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
