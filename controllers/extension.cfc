@@ -218,13 +218,18 @@ component {
 	*/
 	function removefunction(any rc){
 		variables.man.removeFile(rc.name, "functions", rc.function);
-		rc.message = "Function removed";
-		variables.fw.redirect("extension.addFunctions?name=#rc.name#&message=#rc.message#");
+		rc.message = "Function <em>#rc.function#</em> is removed";
+		variables.fw.redirect("extension.addFunctions?name=#rc.name#&message=#urlencodedformat(rc.message)#");
 	}
 	function removetag(any rc){
 		variables.man.removeFile(rc.name, "tags", rc.tag);
-		rc.message = "Tag #rc.tag# removed";
-		variables.fw.redirect("extension.addtags?name=#rc.name#&message=#rc.message#");
+		rc.message = "Tag <em>#rc.tag#</em> is removed";
+		variables.fw.redirect("extension.addtags?name=#rc.name#&message=#urlencodedformat(rc.message)#");
+	}
+	function removejar(any rc){
+		variables.man.removeFile(rc.name, "jars", rc.jar);
+		rc.message = "Jar <em>#rc.jar#</em> is removed";
+		variables.fw.redirect("extension.addjars?name=#rc.name#&message=#urlencodedformat(rc.message)#");
 	}
 	function removeapplication(any rc) {
 		variables.man.removeFile(rc.name, "applications", rc.application);

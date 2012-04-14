@@ -24,10 +24,10 @@
 				<tr><th colspan="2">JAR</th></tr>
 			</thead>
 			<tbody>
-			<cfloop array="#rc.jars#" index="tag">
+			<cfloop array="#rc.jars#" index="jar">
 				<tr>
-					<td>#tag#</td>
-					<td width="20%"><a class="btn btn-danger" href="#buildURL("extension.removejar?name=#rc.name#&tag=#tag#")#"><i class="icon-remove-sign icon-white"></i> Remove</a></td>
+					<td>#jar#</td>
+					<td width="20%"><a class="btn btn-danger" href="#buildURL("extension.removejar?name=#rc.name#&jar=#jar#")#"><i class="icon-remove-sign icon-white"></i> Remove</a></td>
 				</tr>
 			</cfloop>
 			</tbody>
