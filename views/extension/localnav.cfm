@@ -8,7 +8,7 @@
 			<cfif rc.info.type IS "server">
 			<li class="nowrap">Applications <i class="icon-question-sign" data-content="Applications can only be installed if the extension is of type Web" title="Applications"></i></li>
 			<cfelse>
-			<li class="nowrap"><a href="#buildURL("extension.addApplication?name=#rc.name#")#">Applications <i class="icon-question-sign" data-content="Allows you to deploy a whole application to a web context" title="Applications"></i></a></li>
+			<li class="nowrap"><a href="#buildURL("extension.addApplications?name=#rc.name#")#">Applications <i class="icon-question-sign" data-content="Allows you to deploy a whole application to a web context" title="Applications"></i></a></li>
 			</cfif>
 			
 			<li class="nowrap"><a href="#buildURL("extension.addTags?name=#rc.name#")#">Custom Tags <i class="icon-question-sign" data-content="Allows you to add custom tags and use them as you would the built in tags" title="Custom Tags"></i></a></li>

@@ -200,7 +200,7 @@ component {
 	function addJars(rc){
 		rc.jars = variables.man.listFolderContents(rc.name, "jars");	
 	}
-	function addApplication(rc){
+	function addApplications(rc){
 		rc.application = variables.man.listFolderContents(rc.name, "applications");	
 		rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
 	}
@@ -243,7 +243,7 @@ component {
 	}
 	function removeapplication(any rc) {
 		variables.man.removeFile(rc.name, "applications", rc.application);
- 		variables.fw.redirect("extension.addapplication?name=#rc.name#&message=The application is removed");
+ 		variables.fw.redirect("extension.addapplications?name=#rc.name#&message=The application is removed");
 	}
 		
 	
@@ -260,7 +260,7 @@ component {
 	
 	function saveStep(any rc){
 		variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
-		variables.fw.redirect("extension.addApplication?name=#rc.name#");
+		variables.fw.redirect("extension.addApplications?name=#rc.name#");
 	}
 	
 	function editGroup(any rc){

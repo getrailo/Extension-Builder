@@ -6,11 +6,10 @@
 	</p>
 
 	<form action="#buildURL("extension.addjar")#" class="well form-inline progressuploader" method="post" enctype="multipart/form-data">
-	<label>Jar file to upload</label>
-	  <input type="hidden" name="name" value="#rc.name#">
-	  <input type="file" class="span3 uploadfield" name="jarupload" placeholder="Select a JAR file">
-	<input type="submit" class="btn" value="Add JAR">
-
+		<label>Jar file to upload</label>
+		<input type="hidden" name="name" value="#rc.name#">
+		<input type="file" class="span3 uploadfield" name="jarupload" placeholder="Select a JAR file">
+		<input type="submit" class="btn" value="Add JAR">
 	</form>
 	<div class="progress progress-striped active hide">
 		<div class="bar" style="width: 0%;"></div>
