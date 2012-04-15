@@ -30,6 +30,7 @@
 	<cfparam name="rc.js" default="#[]#">
 	<cfset arrayAppend(rc.js, js) />
 	
+
 			<h1>License</h1>
 			<p>Here you can add your own license to your extension, and select a template from some common licenses.
 				<br />The license templates were copied from <a href="http://www.opensource.org">opensource.org</a>

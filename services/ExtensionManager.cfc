@@ -1,5 +1,7 @@
 component output="false"{
 /* This component provides some nice functions to be able to read from the extension zip files */
+	
+	// PK: this var is not used
 	variables.validinfotags = "name,label,id,version,created,author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
 	variables.cdata = "description"; //In case we add more
 	
@@ -230,14 +232,14 @@ component output="false"{
 	}
 
 	
-	function addBinaryFile(String extensionName, String source, String folder){
+	function addFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
 		if(!DirectoryExists(itemPath)){
 				Directorycreate(itemPath);
 		}
 		
 		//Has to have the full name
-			itemPath  = itemPath & ListLast(source, "/");
+		itemPath  = itemPath & ListLast(source, "/");
 		
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
@@ -259,7 +261,7 @@ component output="false"{
 			ArrayAppend(xmlItem.XMLChildren, item);
 	}
 	
-	function removeTextFile(String extensionName, String folder, String filename){
+	function removeFile(String extensionName, String folder, String filename){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
 		if(FileExists(itemPath)){
 			FileDelete(itemPath);
