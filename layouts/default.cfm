@@ -35,6 +35,18 @@
 	</cfoutput>
 	
 	<div class="container-fluid">
+		<cfif structKeyExists(rc, "message") and Len(rc.message)>
+			<div class="alert alert-success">
+				<a class="close" data-dismiss="alert">x</a>
+				<cfoutput>#rc.message#</cfoutput>
+			</div>
+		</cfif>
+		<cfif structKeyExists(rc, "error") and Len(rc.error)>
+			<div class="alert alert-error">
+				<a class="close" data-dismiss="alert">x</a>
+				<cfoutput>#rc.error#</cfoutput>
+			</div>
+		</cfif>
 		<cfoutput>#body#</cfoutput>	
 		
 	 <hr>
