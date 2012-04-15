@@ -1,13 +1,16 @@
 <cfcomponent output="false">
-
+	
+	<!--- please note: this cfset can be overwritten by the SDK --->
+	<cfset variables.extensionInfo = {
+		  title: 'Extension Builder SDK Provider (#cgi.http_host#)'
+		, description: 'Provider for locally built extensions by the Railo Extension BuilderSDK'
+		, image: ''
+		, url: 'http://#cgi.http_host#'
+		, mode: 'develop'
+	} />
+	
 	<cffunction name="getInfo" access="remote" returntype="struct" output="false">
-    	<cfset var info=struct()>
-        <cfset info.title="Extension Builder SDK Provider ("&cgi.HTTP_HOST&")">
-        <cfset info.mode="develop">
-        <cfset info.description="Provider for locally built extensions by the Railo Extension BuilderSDK">
-        <cfset info.image="">
-        <cfset info.url="http://" & cgi.HTTP_HOST>
-    	<cfreturn info>
+    	<cfreturn variables.extensionInfo />
     </cffunction>
              
     <cffunction name="listApplications" access="remote" returntype="query" output="false">
