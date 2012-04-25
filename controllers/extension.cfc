@@ -61,7 +61,7 @@ component {
 	}
 	
 	function saveInfo(any rc) {
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by";
+		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by,licenseTemplate,StoreID";
 		
 		var dataToSend = Duplicate(rc);
 		
@@ -278,6 +278,32 @@ component {
 	
 	
 	/*
+		Publish to ext store
+	*/
+	function publish(any rc){
+		rc.storeInfo = _getEncryptedData();
+	}
+	
+	function savestorelogin(any rc){
+		var data = _getEncryptedData();
+		data.getrailo_user = rc.getrailo_user;
+		data.getrailo_pass = rc.getrailo_pass;
+		_setEncryptedData(data);
+		variables.fw.redirect("extension.publish?name=#rc.name#&message=The login details have been saved");
+	}
+	
+	function publishnow(any rc){
+		rc.storeInfo = _getEncryptedData();
+		if (not structKeyExists(rc.storeInfo, "getrailo_pass"))
+		{
+			variables.fw.redirect("extension.publish?name=#rc.name#&error=You have not yet saved your getrailo.org login details!");
+		}
+		// doing the actual cfhttp stuff
+		include "inc_publishnow.cfm";
+	}
+	
+	
+	/*
 		edit text files
 	*/
 	function edittag(any rc){
@@ -297,6 +323,33 @@ component {
 	/*
 		Helper functions
 	*/
+	function _getEncryptedData()
+	{
+		var file = expandPath('/SDKdata/secureddata.txt');
+		if (!fileExists(file))
+		{
+			return {};
+		}
+		var data = fileRead(file);
+		try {
+			data = decrypt(data, getRailoID().web.id, "CFMX_COMPAT", "Base64");
+			return evaluate(data);
+		// file might have been moved to a new web context or been tampered with; delete it
+		} catch(any)
+		{
+//			fileDelete(file);
+			return {};
+		}
+	}
+
+	function _setEncryptedData(struct data)
+	{
+		var file = expandPath('/SDKdata/secureddata.txt');
+		var data = serialize(data);
+		data = encrypt(data, getRailoID().web.id, "CFMX_COMPAT", "Base64");
+		fileWrite(file, data);
+	}
+
 	function _updateTextFile(any rc, String type)
 	{
 		rc.newname &= ".cfc";
