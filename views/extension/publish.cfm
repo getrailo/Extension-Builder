@@ -12,9 +12,6 @@
 		These extensions are visible in all Railo Administrators around the world.
 		<br />All you need to do, is signup, and then start publishing!
 	</p>
-	<p>If you prefer to add your extension to the store manually, then just <a href="http://www.getrailo.org/index.cfm/extensions" target="_blank" title="Link opens new window">go to the Store</a>, and use this zip file:
-		<br /><a href="/ext/#rc.name#.zip"><em>#expandPath('/ext/#rc.name#.zip')#</em></a>
-	</p>
 	<hr />
 	<div class="row-fluid">
 		<div class="span6">
@@ -31,7 +28,7 @@
 						<p>The SDK will upload your extension directly to the store.</p>
 					</cfif>
 					<cfif v("getrailo_user") eq "">
-						<p>You have not yet saved your getrailo.org login details.</p>
+						<p class="error"><strong>You have not yet saved your getrailo.org login details.</strong></p>
 						<ol>
 							<li><a href="http://www.getrailo.org/index.cfm/extensions/for-developers/your-profile?display=login" target="_blank" title="Link opens new window">Register for a getrailo.org account</a></li>
 							<li>Then save your login details in the form on the right</li>
@@ -47,8 +44,8 @@
 		<div class="span6">
 			<form action="#buildURL("extension.savestorelogin?name=#rc.name#")#" method="post">
 				<fieldset>
-					<legend>Getrailo.org login</legend>
-					<p>When you add your login here, you will be able to directly upload your extension to the Extension Store.
+					<legend>Your Getrailo.org login details</legend>
+					<p>By saving your login here, you will be able to directly upload your extension to the Extension Store.
 					</p>
 					<div>
 						<label for="getrailo_user">User name</label>
@@ -65,4 +62,9 @@
 			</form>
 		</div>
 	</div>
+	<hr />
+	<h3>Publish manually</h3>
+	<p>If you prefer to add your extension to the store manually, then just <a href="http://www.getrailo.org/index.cfm/extensions" target="_blank" title="Link opens new window">go to the Store</a>, and use this zip file:
+		<br /><a href="/ext/#rc.name#.zip"><em>#expandPath('/ext/#rc.name#.zip')#</em></a>
+	</p>
 </cfoutput>
