@@ -251,6 +251,12 @@ component {
 	/*
 		Steps 
 	*/
+	
+	function steps(any rc){
+			rc.stepsinfo = XMLSearch(variables.man.getConfig(rc.name), "//step");
+		
+	}
+	
 	function editStep(any rc){
 		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//step[#rc.step#]");
 		rc.label = rc.stepxml[1].XMLAttributes['label'];
@@ -266,8 +272,9 @@ component {
 	function editGroup(any rc){
 		var stepXML = variables.man.getConfig(rc.name);
 		rc.groupxml = xmlSearch(stepXML, "//step[#rc.step#]/group[#rc.group#]")[1]; //first one that has been found
-		rc.label = rc.groupxml.XmlAttributes.label;
-		rc.description = rc.groupxml.XmlAttributes.description;
+		
+		rc.label = isDefined("rc.groupxml.XmlAttributes.label") ? rc.groupxml.XmlAttributes.label : "";
+		rc.description = isDefined("rc.groupxml.XmlAttributes.description") ? rc.groupxml.XmlAttributes.description : "";
 		rc.fields = rc.groupXML.XMLChildren;
 	}
 	

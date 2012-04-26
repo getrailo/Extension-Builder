@@ -91,6 +91,7 @@ component {
 		
 		admin action="updateExtensionProvider" type="web" password="#rc.webpass#" url="#extproviderURL#";
 		
+		variables.fw.redirect("provider");
 		
 	}
 	
