@@ -16,7 +16,7 @@
 					{
 						$.ajax({
 							type:"GET"
-							, url: "#buildURL("extension.licenses")#?license=" + $(this).val()
+							, url: "/licenses/" + $(this).val()
 							, dataType:"text"
 							, complete: function(data) {
 								$('##license').val(data.responseText).animate({opacity:1}, 1000)

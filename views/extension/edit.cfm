@@ -18,13 +18,10 @@
 </cfsavecontent>
 <cfset arrayAppend(rc.js, js)>
 
-<form action="#buildURL("extension.saveinfo")#" method="post">
+<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
 	<h1>Edit #v("label")#</h1>
-
-	<hr>
+	<hr/>
 	<div class="row-fluid">
-	
-	<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
 		<div class="span6">
 			<fieldset>
 			 	<legend>Extension Information</legend>
