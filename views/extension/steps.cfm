@@ -6,7 +6,11 @@
 			$("a.localedit").live("click", function(e){
 				e.preventDefault();
 				var h = $(this).attr("href");
-				$("#step_target").load(h + (h.indexOf('?')>-1?'&':'?')+"ajax=1");
+				$("#step_target").load(h + (h.indexOf('?')>-1?'&':'?')+"ajax=1", function(){
+					$("#step_target i[data-content]").each(function(){
+						$(this).popover();
+					});
+				});
 			});
 		});
 	</script>
@@ -49,7 +53,9 @@
 												<cfset fieldCounter = 1>
 												<cfif ArrayLen(s.XMLChildren)>
 													<cfloop array="#s.XMLChildren#" index="i">
-														<li class="item">#displayAttribute(i, "name", "Field #fieldCounter#")# (#displayAttribute(i, "type")#)</li>
+														<li class="item">
+															<a class="localedit" href="#buildURL("extension.editfield?name=#rc.name#&step=#stepcounter#&group=#groupcounter#&field=#fieldCounter#")#">#displayAttribute(i, "name", "Field #fieldCounter#")# (#displayAttribute(i, "type")#)</a>
+														</li>
 														<cfset fieldCounter++>
 													</cfloop>									
 												</cfif>

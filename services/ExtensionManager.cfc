@@ -239,6 +239,47 @@ component output="false"{
 		setConfig(extensionName, configXML);
 	}
 
+
+	function saveField(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		var group = xmlSearch(configXML, "/config/step[#rc.step#]/group[#rc.group#]")[1];
+		var field = xmlSearch(configXML, "/config/step[#rc.step#]/group[#rc.group#]/item[#rc.field#]");
+		var newItem = xmlElemNew(configXML, "item");
+		if (arrayLen(field))
+		{
+			group.XMLChildren[rc.field] = newItem;
+		} else
+		{
+			arrayAppend(group.xmlChildren, newItem);
+		}
+		
+		newItem.XMLAttributes['type'] = rc.type;
+		newItem.XMLAttributes['name'] = rc.field_name;
+
+		if (rc.type eq "password" or rc.type eq "text")
+		{
+			newItem.XMLAttributes['label'] = rc.label;
+			newItem.xmlText = rc.field_value;
+		} else {
+			newItem.XMLAttributes['description'] = rc.label;
+			var options = listToArray(rc.options, "#chr(10)##chr(13)#");
+			for (var i=1; i lte arrayLen(options); i++)
+			{
+				var opt = xmlElemNew(configXML, "option");// <option value="IIS7" description="">IIS7</option>
+				arrayAppend(newItem.xmlChildren, opt);
+				if (find('*', options[i]) eq 1)
+				{
+					opt.xmlAttributes["selected"] = "selected";
+				}
+				opt.xmlAttributes["value"] = rereplace(listfirst(options[i], '|'), '^\*', '');
+				opt.xmlAttributes["description"] = listRest(options[i], '|');
+				opt.xmlText = listRest(options[i], '|');
+			}
+		}
+		setConfig(rc.name, configXML);
+	}
+
 	
 	function addFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";

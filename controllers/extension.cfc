@@ -322,6 +322,44 @@ component {
 	}
 	
 	
+	function editField(any rc){
+		var stepXML = variables.man.getConfig(rc.name);
+		if (!structKeyExists(rc, "field"))
+		{
+			rc.field = 1;
+		}
+		var fields = xmlSearch(stepXML, "/config/step[#rc.step#]/group[#rc.group#]/item");
+		if (arrayLen(fields) gte rc.field)
+		{
+			rc.item = {};
+			for (var key in fields[rc.field].xmlAttributes)
+			{
+				rc.item[key] = fields[rc.field].xmlAttributes[key];
+			}
+			rc.item.options = "";
+			if (arrayLen(fields[rc.field].xmlChildren))
+			{
+				for (var i=1; i lte arrayLen(fields[rc.field].xmlChildren); i++)
+				{
+					var fld = fields[rc.field].xmlChildren[i];
+					rc.item.options &= chr(10) & (structKeyExists(fld.xmlAttributes, 'selected') ? '*':'') & fld.xmlAttributes['value'] & "|" & fld.xmlText;
+				}
+			} else 
+			{
+				rc.item.defaultvalue = fields[rc.field].xmlText;
+			}
+		} else
+		{
+			rc.item = {};
+		}
+	}
+	
+	function saveField(any rc){
+		variables.man.saveField(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#");
+	}
+	
+	
 	/*
 		Publish to ext store
 	*/
