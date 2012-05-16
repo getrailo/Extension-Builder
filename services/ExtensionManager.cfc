@@ -188,10 +188,10 @@ component output="false"{
 	
 	function saveStep(String extensionName, Numeric step=0, String label, String description=""){
 		var configXML = getConfig(extensionName);
-		var steps = XMLSearch(configXML, "//step");
+		var steps = XMLSearch(configXML, "/config/step");
 		
-		
-		if(step == 0){ // we are just adding this should be easier
+		if(step == 0 || step gt arrayLen(steps))
+		{
 			var item = XMLElemNew(configXML, "step");
 				item.XMLAttributes["label"] = label;
 				item.XMLAttributes["description"] = description;
@@ -202,8 +202,7 @@ component output="false"{
 				item.XMLAttributes["label"] = label;
 				item.XMLAttributes["description"] = description;
 		}
-		setConfig(extensionName, configXML)
-		return getConfig(extensionName);		
+		setConfig(extensionName, configXML);
 	}
 	
 	
@@ -216,20 +215,22 @@ component output="false"{
 			arrayAppend(configXML.config.XMLChildren, newstep);
 			step = 1;
 		}
-		var steps = XMLSearch(configXML, "//step");
+		var steps = XMLSearch(configXML, "/config/step");
 		
 		if(!Arrayisdefined(steps, step)){
-			throw("No step found!");
+			throw("Step [#step#] was not found!");
 		}
 		var currstep = steps[step];
 		
-		if(group == 0){
-			var groupItem  = XMLElemNew(configXML, "group") ;
+		if(group == 0 or not structKeyExists(configXML.config.step[step], "group")
+			or arrayLen(configXML.config.step[step].group) lt arguments.group)
+		{
+			var groupItem  = XMLElemNew(configXML, "group");
 				groupItem.XMLAttributes["label"] = label;
 				groupItem.XMLAttributes["description"] = description;
 				ArrayAppend(currstep.XMLChildren, groupItem);
 		}
-		else{ // the group should exist. 
+		else{ // the group exists
 			var groupItem	= configXML.config.step[step].group[group];
 				groupItem.XMLAttributes["label"] = label;
 				groupItem.XMLAttributes["description"] = description;

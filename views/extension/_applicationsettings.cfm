@@ -47,7 +47,7 @@
 			</tbody>
 		</table>
 		<div class="form-actions">
-		<a href="#buildURL("extension.addstep?name=#rc.name#")#" type="submit" class="btn">Add New Step</a>
+		<a href="#buildURL("extension.editstep?name=#rc.name#")#" type="submit" class="btn">Add New Step</a>
 		</div>
 
 

@@ -275,13 +275,21 @@ component {
 		
 	}
 	
-	function editStep(any rc){
-		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "/config/step[#rc.step#]");
-//		dump(variables.man.getConfig(rc.name));
-//		abort;
-		rc.label = rc.stepxml.XMLAttributes.label;
-		rc.description = rc.stepxml.XMLAttributes.description;
-		rc.groups = rc.stepxml.XMLChildren;
+	function editStep(any rc)
+	{
+		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "/config/step");
+		if (structKeyExists(rc, "step"))
+		{
+			rc.label = rc.stepxml[rc.step].XMLAttributes.label;
+			rc.description = rc.stepxml[rc.step].XMLAttributes.description;
+			rc.groups = rc.stepxml[rc.step].XMLChildren;
+		// new step
+		} else
+		{
+			rc.step = arrayLen(rc.stepxml)+1;
+			rc.label = rc.description = '';
+			rc.groups = [];
+		}
 	}
 	
 	function saveStep(any rc){
@@ -310,7 +318,7 @@ component {
 	
 	function saveGroup(any rc){
 		variables.man.saveGroup(rc.name, rc.step, rc.group, rc.label, rc.description);
-		variables.fw.redirect("extension.editgroup?name=#rc.name#&step=#rc.step#&group=#rc.group#");
+		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	}
 	
 	
