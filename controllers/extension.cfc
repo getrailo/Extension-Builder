@@ -63,7 +63,7 @@ component {
 	function saveInfo(any rc) {
 		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by,licenseTemplate,StoreID";
 		
-		var dataToSend = Duplicate(rc);
+		var dataToSend = duplicate(rc);
 		
 		// upload image?
 		if (structKeyExists(rc, "imgtype") and rc.imgtype eq "file")
@@ -84,8 +84,8 @@ component {
 			{
 				dataToSend.image = rc.oldimage;
 			}
-		// remove old image
-		else if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
+			// remove old image
+			else if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
 			{
 				try {
 					file action="delete" file="zip://#expandPath("/ext/#rc.name#.zip")#!#rc.oldimage#";
@@ -94,12 +94,16 @@ component {
 			}
 		}
 		
-		for(c in dataToSend){
-				if(!ListFindNoCase(validFields,c)){
-						StructDelete(dataToSend, c);
-				}
+		//Error: java.util.ConcurrentModificationException
+		var list = structKeyList(dataToSend);
+		for (var i=listlen(list); i>0; i--)
+		{
+			c = listGetAt(list, i);
+			if(!ListFindNoCase(validFields,c)){
+				StructDelete(dataToSend, c);
+			}
 		}
-		
+
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
 		rc.message = "The information has been saved to the extension";
 		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
@@ -132,9 +136,9 @@ component {
 	}
 	
 	function edit(any rc) {
-		// happens in 'before' fnc already
-		//var man = application.di.getBean("ExtensionManager");
-		//rc.info = man.getInfo(rc.name);
+		// get info whether this ext installs an application.
+		var extFile = 'zip://#expandPath("/ext/#rc.name#.zip")#';
+		rc.info.hasApplication = directoryExists(extFile & "!/applications") and arrayLen(directoryList(extFile & "!/applications",false,"name")) gt 0;
 	}
 	
 	
@@ -219,7 +223,21 @@ component {
 		_uploadFile(rc, "jarUpload", "jar", "jar");
 	}
 	function uploadapplication(any rc) {
-		_uploadFile(rc, "appzip", "application", "zip");
+		// upload, but do not redirect yet
+		_uploadFile(rc, "appzip", "application", "zip", false);
+		if (structKeyExists(rc, "uploadFailed"))
+		{
+			variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
+		} else
+		{
+			// update the install type of the extension to Web
+			if (rc.info.type neq "web")
+			{
+				variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
+				rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+			}
+			variables.fw.redirect("extension.add#type#s?name=#rc.name#&message=#rc.response#");
+		}
 	}
 	
 	
@@ -266,16 +284,26 @@ component {
 	
 	function saveStep(any rc){
 		variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
-		variables.fw.redirect("extension.addApplications?name=#rc.name#");
+		variables.fw.redirect("extension.steps?name=#rc.name#");
 	}
 	
 	function editGroup(any rc){
 		var stepXML = variables.man.getConfig(rc.name);
-		rc.groupxml = xmlSearch(stepXML, "//step[#rc.step#]/group[#rc.group#]")[1]; //first one that has been found
-		
+		if (!structKeyExists(rc, "group"))
+		{
+			rc.group = 0;
+		}
+		var firstgroup = xmlSearch(stepXML, "//step[#rc.step#]/group[#rc.group#]");
+		if (arrayLen(firstgroup))
+		{
+			rc.groupXml = firstgroup[1];//first one that has been found
+			rc.fields = rc.groupXML.XMLChildren;
+		} else
+		{
+			rc.fields = [];
+		}
 		rc.label = isDefined("rc.groupxml.XmlAttributes.label") ? rc.groupxml.XmlAttributes.label : "";
 		rc.description = isDefined("rc.groupxml.XmlAttributes.description") ? rc.groupxml.XmlAttributes.description : "";
-		rc.fields = rc.groupXML.XMLChildren;
 	}
 	
 	function saveGroup(any rc){
@@ -382,6 +410,7 @@ component {
 			{
 				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
 			}
+			rc.uploadFailed = 1;
 			return;
 		}
 		// upload file
@@ -404,6 +433,7 @@ component {
 				{
 					variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
 				}
+				rc.uploadFailed = 1;
 				return;
 			}
 		}

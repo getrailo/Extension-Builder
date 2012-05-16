@@ -5,7 +5,7 @@ component extends="org.corfield.framework" {
 		reload='reload',
 		password='true',
 		reloadApplicationOnEveryRequest = true,
-		generateSES = true
+		generateSES = false
 	}
 	/*
 		This is provided for illustration only - you should not use this in

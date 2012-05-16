@@ -19,7 +19,7 @@
 		<button class="btn btn-primary" type="submit" >Save</button>
 	</fieldset>
 </form>
-
+<!---
 <cfdump var="#rc.fields#">
 <h2>Fields</h2>
 <cfset counter = 1>
@@ -50,6 +50,6 @@
 			</tfoot>
 		</table>
 
-
+--->
 
 </cfoutput>

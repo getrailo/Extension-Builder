@@ -209,10 +209,17 @@ component output="false"{
 	
 	function saveGroup(String extensionName, Numeric step=0, Numeric group=0, String label, String description=""){
 		var configXML = getConfig(extensionName);
+		
+		if (step eq 0)
+		{
+			var newstep = xmlElemNew(configXML, "step");
+			arrayAppend(configXML.config.XMLChildren, newstep);
+			step = 1;
+		}
 		var steps = XMLSearch(configXML, "//step");
 		
 		if(!Arrayisdefined(steps, step)){
-				throw("No step found!");
+			throw("No step found!");
 		}
 		var currstep = steps[step];
 		

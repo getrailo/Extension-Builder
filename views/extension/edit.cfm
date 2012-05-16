@@ -52,14 +52,22 @@
 					<input type="text" name="version" value="#v("version")#" class="span1" id="version" placeholder="1.0.0">
 				</div>
 			 	<div>
-					<label for="type">Admin type (was #v("type")#)</label>
-					<select name="type" id="type">
-						<cfset type= v("type")>
-						<option value="server" <cfif type EQ "server">selected</cfif>>Server</option>
-						<option value="web" <cfif type EQ "web">selected</cfif>>Web</option>			
-						<option value="all" <cfif type EQ "all">selected</cfif>>Both Web and Server</option>			
-					</select>
-					<i class="icon-question-sign" data-content="If this extension will be available for the Server and/or Web Administrator" title="Admin type"></i>
+					<cfif rc.info.hasApplication>
+						<label for="type">Admin type</label>
+						<select name="type" id="type">
+							<option value="web">Web</option>			
+						</select>
+						<i class="icon-question-sign" data-content="This extension installs an application, so it can only be available for the Web Administrator" title="Admin type"></i>
+					<cfelse>
+						<label for="type">Admin type (was #v("type")#)</label>
+						<select name="type" id="type">
+							<cfset type= v("type")>
+							<option value="server" <cfif type EQ "server">selected</cfif>>Server</option>
+							<option value="web" <cfif type EQ "web">selected</cfif>>Web</option>			
+							<option value="all" <cfif type EQ "all">selected</cfif>>Both Web and Server</option>			
+						</select>
+						<i class="icon-question-sign" data-content="If this extension will be available for the Server and/or Web Administrator" title="Admin type"></i>
+					</cfif>
 			 	</div>
 			
 				<div>

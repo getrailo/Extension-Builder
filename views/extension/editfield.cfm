@@ -4,11 +4,9 @@
 <h1>Edit Field</h1>
 
 <form method="post">
-	
-	<input type="text" name="name" value="#rc.name#">
-	<input type="text" name="step" value="#rc.step#">
-	<input type="text" name="group" value="#rc.group#">
-type="text" name="db_username" label="Username" description="U
+	<input type="hidden" name="name" value="#rc.name#">
+	<input type="hidden" name="step" value="#rc.step#">
+	<input type="hidden" name="group" value="#rc.group#">
 	<label>Name</label>
 	<input type="text" name="field_name" value="#rc.field_name#">
 	

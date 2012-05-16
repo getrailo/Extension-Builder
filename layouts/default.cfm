@@ -1,3 +1,7 @@
+<cfif structKeyExists(url, "ajax")>
+	<cfoutput>#body#</cfoutput>
+	<cfexit method="exittemplate" />
+</cfif>
 <!DOCTYPE HTML>
 <html>
 <head>

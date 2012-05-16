@@ -1,5 +1,5 @@
 
-<cfif ListGetAt(rc.action,2,".") EQ "default">
+<cfif ListGetAt(rc.action,2,".") EQ "default" or structKeyExists(url, "ajax")>
 	<cfoutput>#body#</cfoutput>
 	<cfexit method="exittemplate">
 </cfif>

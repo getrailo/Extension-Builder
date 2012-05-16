@@ -1,4 +1,9 @@
 <cfoutput>
+	<cfif rc.info.type neq "web">
+		<div class="warning">Please note: if you want this extension to install an application,
+			then the Admin type of the extension will be changed to "web".
+		</div>
+	</cfif>
 	<p>Here you can add an application to your Extension. You can do this by simply zipping up your application and adding it here. </p>
 		<form action="#buildURL("extension.uploadapplication")#" class="well form-inline <!--- progressuploader --->" method="post" enctype="multipart/form-data">
 			<label>Application to upload</label>
