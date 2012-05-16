@@ -18,7 +18,7 @@
 	</fieldset>
 </form>
 
-<h2>Groups</h2>
+<!---<h2>Groups</h2>
 <p>Fields within a step can be grouped to define one action. Add a group first to add your fields</p>
 
 <cfset counter = 1>
@@ -49,4 +49,5 @@
 			</tfoot>
 		</table>
 
+--->
 </cfoutput>

@@ -271,17 +271,17 @@ component {
 	*/
 	
 	function steps(any rc){
-			rc.stepsinfo = XMLSearch(variables.man.getConfig(rc.name), "//steps/step");
+			rc.stepsinfo = XMLSearch(variables.man.getConfig(rc.name), "/config/step");
 		
 	}
 	
 	function editStep(any rc){
-		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//steps/step[#rc.step#]");
+		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "/config/step[#rc.step#]");
 //		dump(variables.man.getConfig(rc.name));
 //		abort;
-		rc.label = rc.stepxml[rc.step].XMLAttributes.label;
-		rc.description = rc.stepxml[rc.step].XMLAttributes.description;
-		rc.groups = rc.stepxml[rc.step].XMLChildren;
+		rc.label = rc.stepxml.XMLAttributes.label;
+		rc.description = rc.stepxml.XMLAttributes.description;
+		rc.groups = rc.stepxml.XMLChildren;
 	}
 	
 	function saveStep(any rc){
@@ -295,7 +295,7 @@ component {
 		{
 			rc.group = 0;
 		}
-		var firstgroup = xmlSearch(stepXML, "//step[#rc.step#]/group[#rc.group#]");
+		var firstgroup = xmlSearch(stepXML, "/config/step[#rc.step#]/group[#rc.group#]");
 		if (arrayLen(firstgroup))
 		{
 			rc.groupXml = firstgroup[1];//first one that has been found
