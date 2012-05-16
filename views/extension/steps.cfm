@@ -1,7 +1,5 @@
 <cfparam name="rc.stepsinfo" default="#[]#">
 
-<h1>Installation Steps</h1>
-<p>The installation steps defined here will be presented to the user as they install your extension</p>
 <cfsavecontent variable='js'>
 	<!---
 	<script>
@@ -29,10 +27,7 @@
 			});
 		});
 	</script>
-		
 </cfsavecontent>
-
-
 <cfset ArrayAppend(rc.js, js)>
 
 <cfscript>
@@ -48,6 +43,13 @@
 </cfscript>
 
 <cfoutput>
+
+<h1>Installation Steps</h1>
+<p>The installation steps defined here will be presented to the user as they install your extension.
+	<br />With every step, you can add form fields.
+	The values of these fields can be checked with a bit of custom CFML,
+	which you must add to <a href="#buildURL('extension.installactions?name=#rc.name#')###validation">Installer Actions &gt; Validation</a>.
+</p>
 <div class="row">
 	<div class="span4" style="overflow:scroll;">
 		<div id="step_tree">
@@ -57,8 +59,8 @@
 					<li class="step" id="step_#stepcounter#">
 						<a class="localedit" href="#buildURL("extension.editstep?name=#rc.name#&step=#stepcounter#")#" title="edit step">#displayAttribute(step, "label", "Step #stepcounter#")#</a>
 						<ul>
+							<cfset groupcounter = 1>
 							<cfif ArrayLen(step.XMLChildren)>
-								<cfset groupcounter = 1>
 								<cfloop array="#step.XMLChildren#" index="s">
 									<li class="group">
 										<a class="localedit" href="#buildURL("extension.editgroup?name=#rc.name#&step=#stepcounter#&group=#groupcounter#")#">#displayAttribute(s, "label", "Group #groupcounter#")#</a>
@@ -92,13 +94,10 @@
 			</ol>
 		</div>
 	</div>
-	<div class="span8" id="step_target">
-
-	<cfdump var="#rc.stepsinfo#">
-	</div>
+	<div class="span8" id="step_target"></div>
 </div></cfoutput>
 
-<!--- hidden modals --->
+<!--- hidden modals
 
 <cfoutput>
 <div id="addStep" class="modal hide">
@@ -124,3 +123,4 @@
 </div>
 </cfoutput>
 
+ --->
