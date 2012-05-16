@@ -214,10 +214,10 @@ component {
 	 * then set the 5th argument 'doRedirect' of fnc _uploadFile to False
 	*/
 	function addTag(rc){
-		_uploadFile(rc, "tagUpload", "tag", "cfc");
+		_uploadFile(rc, "tagUpload", "tag", "cfc,cfm");
 	}
 	function addFunction(rc){
-		_uploadFile(rc, "functionUpload", "function", "cfc");
+		_uploadFile(rc, "functionUpload", "function", "cfc,cfm");
 	}
 	function addJar(rc){
 		_uploadFile(rc, "jarUpload", "jar", "jar");
@@ -271,15 +271,17 @@ component {
 	*/
 	
 	function steps(any rc){
-			rc.stepsinfo = XMLSearch(variables.man.getConfig(rc.name), "//step");
+			rc.stepsinfo = XMLSearch(variables.man.getConfig(rc.name), "//steps/step");
 		
 	}
 	
 	function editStep(any rc){
-		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//step[#rc.step#]");
-		rc.label = rc.stepxml[1].XMLAttributes['label'];
-		rc.description = rc.stepxml[1].XMLAttributes.description;
-		rc.groups = rc.stepxml[1].XMLChildren;
+		rc.stepxml = XMLSearch(variables.man.getConfig(rc.name), "//steps/step[#rc.step#]");
+//		dump(variables.man.getConfig(rc.name));
+//		abort;
+		rc.label = rc.stepxml[rc.step].XMLAttributes.label;
+		rc.description = rc.stepxml[rc.step].XMLAttributes.description;
+		rc.groups = rc.stepxml[rc.step].XMLChildren;
 	}
 	
 	function saveStep(any rc){
