@@ -61,9 +61,17 @@ component {
 	}
 	
 	function saveInfo(any rc) {
+		param name="rc.version_update" default="false";
+		
 		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by,licenseTemplate,StoreID";
 		
 		var dataToSend = duplicate(rc);
+		
+		//update the version
+		if(dataToSend.version_update){
+			dataToSend.version = updateVersion(dataToSend.version);
+		}
+
 		
 		// upload image?
 		if (structKeyExists(rc, "imgtype") and rc.imgtype eq "file")
@@ -109,6 +117,15 @@ component {
 		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
 	}
 	
+	
+	function updateVersion(versionString){
+		var versionArray = ListToArray(versionString, ".");
+		
+		var currDate = DateFormat(Now(), "yyyymmdd") & TimeFormat(Now(), "hhmm");
+		
+		versionArray[3] = currDate;
+		return ArrayToList(versionArray, ".");
+	}
 
 	function delete(any rc) {
 		// do not delete? 
@@ -228,6 +245,7 @@ component {
 	}
 	function uploadapplication(any rc) {
 		// upload, but do not redirect yet
+		var type = "application";
 		_uploadFile(rc, "appzip", "application", "zip", false);
 		if (structKeyExists(rc, "uploadFailed"))
 		{

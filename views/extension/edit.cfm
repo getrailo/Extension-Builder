@@ -47,9 +47,18 @@
 					<input type="text" name="packaged-by" value="#v("packaged-by")#" id="email" placeholder="John.Smith@getrailo.org">
 				</div>				
 				
-				<div>
-					<label for="version">Version</label>
-					<input type="text" name="version" value="#v("version")#" class="span1" id="version" placeholder="1.0.0">
+				<div class="control-group">
+				
+				
+					<label for="version" class="control-label">Version</label>
+					<div class="controls">
+					<input type="text" name="version" value="#v("version")#" class="span2" id="version" placeholder="1.0.0">
+					
+					<label for="version_update" class="checkbox">
+						<input type="checkbox" name="version_update" value="true" class="span1" id="version_update" checked="true">
+						Auto Update Version
+					</label>
+					</div>
 				</div>
 			 	<div>
 					<cfif rc.info.hasApplication>
