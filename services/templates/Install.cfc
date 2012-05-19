@@ -1,4 +1,4 @@
-<cfcomponent>
+<cfcomponent output="no">
 	
 	<cfscript>
 		variables.name = "__NAME__";
@@ -20,9 +20,9 @@
         <cfargument name="config" type="struct">
         <cfargument name="step" type="numeric">
 		
-			<cfif FileExists("validation.cfm")>
-				<cfinclude template="validation.cfm">
-			</cfif>     
+		<cfif FileExists("validation.cfm")>
+			<cfinclude template="validation.cfm">
+		</cfif>
     </cffunction>
 
     <cffunction name="install" returntype="string" output="no"
@@ -35,8 +35,7 @@
 		<cfif FileExists("before_install.cfm")>
 			<cfinclude template="before_install.cfm">
 		</cfif>
-
-
+		
 		<!--- Copy all tags to the right folder --->
 		<cfloop array="#variables.tags#" index="local.tag" >
 			<cffile action="copy"
@@ -51,18 +50,78 @@
 				destination="#getContextPath()#/library/function/">
 		</cfloop>
 		
-		
+		<!--- copy jars --->
 		<cfloop array="#variables.jars#" index="local.jar">
 			<cffile action="copy"
 				source="#path#jars/#jar#"
 				destination="#getContextPath()#/lib/">
 		</cfloop>
 		
-		
-		<!--- Extract an application if it exists to the {web-context} Need a param for this!--->
-		
+		<!--- Extract any applications --->
+		<cfif variables.appl neq "">
+			<cfset var installpath = xmlSearch('#path#config.xml', "/config/step/group/item[@fieldusage='appinstallpath']/@name") />
+			<cfif arrayLen(installpath)>
+				<cfset installpath = installpath[1].xmlValue />
+				<cfset installpath = replace(trim(config.mixed[installpath]), '\', '/', 'all') />
+				<cfif installpath eq '' or left(installpath, 1) neq '/'>
+					<cfset installpath = '/' & installpath />
+				</cfif>
+			<cfelse>
+				<cfset installPath = "/" />
+			</cfif>
+			<cfset installpath = expandPath(installPath) />
+			<cfif not directoryExists(installpath)>
+				<cfdirectory action="create" directory="#installpath#" recurse="yes" />
+			</cfif>
 
+			<!--- replace values in the code to install --->
+			<cfset var replacevalues = xmlsearch('#path#config.xml', "/config/step/group/item[@fieldusage='replace']/") />
 		
+			<!--- loop over the applications list (should be one item) --->
+			<cfloop list="#variables.appl#" index="local.app">
+				<cfif arrayLen(replacevalues)>
+					<cfset var tempdir = GetTempDirectory() & "SDK/" />
+					<cfzip action="unzip" file="#path#applications/#local.app#"
+					destination="#tempdir#" overwrite="true" recurse="true" />
+					<!--- replace values --->
+					<cfset var xmlNode = "" />
+					<cfloop array="#replacevalues#" index="xmlNode">
+						<!--- if the form field exists --->
+						<cfif structKeyExists(arguments.config.mixed, xmlNode.xmlAttributes.name)>
+							<cfset var replacefilenames = xmlNode.xmlAttributes.replacefilenames />
+							<cfset var replacestring = xmlNode.xmlAttributes.replacestring />
+							<cfset var withvalue = arguments.config.mixed[xmlNode.xmlAttributes.name] />
+							<cfset var qFiles = "" />
+							<cfdirectory action="list" directory="#tempdir#" recurse="yes" filter="#replace(replacefilenames, ',', '|', 'all')#" name="qFiles" />
+							<cfloop query="qFiles">
+								<cfset _replaceInFile(qFiles.directory & server.separator.file & qFiles.name, replacestring, withvalue) />
+							</cfloop>
+						</cfif>
+					</cfloop>
+					<!--- now move all files and dirs to the installation location --->
+					<cfdirectory action="list" name="qMove" directory="#tempdir#" recurse="yes" sort="dir" />
+					<cfset startdir = qMove.directory />
+					<cfloop query="qMove">
+						<cfset var toDir = replace(qMove.directory, startdir, installpath) />
+						<cfif qMove.type eq "dir">
+							<cfif not DirectoryExists(todir & qMove.name)>
+								<cfdirectory action="create" directory="#todir#/#qMove.name#" recurse="yes" mode="777" />
+							</cfif>
+						<cfelse>
+							<cfif fileExists("#todir##qMove.name#")>
+								<cffile action="delete" file="#todir#/#qMove.name#" />
+							</cfif>
+							<cffile action="move" source="#qMove.directory#/#qmove.name#" destination="#todir#/#qMove.name#" mode="755" />
+						</cfif>
+					</cfloop>
+					<cfdirectory action="delete" directory="#tempdir#" recurse="yes" />
+				<cfelse>
+					<cfzip action="unzip" file="#path#applications/#local.app#"
+					destination="#installpath#" overwrite="true" recurse="true" />
+				</cfif>
+			</cfloop>
+		</cfif>
+
 		<cfset message ="#variables.label# has been successfully installed">
 		
 		<cfif ArrayLen(variables.jars) OR ArrayLen(variables.tags) OR ArrayLen(variables.functions)>
@@ -73,10 +132,9 @@
 			<cfinclude template="after_install.cfm">
 		</cfif>
 
-
-        <cfreturn message>
-
+        <cfreturn message />
 	</cffunction>
+
 
      <cffunction name="update" returntype="string" output="no"
     	hint="called from Railo to update a existing application">
@@ -97,7 +155,7 @@
         <cfargument name="config" type="struct">
 
 		<cfif FileExists("before_uninstall.cfm")>
-				<cfinclude template="before_uninstall.cfm">
+			<cfinclude template="before_uninstall.cfm">
 		</cfif>   
 
 		<!--- Delete any tags we may have installed --->
@@ -107,13 +165,14 @@
 			</cfif>
 		</cfloop>
 		
-		<!--- Delete any tags we may have installed --->
+		<!--- Delete any functions we may have installed --->
 		<cfloop array="#variables.functions#" index="local.func">
 			<cfif FileExists("#getContextPath()#/library/function/#func#")>
 				<cfset FileDelete("#getContextPath()#/library/function/#func#")>
 			</cfif>
 		</cfloop>
 		<!--- TODO: Add a throw exception in case it fails on Windows --->
+		
 		<!--- Check MD5 of JAR files for replacement
 			Throw error if it can't be uninstalled, and has to be installed manually
 		 --->
@@ -124,13 +183,13 @@
 			</cfif>
 		</cfloop>
 		
+		<cfif FileExists("after_uninstall.cfm")>
+			<cfinclude template="after_uninstall.cfm">
+		</cfif>
 		
-			<cfif FileExists("after_uninstall.cfm")>
-				<cfinclude template="after_uninstall.cfm">
-		</cfif>   
-        <cfreturn '#variables.name# has been uninstalled'>
-
+        <cfreturn '#variables.name# has been succesfully uninstalled' />
     </cffunction>
+
 
 	<cffunction name="getContextPath" access="private" returntype="string">
 
@@ -146,4 +205,55 @@
 	</cffunction>
 
 
+	<cffunction name="listDatasources" returntype="void" output="no" hint="called from form generator to create dynamic forms">
+		<cfargument name="item" required="yes" hint="item cfc">
+		<cfset var datasources="">
+		<cfadmin action="getDatasources" type="#request.adminType#" password="#session["password"&request.adminType]#" returnVariable="datasources">
+		<cfloop query="datasources">
+			<cfset item.createOption(value:datasources.name, label:datasources.name&" ("&datasources.host&")")>
+		</cfloop>
+	</cffunction>
+
+
+	<cffunction name="_replaceInDirectory" returntype="void" output="no">
+		<cfargument name="dir" />
+		<cfargument name="findstring" />
+		<cfargument name="replaceWith" />
+		<cfset var qDirList = "" />
+		<cfdirectory action="list" directory="#dir#" filter="#_isTextOrZipFile#" recurse="yes" name="qDirList" type="file" />
+		<cfloop query="qDirList">
+			<cfif listlast(qDirList.name, '.') eq 'zip'>
+				<cfif not find('zip!', arguments.dir)>
+					
+					<cfset _replaceInDirectory(qDirList.directory & server.separator.file & qDirList.name, arguments.findstring, arguments.replaceWith) />
+				</cfif>
+			<cfelse>
+				<cfset _replaceInFile(qDirList & server.separator.file & qDirList.name, arguments.findstring, arguments.replaceWith) />
+			</cfif>
+		</cfloop>
+	</cffunction>
+
+
+	<cffunction name="_replaceInFile" output="no">
+		<cfargument name="file" type="string" />
+		<cfargument name="findstring" />
+		<cfargument name="replaceWith" />
+		<cfset var f = fileread(file) />
+		<cfif findNoCase(findString, f)>
+			<cfset fileWrite(file, replaceNoCase(f, findString, replaceWith, 'all')) />
+		</cfif>
+	</cffunction>
+	
+	
+	<cffunction name="_isTextOrZipFile" returntype="boolean" output="no">
+		<cfargument name="fullpath" />
+		<cfif listfindNoCase("ZIP,txt,cfc,cfm,cfg,xml,config,csv,log,htm,html,js,css,cfml", listlast(fullpath, '.'))>
+			<cfreturn true />
+		<cfelseif listfindNoCase("exe,jpg,gif,png,ico", listlast(fullpath, '.'))>
+			<cfreturn false />
+		<cfelse>
+			<cfreturn not isBinary(fileread(fullpath)) />
+		</cfif>
+	</cffunction>
+	
 </cfcomponent>

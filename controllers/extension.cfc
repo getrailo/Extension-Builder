@@ -137,10 +137,14 @@ component {
 	
 	function edit(any rc) {
 		// get info whether this ext installs an application.
-		var extFile = 'zip://#expandPath("/ext/#rc.name#.zip")#';
-		rc.info.hasApplication = directoryExists(extFile & "!/applications") and arrayLen(directoryList(extFile & "!/applications",false,"name")) gt 0;
+		rc.info.hasApplication = hasApplication(rc.name);
 	}
 	
+	function hasApplication(string name)
+	{
+		var extFile = 'zip://#expandPath("/ext/#arguments.name#.zip")#';
+		return directoryExists(extFile & "!/applications") and arrayLen(directoryList(extFile & "!/applications",false,"name")) gt 0;
+	}
 	
 	/*
 		License
@@ -236,7 +240,7 @@ component {
 				variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
 				rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
 			}
-			variables.fw.redirect("extension.add#type#s?name=#rc.name#&message=#rc.response#");
+			variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 		}
 	}
 	
@@ -335,6 +339,11 @@ component {
 			for (var key in fields[rc.field].xmlAttributes)
 			{
 				rc.item[key] = fields[rc.field].xmlAttributes[key];
+			}
+			/* change the datasource select to different type */
+			if (rc.item.type eq 'select' and structKeyExists(rc.item, 'dynamic') and rc.item.dynamic eq 'listDatasources')
+			{
+				rc.item.type = 'datasource selection';
 			}
 			rc.item.options = "";
 			if (arrayLen(fields[rc.field].xmlChildren))
@@ -435,7 +444,6 @@ component {
 
 	function _updateTextFile(any rc, String type)
 	{
-		rc.newname &= ".cfc";
 		// delete old file if it has a new name now
 		if (rc.newname neq rc[arguments.type])
 		{

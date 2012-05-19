@@ -11,7 +11,8 @@ component output="false"{
 	}
 	
 	private function setConfig(String extensionName, XML xmlDocument){
-		FileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", toString(xmlDocument));
+		var prettyXml = new services.XMLFunctions().indentXML(xmlDocument);
+		FileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", prettyXml);
 	}
 	
 	function getInfo(extensionName){
@@ -253,24 +254,37 @@ component output="false"{
 		{
 			arrayAppend(group.xmlChildren, newItem);
 		}
-		
-		newItem.XMLAttributes['type'] = rc.type;
+		if (rc.type == 'datasource selection')
+		{
+			newItem.XMLAttributes['type'] = "select";
+		} else
+		{
+			newItem.XMLAttributes['type'] = rc.type;
+		}
 		newItem.XMLAttributes['name'] = rc.field_name;
+		newItem.XMLAttributes['label'] = rc.label;
+		newItem.XMLAttributes['replacestring'] = rc.replacestring;
+		newItem.XMLAttributes['replacefilenames'] = rereplace(trim(rc.replacefilenames), '[\r\n]+', ',', 'all');
+		newItem.XMLAttributes['fieldusage'] = rc.fieldusage;
+		
+		// for later: add an optional description for the field
+		//	newItem.XMLAttributes['description'] = rc.label;
 
 		if (rc.type eq "password" or rc.type eq "text")
 		{
-			newItem.XMLAttributes['label'] = rc.label;
 			newItem.xmlText = rc.field_value;
+		} else if (rc.type eq "datasource selection")
+		{
+			newItem.xmlAttributes['dynamic'] = "listDatasources";
 		} else {
-			newItem.XMLAttributes['description'] = rc.label;
 			var options = listToArray(rc.options, "#chr(10)##chr(13)#");
 			for (var i=1; i lte arrayLen(options); i++)
 			{
-				var opt = xmlElemNew(configXML, "option");// <option value="IIS7" description="">IIS7</option>
+				var opt = xmlElemNew(configXML, "option");
 				arrayAppend(newItem.xmlChildren, opt);
 				if (find('*', options[i]) eq 1)
 				{
-					opt.xmlAttributes["selected"] = "selected";
+					opt.xmlAttributes["selected"] = 1;
 				}
 				opt.xmlAttributes["value"] = rereplace(listfirst(options[i], '|'), '^\*', '');
 				opt.xmlAttributes["description"] = listRest(options[i], '|');

@@ -5,16 +5,23 @@
 <script type="text/javascript">
 	$(function(){
 		$('#type').change(function(){
-			console.log($(this).val().match(/(text|password)/i));
 			if ($(this).val().match(/(text|password)/i))
 			{
 				$('#field_options').hide();
 				$('#field_value').show();
+			} else if ($(this).val() == 'datasource selection')
+			{
+				$('#field_options').hide();
+				$('#field_value').hide();
 			} else
 			{
 				$('#field_options').show();
 				$('#field_value').hide();
 			}
+		}).triggerHandler('change');
+		
+		$('#fieldusage input:radio').bind('click change', function(){
+			$('#fieldusage_replace_div').css('display', ($('#fieldusage_replace')[0].checked ? 'block':'none'));
 		}).triggerHandler('change');
 	});
 </script>
@@ -42,7 +49,7 @@
 			<div>
 				<label>Field type</label>
 				<select name="type" id="type">
-					<cfloop list="text,select,radio,checkbox,password" index="type">
+					<cfloop list="text,select,radio,checkbox,password,datasource selection" index="type">
 						<option value="#type#"<cfif v('type') eq variables.type> selected</cfif>>#type#</option>
 					</cfloop>
 				</select>
@@ -61,9 +68,38 @@
 				<br />
 				<textarea name="options" rows="6" cols="100" class="span4">#v('options')#</textarea>
 			</div>
-			<div class="form-actions">
-				<button class="btn btn-primary" type="submit">Save</button>
-			</div>
 		</fieldset>
+		<fieldset>
+			<h3>Field usage</h3>
+			<ul id="fieldusage">
+				<li>
+					<input type="radio" name="fieldusage" value="custom"<cfif v('fieldusage') eq 'custom' or v('fieldusage') eq ''> checked</cfif> /> Custom usage (see the section Installer Actions)
+				</li>
+				<li>
+					<input type="radio" name="fieldusage" value="appinstallpath"<cfif v('fieldusage') eq 'appinstallpath'> checked</cfif> /> Use as the application install path
+				</li>
+				<li>
+					<input type="radio" name="fieldusage" id="fieldusage_replace" value="replace"<cfif v('fieldusage') eq 'replace'> checked</cfif> /> Replace values in the installed application:
+					<div id="fieldusage_replace_div">
+						<p>The value of this field will be used to alter the installed code (tags, functions, and applications)</p>
+						<div>
+							<label>String to replace</label>
+							<input type="text" name="replacestring" value="#v('replacestring')#" placeholder="$_replace_$" />
+						</div>
+						<div>
+							<label style="display:inline;">File names to check for replacements</label>
+							<i class="icon-question-sign" data-content="One file name per line. Do not include a file path! Examples:<br /><em>Application.cfc</em><br /><em>config.xml</em><br /><em>*.cfm</em>" title="Information"></i>
+							<br />
+							<textarea name="replacefilenames" placeholder="config.xml">#replace(v('replacefilenames'), ',', chr(10), 'all')#</textarea>
+						</div>
+					</div>
+					
+				</li>
+			</ul>
+
+		</fieldset>
+		<div class="form-actions">
+			<button class="btn btn-primary" type="submit">Save</button>
+		</div>
 	</form>
 </cfoutput>
