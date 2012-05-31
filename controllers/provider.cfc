@@ -6,9 +6,7 @@ component {
 
 	function default(any rc){
 		rc.baseurl = "http://#CGI.http_host#";
-		if(CGI.server_port != "80"){
-			rc.baseurl &= ":#CGI.SERVER_PORT#";
-		}
+		
 		rc.extproviderURL = rc.baseurl & "/ExtensionProvider.cfc";
 		rc.extInfo = _getExtensionInfo();
 	}
@@ -80,10 +78,7 @@ component {
 		param name="rc.webpass" default="";
 
 		var extproviderURL = "http://#CGI.http_host#";
-		
-		if(CGI.server_port != "80"){
-			extproviderURL &= ":#CGI.SERVER_PORT#";
-		}
+	
 		
 		extproviderURL &= "/ExtensionProvider.cfc";
 			
