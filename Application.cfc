@@ -1,13 +1,18 @@
 component extends="org.corfield.framework" {
 	
 	this.name = "Extension Builder SDK";
+	
+	variables.framework = {
+		reloadApplicationOnEveryRequest = true
+	};
+		/*
 	variables.framework = {
 		reload='reload',
 		password='true',
 		reloadApplicationOnEveryRequest = true,
 		generateSES = false
 	}
-	/*
+
 		This is provided for illustration only - you should not use this in
 		a real program! Only override the defaults you need to change!
 	variables.framework = {
@@ -66,12 +71,6 @@ component extends="org.corfield.framework" {
 	*/
 	
 	
-/*
-	function setupApplication(){
-		
-		
-	}
-*/
 	function setupRequest() {
 		// use setupRequest to do initialization per request
 		//request.context.startTime = getTickCount();
