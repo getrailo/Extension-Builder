@@ -19,7 +19,7 @@
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
         <cfargument name="step" type="numeric">
-		
+
 		<cfif FileExists("validation.cfm")>
 			<cfinclude template="validation.cfm">
 		</cfif>
@@ -59,62 +59,23 @@
 		
 		<!--- Extract any applications --->
 		<cfif variables.appl neq "">
-			<cfset var installpath = xmlSearch('#path#config.xml', "/config/step/group/item[@fieldusage='appinstallpath']/@name") />
-			<cfif arrayLen(installpath)>
-				<cfset installpath = installpath[1].xmlValue />
-				<cfset installpath = replace(trim(config.mixed[installpath]), '\', '/', 'all') />
-				<cfif installpath eq '' or left(installpath, 1) neq '/'>
-					<cfset installpath = '/' & installpath />
-				</cfif>
-			<cfelse>
-				<cfset installPath = "/" />
-			</cfif>
-			<cfset installpath = expandPath(installPath) />
-			<cfif not directoryExists(installpath)>
-				<cfdirectory action="create" directory="#installpath#" recurse="yes" />
-			</cfif>
+			<cfset var installpath = _createInstallPathFromXML(arguments.path, arguments.config) />
 
-			<!--- replace values in the code to install --->
-			<cfset var replacevalues = xmlsearch('#path#config.xml', "/config/step/group/item[@fieldusage='replace']/") />
-		
 			<!--- loop over the applications list (should be one item) --->
 			<cfloop list="#variables.appl#" index="local.app">
-				<cfif arrayLen(replacevalues)>
+				
+				<!--- Check if we need to replace values in the code --->
+				<cfif arrayLen( _getReplaceValuesFromConfig(arguments.path) )>
 					<cfset var tempdir = GetTempDirectory() & "SDK/" />
 					<cfzip action="unzip" file="#path#applications/#local.app#"
 					destination="#tempdir#" overwrite="true" recurse="true" />
-					<!--- replace values --->
-					<cfset var xmlNode = "" />
-					<cfloop array="#replacevalues#" index="xmlNode">
-						<!--- if the form field exists --->
-						<cfif structKeyExists(arguments.config.mixed, xmlNode.xmlAttributes.name)>
-							<cfset var replacefilenames = xmlNode.xmlAttributes.replacefilenames />
-							<cfset var replacestring = xmlNode.xmlAttributes.replacestring />
-							<cfset var withvalue = arguments.config.mixed[xmlNode.xmlAttributes.name] />
-							<cfset var qFiles = "" />
-							<cfdirectory action="list" directory="#tempdir#" recurse="yes" filter="#replace(replacefilenames, ',', '|', 'all')#" name="qFiles" />
-							<cfloop query="qFiles">
-								<cfset _replaceInFile(qFiles.directory & server.separator.file & qFiles.name, replacestring, withvalue) />
-							</cfloop>
-						</cfif>
-					</cfloop>
+					
+					<!--- replace the values --->
+					<cfset _replaceFileValuesInDir(path:path, config:config, dir:tempdir) />
+
 					<!--- now move all files and dirs to the installation location --->
-					<cfdirectory action="list" name="qMove" directory="#tempdir#" recurse="yes" sort="dir" />
-					<cfset startdir = qMove.directory />
-					<cfloop query="qMove">
-						<cfset var toDir = replace(qMove.directory, startdir, installpath) />
-						<cfif qMove.type eq "dir">
-							<cfif not DirectoryExists(todir & qMove.name)>
-								<cfdirectory action="create" directory="#todir#/#qMove.name#" recurse="yes" mode="777" />
-							</cfif>
-						<cfelse>
-							<cfif fileExists("#todir##qMove.name#")>
-								<cffile action="delete" file="#todir#/#qMove.name#" />
-							</cfif>
-							<cffile action="move" source="#qMove.directory#/#qmove.name#" destination="#todir#/#qMove.name#" mode="755" />
-						</cfif>
-					</cfloop>
-					<cfdirectory action="delete" directory="#tempdir#" recurse="yes" />
+					<cfset _moveDirectoryContents(from:tempdir, to:installpath) />
+
 				<cfelse>
 					<cfzip action="unzip" file="#path#applications/#local.app#"
 					destination="#installpath#" overwrite="true" recurse="true" />
@@ -215,26 +176,35 @@
 	</cffunction>
 
 
-	<cffunction name="_replaceInDirectory" returntype="void" output="no">
-		<cfargument name="dir" />
-		<cfargument name="findstring" />
-		<cfargument name="replaceWith" />
-		<cfset var qDirList = "" />
-		<cfdirectory action="list" directory="#dir#" filter="#_isTextOrZipFile#" recurse="yes" name="qDirList" type="file" />
-		<cfloop query="qDirList">
-			<cfif listlast(qDirList.name, '.') eq 'zip'>
-				<cfif not find('zip!', arguments.dir)>
-					
-					<cfset _replaceInDirectory(qDirList.directory & server.separator.file & qDirList.name, arguments.findstring, arguments.replaceWith) />
-				</cfif>
-			<cfelse>
-				<cfset _replaceInFile(qDirList & server.separator.file & qDirList.name, arguments.findstring, arguments.replaceWith) />
+	<cffunction name="_getReplaceValuesFromConfig" returntype="array" output="no" access="private">
+		<cfargument name="path" type="string">
+		<cfreturn xmlsearch('#path#config.xml', "/config/step/group/item[@fieldusage='replace']/") />
+	</cffunction>
+	
+	<cffunction name="_replaceFileValuesInDir" returntype="void" output="no" access="private">
+		<cfargument name="path" type="string">
+		<cfargument name="config" type="struct">
+		<cfargument name="dir" type="string">
+		
+		<cfset var replacevalues = _getReplaceValuesFromConfig(arguments.path) />
+		<cfset var xmlNode = "" />
+		<cfloop array="#replacevalues#" index="xmlNode">
+			<!--- if the form field exists --->
+			<cfif structKeyExists(arguments.config.mixed, xmlNode.xmlAttributes.name)>
+				<cfset var replacefilenames = xmlNode.xmlAttributes.replacefilenames />
+				<cfset var replacestring = xmlNode.xmlAttributes.replacestring />
+				<cfset var withvalue = arguments.config.mixed[xmlNode.xmlAttributes.name] />
+				<cfset var qFiles = "" />
+				<cfdirectory action="list" directory="#arguments.dir#" recurse="yes" filter="#replace(replacefilenames, ',', '|', 'all')#" name="qFiles" />
+				<cfloop query="qFiles">
+					<cfset _replaceInFile(qFiles.directory & server.separator.file & qFiles.name, replacestring, withvalue) />
+				</cfloop>
 			</cfif>
 		</cfloop>
 	</cffunction>
-
-
-	<cffunction name="_replaceInFile" output="no">
+	
+	
+	<cffunction name="_replaceInFile" output="no" access="private">
 		<cfargument name="file" type="string" />
 		<cfargument name="findstring" />
 		<cfargument name="replaceWith" />
@@ -245,7 +215,7 @@
 	</cffunction>
 	
 	
-	<cffunction name="_isTextOrZipFile" returntype="boolean" output="no">
+	<cffunction name="_isTextOrZipFile" returntype="boolean" output="no" access="private">
 		<cfargument name="fullpath" />
 		<cfif listfindNoCase("ZIP,txt,cfc,cfm,cfg,xml,config,csv,log,htm,html,js,css,cfml", listlast(fullpath, '.'))>
 			<cfreturn true />
@@ -254,6 +224,60 @@
 		<cfelse>
 			<cfreturn not isBinary(fileread(fullpath)) />
 		</cfif>
+	</cffunction>
+	
+	
+	<cffunction name="_moveDirectoryContents" returntype="void" access="private">
+		<cfargument name="from" type="string" />
+		<cfargument name="to" type="string" />
+		
+		<cfset var qMove = "" />
+		<cfdirectory action="list" name="qMove" directory="#arguments.from#" recurse="yes" sort="dir" />
+		<cfset var startdir = qMove.directory />
+		<cfloop query="qMove">
+			<cfset var toDir = replace(qMove.directory, startdir, arguments.to) />
+			<cfif qMove.type eq "dir">
+				<cfif not DirectoryExists(todir & qMove.name)>
+					<cfdirectory action="create" directory="#todir#/#qMove.name#" recurse="yes" mode="777" />
+				</cfif>
+			<cfelse>
+				<cfif fileExists("#todir##qMove.name#")>
+					<cffile action="delete" file="#todir#/#qMove.name#" />
+				</cfif>
+				<cffile action="move" source="#qMove.directory#/#qmove.name#" destination="#todir#/#qMove.name#" mode="755" />
+			</cfif>
+		</cfloop>
+		<cfdirectory action="delete" directory="#arguments.from#" recurse="yes" />
+	</cffunction>
+	
+
+	<cffunction name="_createInstallPathFromXML" returntype="string" output="no" access="private">
+		<cfargument name="path" type="string" />
+		<cfargument name="config" type="struct" />
+		
+		<!--- is there an install steps field given for the install path? --->
+		<cfset var installpath = "" />
+		<cfset var xmlItems = xmlSearch('#path#config.xml', "/config/step/group/item[@fieldusage='appinstallpath']/@name") />
+		<cfif arrayLen(xmlItems)>
+			<cfset installpath = xmlItems[1].xmlValue />
+			<cfset installpath = trim(config.mixed[installpath]) />
+		</cfif>
+		
+		<!--- by default, use the website root as install dir --->
+		<cfif installpath eq "">
+			<cfset installpath = '{web-root-directory}' />
+		</cfif>
+		
+		<!--- only do an expandpath when we don't have a full linux path already --->
+		<cfif find('/', installpath) neq 1>
+			<cfset installpath = expandPath(installPath) />
+		</cfif>
+		
+		<!--- create the directory if it does not exist yet--->
+		<cfif not directoryExists(installpath)>
+			<cfdirectory action="create" directory="#installpath#" recurse="yes" mode="777" />
+		</cfif>
+		<cfreturn installpath />
 	</cffunction>
 	
 </cfcomponent>

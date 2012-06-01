@@ -22,6 +22,14 @@
 		
 		$('#fieldusage input:radio').bind('click change', function(){
 			$('#fieldusage_replace_div').css('display', ($('#fieldusage_replace')[0].checked ? 'block':'none'));
+			if ($('#fieldusage_apppath')[0].checked)
+			{
+				var fld = $('#field_value_fld');
+				if (String(fld.val()).indexOf('{') == -1)
+				{
+					fld.val('{web-root-directory}' + fld.val()).css({opacity:.1}).animate({opacity:1}, 1000);
+				}
+			}
 		}).triggerHandler('change');
 	});
 </script>
@@ -59,8 +67,8 @@
 				<input type="text" name="field_name" value="#v('name')#">
 			</div>
 			<div id="field_value">
-				<label>Default value</label>
-				<input type="text" name="field_value" value="#v('defaultvalue')#">
+				<label for="field_value">Default value</label>
+				<input type="text" name="field_value" id="field_value_fld" value="#v('defaultvalue')#">
 			</div>
 			<div id="field_options">
 				<label style="display:inline">List of option values</label>
@@ -76,7 +84,8 @@
 					<input type="radio" name="fieldusage" value="custom"<cfif v('fieldusage') eq 'custom' or v('fieldusage') eq ''> checked</cfif> /> Custom usage (see the section Installer Actions)
 				</li>
 				<li>
-					<input type="radio" name="fieldusage" value="appinstallpath"<cfif v('fieldusage') eq 'appinstallpath'> checked</cfif> /> Use as the application install path
+					<input type="radio" name="fieldusage" id="fieldusage_apppath" value="appinstallpath"<cfif v('fieldusage') eq 'appinstallpath'> checked</cfif> /> Use as the application install path
+					<i class="icon-question-sign" data-content="This must be a full path. Optionally use <b>{web-root-directory}</b> as the default value (will be converted when installing)" title="Webroot placeholder"></i>
 				</li>
 				<li>
 					<input type="radio" name="fieldusage" id="fieldusage_replace" value="replace"<cfif v('fieldusage') eq 'replace'> checked</cfif> /> Replace values in the installed application:
