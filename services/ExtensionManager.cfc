@@ -302,7 +302,7 @@ component output="false"{
 		}
 		setConfig(rc.name, configXML);
 
-		checkAutoVersionUpdate(extensionName);
+		checkAutoVersionUpdate(rc.name);
 	}
 
 	
