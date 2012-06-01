@@ -4,7 +4,11 @@
 	$(function(){
 		var myregexp = new RegExp("[\W]");
 		$("#label").keyup(function(){
-			$("#name").val($(this).val().toLowerCase().replace(/ /g,"-"));
+			
+			var cleanName = $(this).val().toLowerCase().replace(/ /g,"-");
+			cleanName = cleanName.replace("/", "-");
+		
+			$("#name").val(cleanName);
 		});
 		
 		//Setup the error handling for items that have a data-required attribute

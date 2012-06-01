@@ -17,6 +17,7 @@
 			<b>Line:</b> #request.exception.TagContext[1].line#<br/>
 			<b>Code:</b> <pre>#request.exception.TagContext[1].codePrintHTML#</pre>
 		</cfoutput>
+		<cfdump var="#request.exception#" label="">
 	</div>
 </div>
 
