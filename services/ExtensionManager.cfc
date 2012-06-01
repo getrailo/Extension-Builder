@@ -321,19 +321,18 @@ component output="false"{
 		checkAutoVersionUpdate(extensionName);
 	}
 	
-
-	
 	
 	function addElementsToInfo(xmlItem, name, value="", isCDATA=false){
-			var item = XMLElemNew(xmlItem, name);
-			
-				if(isCDATA){
-					item.XmlCData = value;		
-				}
-				else{
-					item.XMLText = value;
-				}
-			ArrayAppend(xmlItem.XMLChildren, item);
+		var item = XMLElemNew(xmlItem, name);
+		
+		if(isCDATA){
+			item.XmlCData = value;		
+		}
+		else{
+			item.XMLText = value;
+		}
+		
+		ArrayAppend(xmlItem.XMLChildren, item);
 	}
 	
 	function removeFile(String extensionName, String folder, String filename){
