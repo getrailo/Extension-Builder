@@ -7,7 +7,7 @@
 	<form action="#buildURL("extension.addtag")#" class="well form-inline <!--- progressuploader --->" method="post" enctype="multipart/form-data">
 	<label>Tag to upload</label>
 	  <input type="hidden" name="name" value="#rc.name#">
-	  <input type="file" class="span3 uploadfield" name="tagUpload" placeholder="Select a custom tag">
+	  <input type="file" class="span4 uploadfield" name="tagUpload" placeholder="Select a custom tag">
 	<input type="submit" class="btn" value="Add Tag">
 	</form>
 		<div class="progress progress-striped active hide">

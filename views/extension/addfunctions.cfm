@@ -2,9 +2,9 @@
 	<h1>Add Functions</h1>
 	<p>You can add your own functions  that will then be treated like Built-in Functions in Railo Server.</p>
 	<form action="#buildURL("extension.addfunction")#" class="well form-inline <!--- progressuploader --->" method="post" enctype="multipart/form-data">
-	<label>Tag to upload</label>
+	<label>Function to upload</label>
 	  <input type="hidden" name="name" value="#rc.name#">
-	  <input type="file" class="span3 uploadfield" name="functionUpload" placeholder="Select a Function file">
+	  <input type="file" class="span4 uploadfield" name="functionUpload" placeholder="Select a Function file">
 	<input type="submit" class="btn" value="Add Function">
 	</form>
 		<div class="progress progress-striped active hide">
