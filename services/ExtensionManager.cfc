@@ -1,8 +1,6 @@
 component output="false"{
 /* This component provides some nice functions to be able to read from the extension zip files */
 	
-	// PK: this var is not used
-	variables.validinfotags = "name,label,id,version,created,author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal";
 	variables.cdata = "description"; //In case we add more
 	
 	function getConfig(String extensionName){
@@ -12,7 +10,7 @@ component output="false"{
 	
 	private function setConfig(String extensionName, XML xmlDocument){
 		var prettyXml = new services.XMLFunctions().indentXML(xmlDocument);
-		FileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", prettyXml);
+		fileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", prettyXml);
 	}
 	
 	function getInfo(extensionName){
@@ -40,6 +38,16 @@ component output="false"{
 	}
 	
 	function saveInfo(String extensionName, Struct info){
+		saveInfoToXML(extensionName, info);
+		updateInstaller(extensionName);
+		
+		checkAutoVersionUpdate(extensionName);
+		
+		return getInfo(extensionName);
+	}
+	
+	function saveInfoToXML(String extensionName, Struct info)
+	{
 		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml";
 		var extXML = XMLParse(FileRead(extPath));
 		
@@ -58,7 +66,6 @@ component output="false"{
 		}
 		var infoItem = extXML.config.info;
 		
-		
 		loop collection="#info#" item="local.i"{
 			var itemIndex = XMLChildPos(infoItem, i, 1);
 			var item = infoItem.XMLChildren[itemIndex];
@@ -72,12 +79,10 @@ component output="false"{
 			else {
 				item.XMLText = info[i];
 			}	
-		}			
+		}
 		FileWrite(extPath, toString(extXML));
-		updateInstaller(extensionName);
-		
-		return getInfo(extensionName);
 	}
+	
 	
 	function updateInstaller(String extensionName){
 		var installString = FileRead("/services/templates/Install.cfc");
@@ -204,6 +209,8 @@ component output="false"{
 				item.XMLAttributes["description"] = description;
 		}
 		setConfig(extensionName, configXML);
+
+		checkAutoVersionUpdate(extensionName);
 	}
 	
 	
@@ -238,6 +245,8 @@ component output="false"{
 		}
 		
 		setConfig(extensionName, configXML);
+
+		checkAutoVersionUpdate(extensionName);
 	}
 
 
@@ -292,6 +301,8 @@ component output="false"{
 			}
 		}
 		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(extensionName);
 	}
 
 	
@@ -307,6 +318,7 @@ component output="false"{
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
 		
+		checkAutoVersionUpdate(extensionName);
 	}
 	
 
@@ -329,6 +341,8 @@ component output="false"{
 		if(FileExists(itemPath)){
 			FileDelete(itemPath);
 		}
+
+		checkAutoVersionUpdate(extensionName);
 	}
 	
 	function removeBinaryFile(String extensionName, String folder, String filename){
@@ -336,6 +350,8 @@ component output="false"{
 		if(FileExists(itemPath)){
 			FileDelete(itemPath);
 		}
+
+		checkAutoVersionUpdate(extensionName);
 	}
 	
 	function getLicenseText(String extensionName)
@@ -352,10 +368,35 @@ component output="false"{
 	{
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
 		file action="write" file="#itempath#" output="#licenseText#";
+
+		checkAutoVersionUpdate(extensionName);
 	}
 	
 	function getLicense(LicenseName){
 		return FileRead("/licenses/#LicenseName#");
+	}
+
+
+	function updateVersion(String extensionName)
+	{
+		var version = getInfo(extensionName).version;
+		if (listLen(version, '.') lt 2)
+		{
+			version = listAppend(version, 0, ".");
+		}
+		var currDate = DateFormat(Now(), "yyyymmdd") & TimeFormat(Now(), "HHmmss");
+		version = rereplace(version, '(^|\.)[^\.]+$', '.#currDate#');
+		
+		saveInfoToXML(extensionName, {"version":version, "name":extensionName});
+	}
+
+	function checkAutoVersionUpdate(String extensionName)
+	{
+		var config = getInfo(extensionName);
+		if (structKeyExists(config, "auto_version_update") and isBoolean(config.auto_version_update) and config.auto_version_update)
+		{
+			updateVersion(extensionName);
+		}
 	}
 
 }

@@ -47,17 +47,17 @@
 					<input type="text" name="packaged-by" value="#v("packaged-by")#" id="email" placeholder="John.Smith@getrailo.org">
 				</div>				
 				
-				<div class="control-group">
-				
-				
+				<div>
 					<label for="version" class="control-label">Version</label>
-					<div class="controls">
-					<input type="text" name="version" value="#v("version")#" class="span2" id="version" placeholder="1.0.0">
-					
-					<label for="version_update" class="checkbox">
-						<input type="checkbox" name="version_update" value="true" class="span1" id="version_update" checked="true">
-						Auto Update Version
-					</label>
+					<div class="row">
+						<div class="span2">
+							<input type="text" name="version" value="#v("version")#" class="span2" id="version" placeholder="1.0.0">
+						</div>
+						<label for="auto_version_update" class="span3 checkbox">
+							<input type="checkbox" name="auto_version_update" value="true" id="auto_version_update" <cfif v('auto_version_update') eq true> checked</cfif>>
+							Auto update version
+							<i class="icon-question-sign" data-content="When checked, the version number will be increased on every update of the extension (adding items, editing details, etc.)<br />The current date-time will be used for incrementing: 1.2.0 will become 1.2.<i>#dateformat(now(), 'yyyymmdd')##timeformat(now(), 'HHmmss')#</i>" title="Auto-update version"></i>
+						</label>
 					</div>
 				</div>
 			 	<div>
