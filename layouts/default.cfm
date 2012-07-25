@@ -29,8 +29,8 @@
              <li class="<!--- active --->">
                 <a href="#buildURL("provider")#">Extension Provider</a>
               </li>
-			  <li><a href="#buildURL("documentation")#">Documentation</a></li>
-			  <li><a href="#buildURL("resources")#">Resources</a></li>
+			  <li><a href="https://github.com/getrailo/Railo-Extension-Builder-SDK/wiki">Documentation</a></li>
+<!--- 			  <li><a href="#buildURL("resources")#">Resources</a></li> --->
             </ul>
           </div>
         </div>
