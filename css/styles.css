@@ -1,3 +1,12 @@
 .nowrap {
   white-space: nowrap;
 }
+
+ol li.step {
+	list-style-image: url("/img/application.png");
+}	
+ol li.group {list-style-image: url("/img/application_form.png");}	
+ol li.item {list-style-image: url("/img/textfield.png");}
+
+/* editing a field: 'what usage' list*/
+ul#fieldusage { list-style:none }

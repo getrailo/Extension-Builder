@@ -3,23 +3,34 @@
 <cfparam name="rc.label" default=""> 
 <cfparam name="rc.description" default=""> 
 <cfparam name="rc.group" default="0">
-<h1>Edit Field Group</h1>
+
+<cfif rc.label eq "">
+	<h1>Add a new field group</h1>
+<cfelse>
+	<h1>Edit field group</h1>
+</cfif>
 <p>Fields within a step can be grouped to define one action.</p>
 <cfoutput>
-<form action="#buildURL("extension.savegroup")#" method="post" class="form-inline well">
-	<fieldset>
-		<legend>Group description</legend>
-		<input type="hidden" name="name" value="#rc.name#">
-		<input type="hidden" name="step" value="#rc.step#">
-		<input type="hidden" name="group" value="#rc.group#">
-		<label>Label</label>
-		<input type="text" name="label" value="#rc.label#" class="span2" placeholder="e.g.: Location">
-		<label>Description</label>
-		<input type="text" name="description" value="#rc.description#" class="span5" placeholder="Location where you want to install your application">
-		<button class="btn btn-primary" type="submit" >Save</button>
-	</fieldset>
-</form>
-
+	<form action="#buildURL("extension.savegroup")#" method="post" class="well">
+		<fieldset>
+			<!---<legend>Group description</legend>--->
+			<input type="hidden" name="name" value="#rc.name#">
+			<input type="hidden" name="step" value="#rc.step#">
+			<input type="hidden" name="group" value="#rc.group#">
+			<div>
+				<label>Label</label>
+				<input type="text" name="label" value="#rc.label#" class="span2" placeholder="e.g.: Location">
+			</div>
+			<div>
+				<label>Description</label>
+				<input type="text" name="description" value="#rc.description#" class="span5" placeholder="">
+			</div>
+			<div class="form-actions">
+				<button class="btn btn-primary" type="submit" >Save</button>
+			</div>
+		</fieldset>
+	</form>
+<!---
 <cfdump var="#rc.fields#">
 <h2>Fields</h2>
 <cfset counter = 1>
@@ -50,6 +61,6 @@
 			</tfoot>
 		</table>
 
-
+--->
 
 </cfoutput>

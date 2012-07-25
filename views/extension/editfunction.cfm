@@ -6,7 +6,7 @@
 	  <input type="hidden" name="name" value="#rc.name#">
   	  <input type="hidden" name="function" value="#rc.function#">
 	  <label>New File Name</label>
-  	  <input type="text" name="newfunctionname" value="#rc.function#">
+  	  <input type="text" name="newname" value="#rc.function#" />
 	  <label>Content</label>
 	  <textarea class="span10" rows="20" name="content">#HTMLeditformat(rc.functioncontent)#</textarea>
 	  <div class="form-actions">

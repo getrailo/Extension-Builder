@@ -16,7 +16,7 @@
 					{
 						$.ajax({
 							type:"GET"
-							, url: "licenses/" + $(this).val()
+							, url: "/licenses/" + $(this).val()
 							, dataType:"text"
 							, complete: function(data) {
 								$('##license').val(data.responseText).animate({opacity:1}, 1000)
@@ -30,11 +30,7 @@
 	<cfparam name="rc.js" default="#[]#">
 	<cfset arrayAppend(rc.js, js) />
 	
-	<div class="row-fluid">
-		<div class="span2">
-			<cfinclude template="localnav.cfm">
-		</div>
-		<div class="span10">
+
 			<h1>License</h1>
 			<p>Here you can add your own license to your extension, and select a template from some common licenses.
 				<br />The license templates were copied from <a href="http://www.opensource.org">opensource.org</a>
@@ -67,6 +63,4 @@
 					<button type="submit" class="btn btn-primary">Save License text</button>
 				</div>
 			</form>
-		</div>
-	</div>
 </cfoutput>

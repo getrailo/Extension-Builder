@@ -18,13 +18,10 @@
 </cfsavecontent>
 <cfset arrayAppend(rc.js, js)>
 
-<form action="#buildURL("extension.saveinfo")#" method="post">
+<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
 	<h1>Edit #v("label")#</h1>
-
-	<hr>
+	<hr/>
 	<div class="row-fluid">
-	
-	<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
 		<div class="span6">
 			<fieldset>
 			 	<legend>Extension Information</legend>
@@ -51,18 +48,35 @@
 				</div>				
 				
 				<div>
-					<label for="version">Version</label>
-					<input type="text" name="version" value="#v("version")#" class="span1" id="version" placeholder="1.0.0">
+					<label for="version" class="control-label">Version</label>
+					<div class="row">
+						<div class="span2">
+							<input type="text" name="version" value="#v("version")#" class="span2" id="version" placeholder="1.0.0">
+						</div>
+						<label for="auto_version_update" class="span3 checkbox">
+							<input type="checkbox" name="auto_version_update" value="true" id="auto_version_update" <cfif v('auto_version_update') eq true> checked</cfif>>
+							Auto update version
+							<i class="icon-question-sign" data-content="When checked, the version number will be increased on every update of the extension (adding items, editing details, etc.)<br />The current date-time will be used for incrementing: 1.2.0 will become 1.2.<i>#dateformat(now(), 'yyyymmdd')##timeformat(now(), 'HHmmss')#</i>" title="Auto-update version"></i>
+						</label>
+					</div>
 				</div>
 			 	<div>
-					<label for="type">Admin type (was #v("type")#)</label>
-					<select name="type" id="type">
-						<cfset type= v("type")>
-						<option value="server" <cfif type EQ "server">selected</cfif>>Server</option>
-						<option value="web" <cfif type EQ "web">selected</cfif>>Web</option>			
-						<option value="all" <cfif type EQ "all">selected</cfif>>Both Web and Server</option>			
-					</select>
-					<i class="icon-question-sign" data-content="If this extension will be available for the Server and/or Web Administrator" title="Admin type"></i>
+					<cfif rc.info.hasApplication>
+						<label for="type">Admin type</label>
+						<select name="type" id="type">
+							<option value="web">Web</option>			
+						</select>
+						<i class="icon-question-sign" data-content="This extension installs an application, so it can only be available for the Web Administrator" title="Admin type"></i>
+					<cfelse>
+						<label for="type">Admin type (was #v("type")#)</label>
+						<select name="type" id="type">
+							<cfset type= v("type")>
+							<option value="server" <cfif type EQ "server">selected</cfif>>Server</option>
+							<option value="web" <cfif type EQ "web">selected</cfif>>Web</option>			
+							<option value="all" <cfif type EQ "all">selected</cfif>>Both Web and Server</option>			
+						</select>
+						<i class="icon-question-sign" data-content="If this extension will be available for the Server and/or Web Administrator" title="Admin type"></i>
+					</cfif>
 			 	</div>
 			
 				<div>

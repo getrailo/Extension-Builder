@@ -20,6 +20,7 @@
 			</tbody>
 			</table>	
 	<div>
+	<!---
 		<h2>Installation Steps</h2>
 		<p>You can add a range of pages to gather information to help you install your application. Each step can have a group of input items that can help you select datasources, paths etc.</p>
 		<!--- Do the steps as LI's --->
@@ -47,10 +48,10 @@
 			</tbody>
 		</table>
 		<div class="form-actions">
-		<a href="#buildURL("extension.addstep?name=#rc.name#")#" type="submit" class="btn">Add New Step</a>
+		<a href="#buildURL("extension.editstep?name=#rc.name#")#" type="submit" class="btn">Add New Step</a>
 		</div>
 
-
+--->
 </cfoutput>
 		
 		

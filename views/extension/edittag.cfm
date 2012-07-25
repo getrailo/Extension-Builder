@@ -4,8 +4,8 @@
 	<p></p>
 	<form action="#buildURL("extension.savetag")#" class="<!--- progressuploader --->" method="post">
 	  <input type="hidden" name="name" value="#rc.name#">
-	  <label>Filename</label>
-	  #rc.tag#
+	  <label>New File Name</label>
+  	  <input type="text" name="newname" value="#rc.tag#" />
   	  <input type="hidden" name="tag" value="#rc.tag#">
 	
 	  <label>Content</label>

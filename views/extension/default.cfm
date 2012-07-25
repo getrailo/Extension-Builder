@@ -16,7 +16,7 @@
 			<th>Functions</th>
 			<th>Applications</th>
 			<th>Jars</th>
-			<th colspan="3" width="20%">
+			<th colspan="4" width="20%">
 			<a href="#buildURL("#me#.new")#" class="btn btn-success"><i class="icon-pencil icon-white"></i> New Extension</a>
 			</th>
 		</tr>
@@ -32,6 +32,7 @@
 				<td><cfif ext.capabilities.functions><i class="icon-ok"></i></cfif></td>
 				<td><cfif ext.capabilities.applications><i class="icon-ok"></i></cfif></td>			
 				<td><cfif ext.capabilities.jars><i class="icon-ok"></i></cfif></td>
+				<td><a class="btn btn-success" href="/ext/#ext.info.name#.zip"><i class="icon-download icon-white"></i> Download</a></td>
 				<td><a class="btn btn-primary" href="#buildURL("#me#.edit?name=#ext.info.name#")#"><i class="icon-edit icon-white"></i> Edit</a></td>
 				<td><a class="btn btn-danger" href="#buildURL("#me#.delete?name=#ext.info.name#")#"><i class="icon-trash icon-white"></i> Delete</a></td>
 				<td><a class="btn" href="#buildURL("#me#.publish?name=#ext.info.name#")#"><i class="icon-shopping-cart"></i> Publish</a></td>

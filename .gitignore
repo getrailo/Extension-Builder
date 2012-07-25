@@ -2,8 +2,9 @@
 /upload/*
 config.steps.xml
 /WEB-INF/
-
 build.xml
 cpd.xml
 ext
 results
+bin
+/temp-storeresult.html

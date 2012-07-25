@@ -1,3 +1,7 @@
+<cfif structKeyExists(url, "ajax")>
+	<cfoutput>#body#</cfoutput>
+	<cfexit method="exittemplate" />
+</cfif>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -25,8 +29,8 @@
              <li class="<!--- active --->">
                 <a href="#buildURL("provider")#">Extension Provider</a>
               </li>
-			  <li><a href="#buildURL("documentation")#">Documentation</a></li>
-			  <li><a href="#buildURL("resources")#">Resources</a></li>
+			  <li><a href="https://github.com/getrailo/Railo-Extension-Builder-SDK/wiki">Documentation</a></li>
+<!--- 			  <li><a href="#buildURL("resources")#">Resources</a></li> --->
             </ul>
           </div>
         </div>
@@ -35,6 +39,18 @@
 	</cfoutput>
 	
 	<div class="container-fluid">
+		<cfif structKeyExists(rc, "message") and Len(rc.message)>
+			<div class="alert alert-success">
+				<a class="close" data-dismiss="alert">x</a>
+				<cfoutput>#rc.message#</cfoutput>
+			</div>
+		</cfif>
+		<cfif structKeyExists(rc, "error") and Len(rc.error)>
+			<div class="alert alert-error">
+				<a class="close" data-dismiss="alert">x</a>
+				<cfoutput>#rc.error#</cfoutput>
+			</div>
+		</cfif>
 		<cfoutput>#body#</cfoutput>	
 		
 	 <hr>
