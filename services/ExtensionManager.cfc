@@ -8,7 +8,7 @@ component output="false"{
 		return XMLParse(config);
 	}
 	
-	private function setConfig(String extensionName, XML xmlDocument){
+	public function setConfig(String extensionName, XML xmlDocument){
 		var prettyXml = new services.XMLFunctions().indentXML(xmlDocument);
 		fileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", prettyXml);
 	}
