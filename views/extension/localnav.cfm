@@ -12,6 +12,7 @@
 			<li class="nowrap"><a href="#buildURL("extension.addJars?name=#rc.name#")#">Java Libraries <i class="icon-question-sign" data-content="Allows you to add any Java libraries you want to deploy with your extension" title="Java Libraries"></i></a></li>	
 			<li class="nav-header nowrap">Install Settings</li>	
 			<li class="nowrap"><a href="#buildURL("extension.steps?name=#rc.name#")#">Step Screens <i class="icon-question-sign" data-content="Step screens allow you to gather install information before Railo actually installs your extension. You can then use this information to modify the install steps" title="Steps"></i></a></li>	
+			<li class="nowrap"><a href="#buildURL("extension.editconfig?name=#rc.name#")#">Edit Config.xml <i class="icon-question-sign" data-content="Manually edit the Config.xml that describes this plugin" title="Config.xml"></i></a></li>
 		</ul>
 	</div>
 </cfoutput>

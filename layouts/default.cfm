@@ -6,8 +6,8 @@
 <html>
 <head>
 	<title>Extension Builder SDK</title>
-	<link rel="stylesheet" href="/css/bootstrap.css">
-	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/styles.css">
 	<cfparam name="rc.js" default="#[]#">
 	<style>
 		BODY {
@@ -29,8 +29,9 @@
              <li class="<!--- active --->">
                 <a href="#buildURL("provider")#">Extension Provider</a>
               </li>
-			  <li><a href="#buildURL("documentation")#">Documentation</a></li>
-			  <li><a href="#buildURL("resources")#">Resources</a></li>
+			  <li><a href="https://github.com/getrailo/Railo-Extension-Builder-SDK/wiki" target="_blank">Documentation</a></li>
+		      <li><a href="https://github.com/getrailo/Railo-Extension-Builder-SDK/issues" target="_blank">Issues</a></li>
+<!--- 			  <li><a href="#buildURL("resources")#">Resources</a></li> --->
             </ul>
           </div>
         </div>
@@ -66,24 +67,24 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 <!---     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> --->
-    <script src="/js/jquery.js"></script>
-    <script src="/js/google-code-prettify/prettify.js"></script>
-    <script src="/js/bootstrap-transition.js"></script>
-    <script src="/js/bootstrap-alert.js"></script>
-    <script src="/js/bootstrap-modal.js"></script>
-    <script src="/js/bootstrap-dropdown.js"></script>
-    <script src="/js/bootstrap-scrollspy.js"></script>
-    <script src="/js/bootstrap-tab.js"></script>
-    <script src="/js/bootstrap-tooltip.js"></script>
-    <script src="/js/bootstrap-popover.js"></script>
-    <script src="/js/bootstrap-button.js"></script>
-    <script src="/js/bootstrap-collapse.js"></script>
-    <script src="/js/bootstrap-carousel.js"></script>
-    <script src="/js/bootstrap-typeahead.js"></script>
-    <script src="/js/jquery.form.js"></script>
-    <script src="/js/tooltips.js"></script>
-    <script src="/js/upload.js"></script>
-    <script src="/js/jstree.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/google-code-prettify/prettify.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+    <script src="js/jquery.form.js"></script>
+    <script src="js/tooltips.js"></script>
+    <script src="js/upload.js"></script>
+    <script src="js/jstree.js"></script>
 	<cfloop array="#rc.js#" index="js">
 	<cfoutput>#js#</cfoutput>
 	</cfloop>
