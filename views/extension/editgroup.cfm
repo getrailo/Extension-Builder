@@ -26,8 +26,11 @@
 				<input type="text" name="description" value="#rc.description#" class="span5" placeholder="">
 			</div>
 			<div class="form-actions">
-				<button class="btn btn-primary" type="submit" >Save</button>
-			</div>
+				<button class="btn btn-primary" type="submit">Save</button>
+				<cfif rc.label neq "">
+					<a class="btn btn-danger" href="#buildURL('extension.removegroup?name=#rc.name#&step=#rc.step#&group=#rc.group#')#"><i class="icon-trash icon-white"></i> Delete</a>
+				</cfif>
+	</div>
 		</fieldset>
 	</form>
 <!---

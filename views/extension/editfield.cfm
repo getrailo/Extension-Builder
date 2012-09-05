@@ -109,6 +109,9 @@
 		</fieldset>
 		<div class="form-actions">
 			<button class="btn btn-primary" type="submit">Save</button>
+			<cfif not structIsEmpty(rc.item)>
+				<a class="btn btn-danger" href="#buildURL('extension.removefield?name=#rc.name#&step=#rc.step#&group=#rc.group#&field=#rc.field#')#"><i class="icon-trash icon-white"></i> Delete</a>
+			</cfif>
 		</div>
 	</form>
 </cfoutput>

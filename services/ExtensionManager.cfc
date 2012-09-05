@@ -212,8 +212,20 @@ component output="false"{
 
 		checkAutoVersionUpdate(extensionName);
 	}
-	
-	
+
+	function removeStep(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		arrayDeleteAt(configXML.config.step, rc.step);
+
+		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(rc.name);
+	}
+
+
+
+
 	function saveGroup(String extensionName, Numeric step=0, Numeric group=0, String label, String description=""){
 		var configXML = getConfig(extensionName);
 		
@@ -249,6 +261,16 @@ component output="false"{
 		checkAutoVersionUpdate(extensionName);
 	}
 
+	function removeGroup(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		arrayDeleteAt(configXML.config.step[rc.step].group, rc.group);
+
+		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(rc.name);
+	}
+
 
 	function saveField(any rc)
 	{
@@ -275,9 +297,9 @@ component output="false"{
 		newItem.XMLAttributes['replacestring'] = rc.replacestring;
 		newItem.XMLAttributes['replacefilenames'] = rereplace(trim(rc.replacefilenames), '[\r\n]+', ',', 'all');
 		newItem.XMLAttributes['fieldusage'] = rc.fieldusage;
-		
-		// for later: add an optional description for the field
-		//	newItem.XMLAttributes['description'] = rc.label;
+
+// for later: add an optional description for the field
+//	newItem.XMLAttributes['description'] = rc.label;
 
 		if (rc.type eq "password" or rc.type eq "text")
 		{
@@ -305,7 +327,17 @@ component output="false"{
 		checkAutoVersionUpdate(rc.name);
 	}
 
-	
+
+	function removeField(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		arrayDeleteAt(configXML.config.step[rc.step].group[rc.group].item, rc.field);
+		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(rc.name);
+	}
+
+
 	function addFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
 		if(!DirectoryExists(itemPath)){

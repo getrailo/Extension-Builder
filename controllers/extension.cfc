@@ -303,7 +303,13 @@ component {
 		variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
 		variables.fw.redirect("extension.steps?name=#rc.name#");
 	}
-	
+
+	function removeStep(any rc)
+	{
+		variables.man.removeStep(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&message=The step has been removed");
+	}
+
 	function editGroup(any rc){
 		var stepXML = variables.man.getConfig(rc.name);
 		if (!structKeyExists(rc, "group"))
@@ -322,13 +328,19 @@ component {
 		rc.label = isDefined("rc.groupxml.XmlAttributes.label") ? rc.groupxml.XmlAttributes.label : "";
 		rc.description = isDefined("rc.groupxml.XmlAttributes.description") ? rc.groupxml.XmlAttributes.description : "";
 	}
-	
+
 	function saveGroup(any rc){
 		variables.man.saveGroup(rc.name, rc.step, rc.group, rc.label, rc.description);
 		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	}
-	
-	
+
+	function removeGroup(any rc)
+	{
+		variables.man.removeGroup(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&message=The group has been removed");
+	}
+
+
 	function editField(any rc){
 		var stepXML = variables.man.getConfig(rc.name);
 		if (!structKeyExists(rc, "field"))
@@ -370,7 +382,12 @@ component {
 		variables.man.saveField(rc);
 		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	}
-	
+
+	function removefield(any rc)
+	{
+		variables.man.removeField(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#&message=The field has been removed");
+	}
 	
 	/*
 		Publish to ext store

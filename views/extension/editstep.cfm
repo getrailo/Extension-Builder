@@ -25,6 +25,9 @@
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" type="submit" >Save</button>
+				<cfif rc.label neq "">
+					<a class="btn btn-danger" href="#buildURL('extension.removestep?name=#rc.name#&step=#rc.step#')#"><i class="icon-trash icon-white"></i> Delete</a>
+				</cfif>
 			</div>
 		</fieldset>
 	</form>
