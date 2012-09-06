@@ -8,3 +8,5 @@ ext
 results
 bin
 /temp-storeresult.html
+/.idea/
+/*.iml
