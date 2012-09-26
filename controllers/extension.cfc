@@ -169,7 +169,7 @@ component extends="services.ExtensionsInfo"
 		variables.man.saveInfo(rc.name, {name:rc.name, licenseTemplate:replace(rc.licenseTemplate, '.txt', '')});
 		variables.man.setLicenseText(rc.name, rc.license);
 		rc.message = "Your license text has been saved to the extension";
-		variables.fw.redirect("extension.installactions?name=#rc.name#&message=#rc.message#");
+		variables.fw.redirect("extension.addApplications?name=#rc.name#&message=#rc.message#");
 	}
 	
 	
@@ -212,7 +212,18 @@ component extends="services.ExtensionsInfo"
 		rc.jars = variables.man.listFolderContents(rc.name, "jars");	
 	}
 	function addApplications(rc){
-		rc.application = variables.man.listFolderContents(rc.name, "applications");	
+		var apps = variables.man.listFolderContents(rc.name, "applications");
+		rc.application = [];
+		for (var app in apps)
+		{
+			if (listLast(app, '.') eq "lnk")
+			{
+				arrayAppend(rc.application, {type:"URL", name:app, url:variables.man.getFileContent(rc.name, "applications", app)});
+			} else
+			{
+				arrayAppend(rc.application, {type:"file", name:app});
+			}
+		}
 		rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
 	}
 	
@@ -230,22 +241,38 @@ component extends="services.ExtensionsInfo"
 		_uploadFile(rc, "jarUpload", "jar", "jar");
 	}
 	function uploadapplication(any rc) {
-		// upload, but do not redirect yet
 		var type = "application";
-		_uploadFile(rc, "appzip", "application", "zip", false);
-		if (structKeyExists(rc, "uploadFailed"))
+
+		if (rc.apptype eq "url")
 		{
-			variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
+			if (isValid("url", rc.appurl))
+			{
+				var appname = listLast(rc.appurl, "/");
+				var filepath = "#getTempDirectory()##appname#.lnk";
+				fileWrite(filepath, rc.appurl);
+				variables.man.addFile(rc.name, filepath, "#type#s");
+				rc.response = "The #type# URL has been added";
+			} else
+			{
+				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#urlencodedformat('The URL [#rc.appurl#] you provided is not valid')#");
+			}
 		} else
 		{
-			// update the install type of the extension to Web
-			if (rc.info.type neq "web")
+			// upload, but do not redirect yet
+			_uploadFile(rc, "appzip", "application", "zip", false);
+			if (structKeyExists(rc, "uploadFailed"))
 			{
-				variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
-				rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
 			}
-			variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 		}
+
+		// update the install type of the extension to Web
+		if (rc.info.type neq "web")
+		{
+			variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
+			rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+		}
+		variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 	}
 	
 	

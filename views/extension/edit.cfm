@@ -18,6 +18,27 @@
 </cfsavecontent>
 <cfset arrayAppend(rc.js, js)>
 
+<cfsavecontent variable="js">
+	<script type="text/javascript">
+		$(function(){
+			$('##imgtypeurl,##imgtypefile').click(function(){
+				var imgfieldurl = $('##imageurl');
+				var imgfieldfile = $('##imagefile');
+				if ($('##imgtypefile:checked').length)
+				{
+					imgfieldfile.show().prop('disabled', null);
+					imgfieldurl.hide().prop('disabled', 'disabled');
+				} else
+				{
+					imgfieldurl.show().prop('disabled', null);
+					imgfieldfile.hide().prop('disabled', 'disabled');
+				};
+			}).filter(':first').triggerHandler('click');
+		});
+	</script>
+</cfsavecontent>
+<cfset arrayAppend(rc.js, js) />
+
 <form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
 	<h1>Edit #v("label")#</h1>
 	<hr/>
@@ -147,23 +168,10 @@
 							or &nbsp; <input type="radio" name="imgtype" style="display:inline;" id="imgtypefile" value="file"<cfif imgtype eq 'file'> checked</cfif> />
 							<cfif v("image") neq "" and imgtype eq "file">New file<cfelse>File</cfif>
 						</label>
-<cfsavecontent variable="js">
-	<script type="text/javascript">
-		$(function(){
-			$('##imgtypeurl,##imgtypefile').click(function(){
-				var imgfield = $('##image');
-				var isfile = $('##imgtypefile:checked').length;
-				imgfield.prop('placeholder', isfile ? '':'http://mydomain.com/image.png')
-					.prop('type', isfile ? 'file':'text');
-			}).filter(':first').triggerHandler('click');
-		});
-	</script>
-</cfsavecontent>
-<cfparam name="rc.js" default="#[]#">
-<cfset arrayAppend(rc.js, js) />
 						<br clear="all" />
 					</div>
-					<input type="text" name="image" value="#v("image")#" id="image" class="span4" placeholder="http://mydomain.com/image.png">
+					<input type="text" name="image" value="<cfif imgtype eq 'url'>#v("image")#</cfif>" id="imageurl" class="span4" placeholder="http://mydomain.com/image.png">
+					<input type="file" name="image" id="imagefile" class="span4" />
 					<i class="icon-question-sign" data-content="Upload an image, or provide an absolute URL to the image that is the logo for your Extension" title="ImageURL"></i>
 				</div>
 			 	<div class="control-group">

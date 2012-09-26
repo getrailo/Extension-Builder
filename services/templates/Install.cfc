@@ -63,11 +63,24 @@
 
 			<!--- loop over the applications list (should be one item) --->
 			<cfloop list="#variables.appl#" index="local.app">
-				
+				<!--- download the file? --->
+				<cfif listLast(local.app, '.') eq "lnk">
+					<cfset local.dlURL = fileRead('#path#applications/#local.app#') />
+					<cfhttp url="#local.dlURL#" timeout="9999"
+						getasbinary="auto" result="local.httpData" throwonerror="true" path="#getTempDirectory()#" file="#local.app#.zip" />
+					<!--- check if file is a zip file --->
+					<cfif not isZipFile(getTempDirectory() & local.app & ".zip")>
+						<cfthrow message="The file downloaded from [#local.dlURL#] is not a valid zip file!" />
+					</cfif>
+					<cfset local.appPath = getTempDirectory() & local.app & ".zip" />
+				<cfelse>
+					<cfset local.appPath = "#path#applications/#local.app#" />
+				</cfif>
+
 				<!--- Check if we need to replace values in the code --->
 				<cfif arrayLen( _getReplaceValuesFromConfig(arguments.path) )>
 					<cfset var tempdir = GetTempDirectory() & "SDK/" />
-					<cfzip action="unzip" file="#path#applications/#local.app#"
+					<cfzip action="unzip" file="#local.appPath#"
 					destination="#tempdir#" overwrite="true" recurse="true" />
 					
 					<!--- replace the values --->
@@ -77,7 +90,7 @@
 					<cfset _moveDirectoryContents(from:tempdir, to:installpath) />
 
 				<cfelse>
-					<cfzip action="unzip" file="#path#applications/#local.app#"
+					<cfzip action="unzip" file="#local.appPath#"
 					destination="#installpath#" overwrite="true" recurse="true" />
 				</cfif>
 			</cfloop>

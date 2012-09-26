@@ -196,8 +196,7 @@ component extends="ExtensionsInfo"
 	}
 	
 	function getFileContent(String extensionName, String folder, String filename){
-		var ret = "";
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder##folder eq '' ? '':'/'##filename#";
 		if(!fileExists(itemPath)){
 				return "";
 		}
@@ -399,12 +398,7 @@ component extends="ExtensionsInfo"
 	
 	function getLicenseText(String extensionName)
 	{
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
-		if (fileExists(itemPath))
-		{
-			return fileRead(itemPath);
-		}
-		return "";
+		return getFileContent(extensionName, "", "License.txt");
 	}
 
 	function setLicenseText(String extensionName, String licenseText)
