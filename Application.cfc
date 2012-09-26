@@ -3,7 +3,8 @@ component extends="org.corfield.framework" {
 	this.name = "Extension Builder SDK";
 	
 	variables.framework = {
-		reloadApplicationOnEveryRequest = true
+		reloadApplicationOnEveryRequest = true,
+		generateSES = false
 	};
 		/*
 	variables.framework = {

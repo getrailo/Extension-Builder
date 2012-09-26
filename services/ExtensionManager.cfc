@@ -8,7 +8,7 @@ component output="false"{
 		return XMLParse(config);
 	}
 	
-	private function setConfig(String extensionName, XML xmlDocument){
+	public function setConfig(String extensionName, XML xmlDocument){
 		var prettyXml = new services.XMLFunctions().indentXML(xmlDocument);
 		fileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", prettyXml);
 	}
@@ -125,6 +125,9 @@ component output="false"{
 	
 	function createNewExtension(String extensionName, String extensionLabel){
 		//Need to create the config.xml from the information provided
+		
+
+		
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XMML config
@@ -147,8 +150,12 @@ component output="false"{
 			}
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
+		if(!DirectoryExists(expandPath("ext/"))){
+			DirectoryCreate(expandPath("ext/"));
+		}
+		
 		//Create a new file name after the name
-		zip action="zip" file="#expandpath("/ext/#extensionName#.zip")#"{
+		zip action="zip" file="#expandpath("ext/#extensionName#.zip")#"{
 			zipparam content=toString(xmlConfig) entrypath="config.xml";
 		}
 		

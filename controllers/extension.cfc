@@ -272,10 +272,24 @@ component {
 	}
 		
 	
+	/*
+	 * Config.xml
+	 **/
 	
+	function editconfig(any rc){
+		///need to load up from XML file
+		rc.config_xml = variables.man.getFileContent(rc.name, "", "config.xml");
+	}
+	
+	
+	function saveconfig(any rc){
+		variables.man.setConfig(rc.name, XMLParse(rc.config_xml));
+		variables.fw.redirect("extension.editconfig?name=#rc.name#&message=The config has been saved");
+	}
 	/*
 		Steps 
 	*/
+	
 	
 	function steps(any rc){
 			rc.stepsinfo = XMLSearch(variables.man.getConfig(rc.name), "/config/step");
