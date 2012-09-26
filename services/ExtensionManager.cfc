@@ -49,9 +49,8 @@ component extends="ExtensionsInfo"
 	
 	function saveInfoToXML(String extensionName, Struct info)
 	{
-		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml";
-		var extXML = XMLParse(FileRead(extPath));
-		
+		var extXML = getConfig(extensionName);
+
 		// add uploaded image file info the extension zip file
 		if (structKeyExists(info, "image") and info.image neq "" and not isValid("url", info.image) and fileExists(info.image))
 		{
@@ -67,7 +66,8 @@ component extends="ExtensionsInfo"
 		}
 		var infoItem = extXML.config.info;
 		
-		loop collection="#info#" item="local.i"{
+		loop collection="#info#" item="local.i"
+		{
 			var itemIndex = XMLChildPos(infoItem, i, 1);
 			var item = infoItem.XMLChildren[itemIndex];
 			if(itemIndex LT 0){
@@ -81,7 +81,7 @@ component extends="ExtensionsInfo"
 				item.XMLText = info[i];
 			}	
 		}
-		FileWrite(extPath, toString(extXML));
+		setConfig(extensionName, toString(extXML));
 	}
 	
 	
