@@ -1,4 +1,5 @@
-component output="false"{
+component extends="ExtensionsInfo"
+{
 /* This component provides some nice functions to be able to read from the extension zip files */
 	
 	variables.cdata = "description"; //In case we add more
@@ -127,24 +128,28 @@ component output="false"{
 		//Need to create the config.xml from the information provided
 		var uuid = CreateUUID();
 		var created = Now();
-		//Create THE XMML config
+		//Create THE XML config
 
-		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal,packaged-by,licenseTemplate");
 		var xmlConfig = XMLNew(true);
 		xmlConfig.XMLRoot = XMLElemNew(xmlConfig, "config");
 		var infoel = XMLElemNew(xmlConfig.XMLRoot, "info");
 		
-			//Add some default values
-			addElementsToInfo(infoel, "name", extensionName);
-			addElementsToInfo(infoel, "label", extensionLabel);
-			addElementsToInfo(infoel, "id", CreateUUID());
-			addElementsToInfo(infoel, "type", "server");
-			addElementsToInfo(infoel, "version", "1.0.0");
-			addElementsToInfo(infoel, "created", Now());
-			//Now add the rest of the tags
-			loop array="#validFields#" index="v"{
-				addElementsToInfo(infoel, v, "");
+		//Add some default values
+		addElementsToInfo(infoel, "name", extensionName);
+		addElementsToInfo(infoel, "label", extensionLabel);
+		addElementsToInfo(infoel, "id", CreateUUID());
+		addElementsToInfo(infoel, "type", "server");
+		addElementsToInfo(infoel, "version", "1.0.0");
+		addElementsToInfo(infoel, "created", Now());
+		//Now add the rest of the tags
+		loop list="#variables.validExtensionFields#" index="local.v"
+		{
+			if (not structKeyExists(infoel, local.v))
+			{
+				addElementsToInfo(infoel, local.v, "");
 			}
+		}
+
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
 		//Create a new file name after the name

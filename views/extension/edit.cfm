@@ -6,7 +6,7 @@
 <cffunction name="v" output="false">
 	<cfargument name="f">
 	<cfreturn StructKeyExists(rc.info, f) ? Trim(rc.info[f]) : "">
-</cffunction>	
+</cffunction>
 <cfsavecontent variable="js">
 	<script>
 		var categories ="Framework,CMS,Core,Gateway,Database,Forum,E-Commerce,Demo".split(",");
@@ -23,31 +23,67 @@
 	<hr/>
 	<div class="row-fluid">
 		<div class="span6">
+			<!--- pre-fill form option, if data is not yet entered --->
+			<cfif arrayLen(rc.extensions) gt 1 and (v('author') eq "" or structKeyExists(rc, "prefillfrom"))>
+				<cfsavecontent variable="js">
+					<script>
+						$('##prefillfrom').change(function(){
+							self.location.href = '#buildURL("extension.edit?name=#rc.name#&prefillfrom=")#'+$(this).val();
+						});
+
+						/* If we just overrode data, highlight those fields */
+						<cfif structKeyExists(rc, "overrideData")>
+							<cfloop collection="#rc.overrideData#" item="key">
+								<cfif rc.overrideData[key] neq "" and rc.overrideData[key] eq rc.info[key]>
+									$('###lCase(key)#').parents('div.control-group:first').addClass('warning');
+								</cfif>
+							</cfloop>
+						</cfif>
+					</script>
+				</cfsavecontent>
+				<cfset arrayAppend(rc.js, js)>
+
+				<cfparam name="rc.prefillfrom" default="" />
+				<fieldset>
+					<legend>Use data from existing extension:</legend>
+					<div>
+						<select name="prefillfrom" id="prefillfrom" class="span4">
+							<option value=""> - none</option>
+							<cfloop array="#rc.extensions#" index="ext">
+								<cfif ext.info.name neq rc.name>
+									<option value="#ext.info.name#"<cfif ext.info.name eq rc.prefillfrom> selected</cfif>>#ext.info.label#</option>
+								</cfif>
+							</cfloop>
+						</select>
+					</div>
+				</fieldset>
+			</cfif>
+
 			<fieldset>
 			 	<legend>Extension Information</legend>
-			 	<div>
+			 	<div class="control-group">
 					<label for="label">Display Name</label>
 					<input type="text" name="label" value="#v("label")#" class="span4" id="label" placeholder="My Great Extension">
 				</div>
-				<div>
+				<div class="control-group">
 			 		<label>Short Name:</label>
 					#v("name")#
 			 		<input type="hidden" name="name" value="#v("name")#" id="Name" placeholder="MyExtension"/>	
 			 	</div>
-				<div>
+				<div class="control-group">
 					<label for="author">Author</label>
 					<input type="text" name="author" value="#v("author")#" id="author" placeholder="John Smith">
 				</div>
-				<div>
+				<div class="control-group">
 					<label for="email">Email</label>
 					<input type="text" name="email" value="#v("email")#" id="email" placeholder="John.Smith@getrailo.org">
 				</div>
-				<div>
+				<div class="control-group">
 					<label for="packaged-by">Packaged By</label>
-					<input type="text" name="packaged-by" value="#v("packaged-by")#" id="email" placeholder="John.Smith@getrailo.org">
+					<input type="text" name="packaged-by" value="#v("packaged-by")#" id="packaged-by" placeholder="John.Smith@getrailo.org">
 				</div>				
 				
-				<div>
+				<div class="control-group">
 					<label for="version" class="control-label">Version</label>
 					<div class="row">
 						<div class="span2">
@@ -60,7 +96,7 @@
 						</label>
 					</div>
 				</div>
-			 	<div>
+			 	<div class="control-group">
 					<cfif rc.info.hasApplication>
 						<label for="type">Admin type</label>
 						<select name="type" id="type">
@@ -79,24 +115,24 @@
 					</cfif>
 			 	</div>
 			
-				<div>
+				<div class="control-group">
 					<label for="description">Description</label>
-					<textarea name="description" rows="8" class="span5">#v("description")#</textarea>
+					<textarea name="description" rows="8" class="span5" id="description">#v("description")#</textarea>
 				</div>
 				
-				<div>
+				<div class="control-group">
 					<label for="category">Category</label>
 					<input type="text" name="category" class="typeahead" value="#v("category")#" id="category" placeholder="Gateway">
 					<i class="icon-question-sign" data-content="You can define the category that your extension belongs to" title="Category"></i>
 				</div>
-				</fieldset>
+			</fieldset>
 		</div>
 		<div class="span6">
 			<fieldset>
 				<legend>Resources</legend>
-				<div>
+				<div class="control-group">
 					<cfset imgtype = isvalid('url', v("image")) ? 'url':'file' />
-					<label for="imgurl">Image</label>
+					<label>Image</label>
 					<cfif imgtype eq 'file' and v('image') neq "">
 						<input type="hidden" name="oldimage" value="#v('image')#" />
 						Current uploaded file: <a href="/ext#v('image')#" title="Click to view full size"><img src="/ext#v('image')#" alt="Logo file" style="height:30px;" /></a>
@@ -130,25 +166,25 @@
 					<input type="text" name="image" value="#v("image")#" id="image" class="span4" placeholder="http://mydomain.com/image.png">
 					<i class="icon-question-sign" data-content="Upload an image, or provide an absolute URL to the image that is the logo for your Extension" title="ImageURL"></i>
 				</div>
-			 	<div>
+			 	<div class="control-group">
 					<label for="mailinglist">Mailing List</label>
 					<input type="text" name="mailinglist" value="#v("mailinglist")#" class="span4" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
 				</div>
 				
-				<div>
-					<label for="supportURL">Support URL</label>
-					<input type="text" name="support" value="#v("support")#" id="supportURL" class="span4" placeholder="http://groups.google.com/group/railo-beta">
+				<div class="control-group">
+					<label for="support">Support URL</label>
+					<input type="text" name="support" value="#v("support")#" id="support" class="span4" placeholder="http://groups.google.com/group/railo-beta">
 				</div>
 				
-				<div>
-					<label for="documentationURL">Documentation URL</label>
-					<input type="text" name="documentation" value="#v("documentation")#" class="span4" id="documentationURL" placeholder="http://groups.google.com/group/railo-beta">
+				<div class="control-group">
+					<label for="documentation">Documentation URL</label>
+					<input type="text" name="documentation" value="#v("documentation")#" class="span4" id="documentation" placeholder="http://groups.google.com/group/railo-beta">
 				</div>
 			</fieldset>
 			
 			<fieldset>
 				<legend>Payment / donation Information</legend>
-				<div>
+				<div class="control-group">
 					<label for="paypal">Paypal Address</label>
 					<input type="text" name="paypal" value="#v("paypal")#" id="paypal" placeholder="joe.user@mydomain.com">
 

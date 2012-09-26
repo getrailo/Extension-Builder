@@ -1,5 +1,8 @@
-component {
+component extends="services.ExtensionsInfo"
+{
+
 	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation, before_uninstall, after_uninstall");
+
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
@@ -18,19 +21,9 @@ component {
 	}
 
 	function default(any rc){
-		var ep = new ExtensionProvider();
-		var remoteExtensions = ep.listApplications();
-
-		rc.extensions = [];
-
-		loop query="remoteExtensions"{
-				var ext = {};
-					ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
-					ext.capabilities = variables.man.getCapability(ext.info.name);
-				ArrayAppend(rc.extensions, ext);
-		}
+		rc.extensions = _getAvailableExtensions();
 	}
-	
+
 	function new(any rc) {
 		rc.info = {};
 		//variables.fw.setView("extension.edit");
@@ -62,9 +55,7 @@ component {
 	
 	function saveInfo(any rc) {
 		param name="rc.auto_version_update" default="false";
-		
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by,licenseTemplate,StoreID,auto_version_update";
-		
+
 		var dataToSend = duplicate(rc);
 		
 		// upload image?
@@ -101,7 +92,7 @@ component {
 		for (var i=listlen(list); i>0; i--)
 		{
 			c = listGetAt(list, i);
-			if(!ListFindNoCase(validFields,c)){
+			if(!ListFindNoCase(variables.validExtensionFields, c)){
 				StructDelete(dataToSend, c);
 			}
 		}
@@ -137,11 +128,21 @@ component {
 
 	}
 	
-	function edit(any rc) {
+	function edit(any rc)
+	{
 		// get info whether this ext installs an application.
 		rc.info.hasApplication = hasApplication(rc.name);
+
+		rc.extensions = _getAvailableExtensions();
+
+		// option to pre-fill form with values of existing extension
+		if (structKeyExists(rc, "prefillfrom") && rc.prefillfrom neq "")
+		{
+			rc.overrideData = variables.man.getInfo(rc.prefillfrom);
+			_overrideEmptyValues(rc.info, rc.overrideData);
+		}
 	}
-	
+
 	function hasApplication(string name)
 	{
 		var extFile = 'zip://#expandPath("/ext/#arguments.name#.zip")#';
@@ -463,7 +464,7 @@ component {
 		// file might have been moved to a new web context or been tampered with; delete it
 		} catch(any)
 		{
-//			fileDelete(file);
+			fileDelete(file);
 			return {};
 		}
 	}
@@ -536,4 +537,31 @@ component {
 		}
 		return;
 	}
+
+	private Array function _getAvailableExtensions()
+	{
+		var ret = [];
+		var ep = new ExtensionProvider();
+		var remoteExtensions = ep.listApplications();
+
+		loop query="remoteExtensions"{
+			var ext = {};
+			ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
+			ext.capabilities = variables.man.getCapability(ext.info.name);
+			ArrayAppend(ret, ext);
+		}
+		return ret;
+	}
+
+	private void function _overrideEmptyValues(required Struct old, required Struct new)
+	{
+		for (var key in arguments.new)
+		{
+			if (not structKeyExists(arguments.old, key) or arguments.old[key] eq "")
+			{
+				arguments.old[key] = arguments.new[key];
+			}
+		}
+	}
+
 }

@@ -12,9 +12,9 @@ component {
 		var uuid = CreateUUID();
 		var created = Now();
 		var xmlTmpl = FileRead("config.template.xml");
-			xmlConfig = Replace(xmlTmpl, "${id}", uuid, "all");
+		var	xmlConfig = Replace(xmlTmpl, "${id}", uuid, "all");
 			xmlConfig = Replace(xmlConfig, "${created}", created, "all");
-		var replacements = ListToArray("id,version,name,type,label,description,created,category,author,image,mailinglist,support,documentation");
+		var replacements = ListToArray("id,version,name,email,type,label,description,created,category,author,image,mailinglist,support,documentation");
 		
 		for(r in replacements){
 		
