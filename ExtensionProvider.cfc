@@ -26,7 +26,7 @@
 		<cfset var extensions = DirectoryList(extensionPath, false,"name","*.zip")>
 		
 		<cfloop array="#extensions#" index="local.ext">
-			<cffile action="read" file="zip://#expandPath("/ext/#ext#")#!/config.xml" variable="config">
+			<cffile action="read" file="zip://#expandPath("/ext/#local.ext#")#!/config.xml" variable="config">
 			<cfset info = XMLParse(config)>
 			
 	        <cfset QueryAddRow(apps)>

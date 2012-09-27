@@ -2,14 +2,14 @@
 <cfsavecontent variable="pageScripts">
 <script>
 	$(function(){
-		var myregexp = new RegExp("[\W]");
 		$("#label").keyup(function(){
-			
-			var cleanName = $(this).val().toLowerCase().replace(/ /g,"-");
-			cleanName = cleanName.replace("/", "-");
-		
+			// replace all non-A-Z and 0-9 to dashes
+			var cleanName = $(this).val().toLowerCase().replace(/[^0-9a-z]+/g,"-");
+			// remove dashes at start and end
+			cleanName = cleanName.replace(/(^-|-$)/g, "");
+
 			$("#name").val(cleanName);
-		});
+		}).triggerHandler('keyup');
 		
 		//Setup the error handling for items that have a data-required attribute
 		

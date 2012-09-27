@@ -1,5 +1,8 @@
-component {
+component extends="services.ExtensionsInfo"
+{
+
 	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation, before_uninstall, after_uninstall");
+
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
@@ -18,19 +21,9 @@ component {
 	}
 
 	function default(any rc){
-		var ep = new ExtensionProvider();
-		var remoteExtensions = ep.listApplications();
-
-		rc.extensions = [];
-
-		loop query="remoteExtensions"{
-				var ext = {};
-					ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
-					ext.capabilities = variables.man.getCapability(ext.info.name);
-				ArrayAppend(rc.extensions, ext);
-		}
+		rc.extensions = _getAvailableExtensions();
 	}
-	
+
 	function new(any rc) {
 		rc.info = {};
 		//variables.fw.setView("extension.edit");
@@ -62,9 +55,7 @@ component {
 	
 	function saveInfo(any rc) {
 		param name="rc.auto_version_update" default="false";
-		
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by,licenseTemplate,StoreID,auto_version_update";
-		
+
 		var dataToSend = duplicate(rc);
 		
 		// upload image?
@@ -101,7 +92,7 @@ component {
 		for (var i=listlen(list); i>0; i--)
 		{
 			c = listGetAt(list, i);
-			if(!ListFindNoCase(validFields,c)){
+			if(!ListFindNoCase(variables.validExtensionFields, c)){
 				StructDelete(dataToSend, c);
 			}
 		}
@@ -137,11 +128,21 @@ component {
 
 	}
 	
-	function edit(any rc) {
+	function edit(any rc)
+	{
 		// get info whether this ext installs an application.
 		rc.info.hasApplication = hasApplication(rc.name);
+
+		rc.extensions = _getAvailableExtensions();
+
+		// option to pre-fill form with values of existing extension
+		if (structKeyExists(rc, "prefillfrom") && rc.prefillfrom neq "")
+		{
+			rc.overrideData = variables.man.getInfo(rc.prefillfrom);
+			_overrideEmptyValues(rc.info, rc.overrideData);
+		}
 	}
-	
+
 	function hasApplication(string name)
 	{
 		var extFile = 'zip://#expandPath("/ext/#arguments.name#.zip")#';
@@ -168,7 +169,7 @@ component {
 		variables.man.saveInfo(rc.name, {name:rc.name, licenseTemplate:replace(rc.licenseTemplate, '.txt', '')});
 		variables.man.setLicenseText(rc.name, rc.license);
 		rc.message = "Your license text has been saved to the extension";
-		variables.fw.redirect("extension.installactions?name=#rc.name#&message=#rc.message#");
+		variables.fw.redirect("extension.addApplications?name=#rc.name#&message=#rc.message#");
 	}
 	
 	
@@ -211,7 +212,18 @@ component {
 		rc.jars = variables.man.listFolderContents(rc.name, "jars");	
 	}
 	function addApplications(rc){
-		rc.application = variables.man.listFolderContents(rc.name, "applications");	
+		var apps = variables.man.listFolderContents(rc.name, "applications");
+		rc.application = [];
+		for (var app in apps)
+		{
+			if (listLast(app, '.') eq "lnk")
+			{
+				arrayAppend(rc.application, {type:"URL", name:app, url:variables.man.getFileContent(rc.name, "applications", app)});
+			} else
+			{
+				arrayAppend(rc.application, {type:"file", name:app});
+			}
+		}
 		rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
 	}
 	
@@ -229,22 +241,38 @@ component {
 		_uploadFile(rc, "jarUpload", "jar", "jar");
 	}
 	function uploadapplication(any rc) {
-		// upload, but do not redirect yet
 		var type = "application";
-		_uploadFile(rc, "appzip", "application", "zip", false);
-		if (structKeyExists(rc, "uploadFailed"))
+
+		if (rc.apptype eq "url")
 		{
-			variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
+			if (isValid("url", rc.appurl))
+			{
+				var appname = listLast(rc.appurl, "/");
+				var filepath = "#getTempDirectory()##appname#.lnk";
+				fileWrite(filepath, rc.appurl);
+				variables.man.addFile(rc.name, filepath, "#type#s");
+				rc.response = "The #type# URL has been added";
+			} else
+			{
+				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#urlencodedformat('The URL [#rc.appurl#] you provided is not valid')#");
+			}
 		} else
 		{
-			// update the install type of the extension to Web
-			if (rc.info.type neq "web")
+			// upload, but do not redirect yet
+			_uploadFile(rc, "appzip", "application", "zip", false);
+			if (structKeyExists(rc, "uploadFailed"))
 			{
-				variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
-				rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
 			}
-			variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 		}
+
+		// update the install type of the extension to Web
+		if (rc.info.type neq "web")
+		{
+			variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
+			rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+		}
+		variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 	}
 	
 	
@@ -463,7 +491,7 @@ component {
 		// file might have been moved to a new web context or been tampered with; delete it
 		} catch(any)
 		{
-//			fileDelete(file);
+			fileDelete(file);
 			return {};
 		}
 	}
@@ -536,4 +564,31 @@ component {
 		}
 		return;
 	}
+
+	private Array function _getAvailableExtensions()
+	{
+		var ret = [];
+		var ep = new ExtensionProvider();
+		var remoteExtensions = ep.listApplications();
+
+		loop query="remoteExtensions"{
+			var ext = {};
+			ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
+			ext.capabilities = variables.man.getCapability(ext.info.name);
+			ArrayAppend(ret, ext);
+		}
+		return ret;
+	}
+
+	private void function _overrideEmptyValues(required Struct old, required Struct new)
+	{
+		for (var key in arguments.new)
+		{
+			if (not structKeyExists(arguments.old, key) or arguments.old[key] eq "")
+			{
+				arguments.old[key] = arguments.new[key];
+			}
+		}
+	}
+
 }
