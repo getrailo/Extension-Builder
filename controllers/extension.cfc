@@ -1,4 +1,4 @@
-component extends="services.ExtensionsInfo"
+component extends="basecontroller"
 {
 
 	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation, before_uninstall, after_uninstall");
@@ -6,19 +6,12 @@ component extends="services.ExtensionsInfo"
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
+        variables.validExtensionFields =  variables.man.getValidExtensionFields();
+
 	}
 	
-	function before(any rc){
-		//Called on every request before anything happens
-		param name="rc.errors" default=[];
-		param name="rc.js" default=[];
-		param name="rc.message" default="";
-		
-		//test if we are getting a specific extension
-		if(StructKeyExists(rc, "name") AND ListLast(rc.action, ".") != "create"){
-			rc.info = variables.man.getInfo(rc.name);
-		}
-	}
+
+    //before() moved to basecontroller
 
 	function default(any rc){
 		rc.extensions = _getAvailableExtensions();
@@ -128,8 +121,7 @@ component extends="services.ExtensionsInfo"
 
 	}
 	
-	function edit(any rc)
-	{
+	function edit(any rc) {
 		// get info whether this ext installs an application.
 		rc.info.hasApplication = hasApplication(rc.name);
 

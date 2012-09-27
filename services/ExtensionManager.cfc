@@ -1,8 +1,18 @@
-component extends="ExtensionsInfo"
+component
 {
 /* This component provides some nice functions to be able to read from the extension zip files */
 	
 	variables.cdata = "description"; //In case we add more
+
+
+    function init(ExtensionsInfo){
+        variables.validExtensionFields  = ExtensionsInfo.getValidExtensionFields();
+
+    }
+
+    function getValidExtensionFields(){
+        return  variables.validExtensionFields;
+    }
 	
 	function getConfig(String extensionName){
 		var config = FileRead("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml")
