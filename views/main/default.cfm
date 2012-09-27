@@ -1,6 +1,6 @@
 <cfoutput><div class="hero-unit">
-<h1>Welcome to the Railo Extension SDK</h1>
-<p>With this SDK you can build your own extensions that can be installed in the Railo Administrator</p>
+<h1>Welcome to the Railo Extension Builder</h1>
+<p>With this application you can build your own extensions that can be installed in the Railo Administrator</p>
 </div>
 
 <hr>
@@ -19,7 +19,7 @@
 <div class="span4">
 	<h2>Install the Provider</h2>
 	<p>
-	So that you can install your extensions, we have provided a simple way for you to add the SDK's Extension provider 
+	So that you can install your extensions, we have provided a simple way for you to add the Railo Extension Builder's provider
 	to your Railo Web and Server administrators.
 	</p>
 	<p>

@@ -22,10 +22,12 @@ component{
 
         if(type EQ "versionNumber"){
 
+            if(!Len(value)){
+                return true;
+            }
             if(ListLen(value, ".") NEQ 4){
                 return false;
             }
-
 
             loop list="#value#" delimiters="." index="local.i"{
                 if(!isNumeric(local.i)){
@@ -33,7 +35,6 @@ component{
 
                 }
             }
-
         }
         return true;
     }
