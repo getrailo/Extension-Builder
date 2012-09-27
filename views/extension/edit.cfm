@@ -102,8 +102,12 @@
 				<div class="control-group">
 					<label for="packaged-by">Packaged By</label>
 					<input type="text" name="packaged-by" value="#v("packaged-by")#" id="packaged-by" placeholder="John.Smith@getrailo.org">
-				</div>				
-				
+				</div>
+                <div class="control-group">
+                    <label for="packaged-by">Mininum Railo Version</label>
+                    <input type="text" name="railo-version" value="#v("railo-version")#" id="railo-version" placeholder="4.0.0.0">
+                    <i class="icon-question-sign" data-content="You can define which is the minimum version of Railo you can support with your extension. Leave it blank to skip version checking" title="Minimum Railo Version"></i>
+                </div>
 				<div class="control-group">
 					<label for="version" class="control-label">Version</label>
 					<div class="row">

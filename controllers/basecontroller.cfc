@@ -11,5 +11,30 @@ component{
             rc.info = variables.man.getInfo(rc.name);
         }
     }
+
+
+
+    function boolean checkField(type,value){
+
+        if(ListFind("any,array,binary,boolean,component,creditcard,date,time,email,eurodate,float,numeric,guid,integer,query,range,regex,ssn,string,struct,telephone,URL,UUID,USdate,variableName,zipcode", type)){
+           return isValid(type, value);
+        }
+
+        if(type EQ "versionNumber"){
+
+            if(ListLen(value, ".") NEQ 4){
+                return false;
+            }
+
+
+            loop list="#value#" delimiters="." index="local.i"{
+                if(!isNumeric(local.i)){
+                    return false;
+
+                }
+            }
+
+        }
+    }
 }
 
