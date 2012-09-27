@@ -90,9 +90,10 @@ component extends="basecontroller"
 			}
 		}
 
-        local.errors = getFieldErrors(dataToSend);
-        if(arrayLen(local.errors)){
-            variables.fw.redirect("extension.edit?name=#rc.name#&error=#ArrayToList(local.errors)#");
+       local.railoversion = StructKeyExists(dataToSend, "railo-version") ? dataToSend['railo-version']: "";
+
+        if(!checkField("versionNumber",  local.railoversion)){
+            variables.fw.redirect("extension.edit?name=#rc.name#&error=The Railo Version number must be in the format 4.0.0.0");
         }
 
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
@@ -101,31 +102,7 @@ component extends="basecontroller"
 	}
 
 
-    private Array function getFieldErrors(stCheckFields){
-        local.sterrors = [];
 
-        //I know this is not the best way to do it, but I just need to check ONE field currently.
-
-        if(structKeyExists(stCheckFields, "railo-version")){
-            local.rvfield =  stCheckFields['railo-version'];
-            if(!Len(rvfield)){ //There is nothing to check, just return
-                return local.sterrors;
-            }
-
-            if(!ListLen(rvfield, ".") EQ 4){
-                ArrayAppend(local.sterrors, "The version of Railo has to have four parts to it, like 4.0.0.0");
-            }
-
-
-            loop list="#rvfield#" delimiters="." index="local.i"{
-                if(!isNumeric(local.i)){
-                    ArrayAppend(local.sterrors, "The version of Railo has to be made up of four numbers, like 4.0.0.0");
-                    return local.sterrors;
-                }
-            }
-
-        }
-    }
 	
 	function delete(any rc) {
 		// do not delete? 

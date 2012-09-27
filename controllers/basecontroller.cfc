@@ -14,7 +14,7 @@ component{
 
 
 
-    function boolean checkField(type,value){
+    boolean function checkField(type, value){
 
         if(ListFind("any,array,binary,boolean,component,creditcard,date,time,email,eurodate,float,numeric,guid,integer,query,range,regex,ssn,string,struct,telephone,URL,UUID,USdate,variableName,zipcode", type)){
            return isValid(type, value);
@@ -35,6 +35,7 @@ component{
             }
 
         }
+        return true;
     }
 }
 
