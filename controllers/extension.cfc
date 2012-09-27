@@ -90,10 +90,10 @@ component extends="basecontroller"
 			}
 		}
 
-       local.railoversion = StructKeyExists(dataToSend, "railo-version") ? dataToSend['railo-version']: "";
+       local.railoversion = StructKeyExists(dataToSend, "railo_version") ? dataToSend['railo_version']: "";
 
         if(!checkField("versionNumber",  local.railoversion)){
-            variables.fw.redirect("extension.edit?name=#rc.name#&error=The Railo Version number must be in the format 4.0.0.0");
+            variables.fw.redirect("extension.edit?name=#rc.name#&error=The Railo version number must be in the format 4.0.0.0");
         }
 
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);

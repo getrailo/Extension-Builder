@@ -5,6 +5,8 @@
 		variables.label = "__LABEL__";
 		variables.tags = ListToArray("__TAGS__");
 		variables.functions = ListToArray("__FUNCTIONS__");
+        variables.plugins = ListToArray("__PLUGINS__");
+        variables.railo_version = "__RAILO_VERSION__";
 		variables.jars = ListToArray("__JARS__");
 		variables.appl = "__APPS__";
 	</cfscript>
@@ -30,7 +32,14 @@
     	<cfargument name="error" type="struct">
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
-		
+
+
+
+         <cfif Len(Trim(variables.railo_version)) AND (server.railo.version LT variables.railo_version)>
+            <cfset error.common="To install this extension you need at least Railo version [#variables.railo_version#], your version is [#server.railo.version#]">
+            <cfreturn>
+        </cfif>
+
 		
 		<cfif FileExists("before_install.cfm")>
 			<cfinclude template="before_install.cfm">
@@ -292,5 +301,13 @@
 		</cfif>
 		<cfreturn installpath />
 	</cffunction>
+
+
+    <cffunction name="isExtensionVersionValid" returntype="boolean" output="false" access="private">
+        <cfargument name="extRailoVersion" required="true">
+
+
+
+    </cffunction>
 	
 </cfcomponent>

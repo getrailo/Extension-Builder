@@ -102,7 +102,14 @@ component
 		var lFunc = "";
 		var lJars = "";
 		var lApps = "";
+        var minVersion = "";
+
 		var configXML = XMLParse(FileRead(extPath & "/config.xml"));
+
+        if(structKeyExists(configXML.config.info, "railo_version")){
+            minVersion = configXML.config.info.railo_version.XMLText;
+        }
+
 		if(DirectoryExists(extPath & "/tags/")){
 		var qTAGS = DirectoryList(extPath & "/tags/",false,"query");
 			lTags = ValueList(qTAGS.name);
@@ -127,8 +134,8 @@ component
 		installString = Replace(installString, "__TAGS__", lTags, "all");
 		installString = Replace(installString, "__FUNCTIONS__", lFunc, "all");
 		installString = Replace(installString, "__JARS__", lJars, "all");
-		installString = Replace(installString, "__APPS__", lApps, "all");		
-		
+		installString = Replace(installString, "__APPS__", lApps, "all");
+        installString = Replace(installString, "__RAILO_VERSION__", minVersion, "all")
 		
 		FileWrite(extPath & "/Install.cfc", installString);
 	}
