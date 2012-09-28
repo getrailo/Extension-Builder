@@ -1,9 +1,10 @@
 <cfoutput>
 	<h1>Extension Provider</h1>
+	<hr />
 	<div class="row-fluid">
 		<div class="span6">
 			<h2>Install Provider into Railo Web/Server Admin</h2>
-			<p>So that you can use your extensions, you should install this SDK provider as a provider in the Railo Administrator.</p>
+			<p>So that you can use your extensions, you should install the Builder provider as a provider in the Railo Administrator.</p>
 			<form action="#buildURL("provider.install")#" method="post">
 			
 				<legend>Railo Administrator passwords:</legend>
@@ -34,7 +35,7 @@
 		<div class="span6">
 			<h2>Provider URL</h2>
 			<p>
-				The provider url for this SDK is: <code>#rc.extproviderURL#</code>
+				The provider url for the Builder is: <code>#rc.extproviderURL#</code>
 			</p>
 		
 			<h2>Edit the Extension Provider info</h2>

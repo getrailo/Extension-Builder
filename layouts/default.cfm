@@ -5,7 +5,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>Extension Builder SDK</title>
+	<title>Railo Extension Builder</title>
 	<link rel="stylesheet" href="css/bootstrap.css">
 	<link rel="stylesheet" href="css/styles.css">
 	<cfparam name="rc.js" default="#[]#">
@@ -20,7 +20,7 @@
 	<div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <a class="brand" href="#buildURL("main.default")#">Extension Builder SDK</a>
+          <a class="brand" href="#buildURL("main.default")#">Railo Extension Builder</a>
           <div class="nav-collapse">
             <ul class="nav">
              <li class="">

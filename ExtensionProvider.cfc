@@ -1,9 +1,9 @@
 <cfcomponent output="false">
 	
-	<!--- please note: this cfset can be overwritten by the SDK --->
+	<!--- please note: this cfset can be overwritten by the REB --->
 	<cfset variables.extensionInfo = {
-		  title: 'Extension Builder SDK Provider (#cgi.http_host#)'
-		, description: 'Provider for locally built extensions by the Railo Extension BuilderSDK'
+		  title: 'Extension Builder Provider (#cgi.http_host#)'
+		, description: 'Provider for locally built extensions by the Railo Extension Builder'
 		, image: ''
 		, url: 'http://#cgi.http_host#'
 		, mode: 'develop'

@@ -25,7 +25,7 @@
 						</p>
 					<cfelse>
 						<legend>Publish your extension <em>#rc.info.label#</em></legend>
-						<p>The SDK will upload your extension directly to the store.</p>
+						<p>The Builder will upload your extension directly to the store.</p>
 					</cfif>
 					<cfif v("getrailo_user") eq "">
 						<p class="error"><strong>You have not yet saved your getrailo.org login details.</strong></p>

@@ -79,7 +79,7 @@
 
 				<!--- Check if we need to replace values in the code --->
 				<cfif arrayLen( _getReplaceValuesFromConfig(arguments.path) )>
-					<cfset var tempdir = GetTempDirectory() & "SDK/" />
+					<cfset var tempdir = GetTempDirectory() & "REB/" />
 					<cfzip action="unzip" file="#local.appPath#"
 					destination="#tempdir#" overwrite="true" recurse="true" />
 					

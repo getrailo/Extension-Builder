@@ -479,7 +479,7 @@ component extends="services.ExtensionsInfo"
 	*/
 	function _getEncryptedData()
 	{
-		var file = expandPath('/SDKdata/secureddata.txt');
+		var file = expandPath('/localdata/secureddata.txt');
 		if (!fileExists(file))
 		{
 			return {};
@@ -498,7 +498,7 @@ component extends="services.ExtensionsInfo"
 
 	function _setEncryptedData(struct data)
 	{
-		var file = expandPath('/SDKdata/secureddata.txt');
+		var file = expandPath('/localdata/secureddata.txt');
 		var data = serialize(data);
 		data = encrypt(data, getRailoID().web.id, "CFMX_COMPAT", "Base64");
 		fileWrite(file, data);
