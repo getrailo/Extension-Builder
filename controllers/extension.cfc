@@ -308,7 +308,10 @@ component extends="basecontroller"
 		///need to load up from XML file
 		rc.config_xml = variables.man.getFileContent(rc.name, "", "config.xml");
 	}
-	
+
+    function editinstall(any rc){
+        rc.install_cfc =  variables.man.getFileContent(rc.name, "", "Install.cfc");
+    }
 	
 	function saveconfig(any rc){
 		variables.man.setConfig(rc.name, XMLParse(rc.config_xml));

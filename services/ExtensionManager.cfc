@@ -123,12 +123,17 @@ component
 		var qJARS = DirectoryList(extPath & "/jars/",false,"query");
 			lJars = ValueList(qJARS.name);
 		}
-		
-		
+
 		if(DirectoryExists(extPath & "/applications/")){
 		var qApps = DirectoryList(extPath & "/applications/", false, "query");
 			lApps = ValueList(qApps.name);
 		}
+
+        if(directoryExists(extPath & "/plugins/")){
+        var qPlugins = DirectoryList(extPath & "/plugins/", false, "query");
+            lPlugins = ValueList(qPlugins.name);
+        }
+
 		installString = Replace(installString, "__NAME__", extensionName, "all");
 		installString = Replace(installString, "__LABEL__", configXML.config.info.label.XMLText, "all");
 		installString = Replace(installString, "__TAGS__", lTags, "all");
@@ -136,7 +141,10 @@ component
 		installString = Replace(installString, "__JARS__", lJars, "all");
 		installString = Replace(installString, "__APPS__", lApps, "all");
         installString = Replace(installString, "__RAILO_VERSION__", minVersion, "all")
-		
+		installString = Replace(installString, "__PLUGINS__", lPlugins, "all")
+
+
+
 		FileWrite(extPath & "/Install.cfc", installString);
 	}
 	

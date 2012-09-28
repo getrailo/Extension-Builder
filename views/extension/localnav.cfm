@@ -14,6 +14,7 @@
 			<li class="nowrap"><a href="#buildURL("extension.steps?name=#rc.name#")#">Step Screens <i class="icon-question-sign" data-content="Step screens allow you to gather install information before Railo actually installs your extension. You can then use this information to modify the install steps" title="Steps"></i></a></li>
 			<li class="nowrap"><a href="#buildURL("extension.installactions?name=#rc.name#")#">Installer Actions <i class="icon-question-sign" data-content="Allows you to add additional code that should be run by the installer" title="Install Actions"></i></a></li>
 			<li class="nowrap"><a href="#buildURL("extension.editconfig?name=#rc.name#")#">Edit Config.xml <i class="icon-question-sign" data-content="Manually edit the Config.xml that describes this plugin" title="Config.xml"></i></a></li>
+            <li class="nowrap"><a href="#buildURL("extension.editinstall?name=#rc.name#")#">View Install.cfc <i class="icon-question-sign" title="Install.cfc" data-content="View the contents of the deployed Install.cfc file. This file is run by Railo Server to install your application" ></i></a></li>
 		</ul>
 	</div>
 </cfoutput>
