@@ -112,26 +112,28 @@
             <!--- make sure this is actually correct... --->
 			<cfset var installpath = _createInstallPathFromXML(arguments.path, arguments.config) />
 
-			<!--- loop over the applications list (should be one item) --->
+			<!--- loop over the plugin list (should be one item) --->
 			<cfloop array="#variables.plugins#" index="local.plugin">
+            	<!--- download the file? --->
+                <cfset local.pluginName = listDeleteAt(local.plugin, ListLen(local.plugin, "."), ".")>
 
-                <cfdump var="#plugin#">
-                <cfabort>
-				<!--- download the file? --->
-				<cfif listLast(local.app, '.') eq "lnk">
+
+				<cfif listLast(local.plugin, '.') eq "lnk">
 					<cfset local.dlURL = fileRead('#path#plugins/#local.plugin#') />
 					<cfhttp url="#local.dlURL#" timeout="9999"
-						getasbinary="auto" result="local.httpData" throwonerror="true" path="#getTempDirectory()#" file="#local.plugin#.zip" />
+						getasbinary="auto" result="local.httpData" throwonerror="true" path="#getTempDirectory()#" file="#local.pluginName#.zip" />
 					<!--- check if file is a zip file --->
-					<cfif not isZipFile(getTempDirectory() & local.plugin & ".zip")>
+                    <cfset local.zipfile = getTempDirectory() & local.pluginName & ".zip">
+
+					<cfif not isZipFile(local.zipfile)>
 						<cfthrow message="The file downloaded from [#local.dlURL#] is not a valid zip file!" />
 					</cfif>
-					<cfset local.appPath = getTempDirectory() & local.plugin & ".zip" />
+					<cfset local.pluginPath = local.zipfile />
 				<cfelse>
-					<cfset local.appPath = "#path#applications/#local.plugin#" />
+					<cfset local.pluginPath = "#path#plugins/#local.plugin#" />
 				</cfif>
 
-				<cfset  updatePlugin(local.appPath,local.plugin)>
+				<cfset  updatePlugin(local.pluginPath,local.pluginName)>
 			</cfloop>
 		</cfif>
 
@@ -342,12 +344,6 @@
 		<cfargument name="path" type="string" hint="The path where the zip containing the plugin is">
 		<cfargument name="name" type="string" hint="The name of the plugin to install">
 
-        <!--- set the temp location for the zip --->
-		<cfset var target=ExpandPath("{temp-directory}/#name#.zip")>
-
-        <!--- copy it from the temp location to another temp location? --->
-        <cffile action="copy" destination="#target#" mode="777" source="#path#">
-
         <cftry>
 
         <!--- add it ot the railoconfig. xml? --->
@@ -356,7 +352,7 @@
             type="#request.adminType#"
             password="#session["password"&request.adminType]#"
 
-            source="#target#">
+            source="#path#">
             <cffinally>
             	<!---<cffile action="delete" file="#target#">--->
             </cffinally>
