@@ -128,7 +128,40 @@
 					<cfif not isZipFile(local.zipfile)>
 						<cfthrow message="The file downloaded from [#local.dlURL#] is not a valid zip file!" />
 					</cfif>
-					<cfset local.pluginPath = local.zipfile />
+
+                    <!---
+                          MD:
+                          Github actually gives you a zip file with a folder inside it, we should check if there is ONE folder and there isnt an
+                          Action.cfc in the root and then attempt to use the first folder
+
+                          Hence this code is a bit nuts.
+                     ---->
+
+                    <!--- github check --->
+                    <cfscript>
+                        local.isGithubZip= false;
+                        local.zippath = "zip://" & zipfile & "!";
+                        local.filesInRoot = DirectoryList(zippath, false, "name");
+                        local.isGithubZip = !arrayFindNoCase(filesInRoot, "Action.cfc") AND ArrayLen(filesInRoot) IS 1;
+                        local.rootDir = local.filesInRoot[1];
+                        local.pluginPath = local.zipfile;
+                        if(isGithubZip){
+                            //Create a folder to unzip stuff into
+                             if(!directoryExists("#getTempDirectory()#/github_#rootDir#")){
+                                DirectoryCreate("#getTempDirectory()#/github_#rootDir#");
+                             }
+                             //Get the stuff from the uploaded zip and move the directory into the zip
+                              DirectoryCopy("#zippath#/#rootDir#", "#getTempDirectory()#/github_#rootDir#/#rootDir#");
+                              zip file="#getTempDirectory()#/#rootDir#.zip" source="#getTempDirectory()#/github_#rootDir#/#rootDir#" ;
+                              pluginPath = getTempDirectory() & "/" & rootDir & ".zip" ;
+                              //Now delete the directory we removed it.
+                              DirectoryDelete("#getTempDirectory()#/github_#rootDir#", true);
+                        }
+                    </cfscript>
+
+
+
+
 				<cfelse>
 					<cfset local.pluginPath = "#path#plugins/#local.plugin#" />
 				</cfif>
