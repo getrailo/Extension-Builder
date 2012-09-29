@@ -12,20 +12,25 @@
 <div class="tabbable tabs-left">
 
   <ul class="nav nav-tabs">
-	<cfset counter = 0>
+	<!--- find the first tab with content, if any --->
+	<cfset activeTab = rc.availableActions[1] />
 	<cfloop array="#rc.availableActions#" index="act">
-		<cfset class = counter EQ 0 ? "active" : "">
-		<li class="#class#" style="text-transform:capitalize;"><a href="###act#" data-toggle="tab">#Replace(act, "_", " ", "all")#</a></li>
-		<cfset counter++>
+		<cfif rc[act] neq "">
+			<cfset activeTab = act />
+			<cfbreak />
+		</cfif>
+	</cfloop>
+	<cfloop array="#rc.availableActions#" index="act">
+		<cfset hasContent = rc[act] neq "" />
+		<cfset class = activeTab eq act ? "active" : "">
+		<li class="#class#" style="text-transform:capitalize;<cfif hasContent>font-weight: bold;</cfif>"><a href="###act#" data-toggle="tab">#Replace(act, "_", " ", "all")#</a></li>
 	</cfloop>
   </ul>
 
 	<div class="tab-content">
-	<cfset counter = 0>
 	<cfloop array="#rc.availableActions#" index="act">
-		<cfset class = counter EQ 0 ? "active" : "">
+		<cfset class = activeTab eq act ? "active" : "">
 		<div class="tab-pane #class#" id="#act#"><textarea class="span10" rows="20" name="#act#">#HTMLeditformat(rc[act])#</textarea></div>
-		<cfset counter++>
 	</cfloop>
 	</div>
 </div>
