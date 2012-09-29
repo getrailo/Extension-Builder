@@ -102,7 +102,8 @@ component
 		var lFunc = "";
 		var lJars = "";
 		var lApps = "";
-        var minVersion = "";
+		var lPlugins = "";
+		var minVersion = "";
 
 		var configXML = XMLParse(FileRead(extPath & "/config.xml"));
 
