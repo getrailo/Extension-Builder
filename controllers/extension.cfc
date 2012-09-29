@@ -1,4 +1,4 @@
-component extends="services.ExtensionsInfo"
+component extends="basecontroller"
 {
 
 	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation,before_uninstall,after_uninstall");
@@ -6,19 +6,12 @@ component extends="services.ExtensionsInfo"
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
+        variables.validExtensionFields =  variables.man.getValidExtensionFields();
+
 	}
 	
-	function before(any rc){
-		//Called on every request before anything happens
-		param name="rc.errors" default=[];
-		param name="rc.js" default=[];
-		param name="rc.message" default="";
-		
-		//test if we are getting a specific extension
-		if(StructKeyExists(rc, "name") AND ListLast(rc.action, ".") != "create"){
-			rc.info = variables.man.getInfo(rc.name);
-		}
-	}
+
+    //before() moved to basecontroller
 
 	function default(any rc){
 		rc.extensions = _getAvailableExtensions();
@@ -97,11 +90,19 @@ component extends="services.ExtensionsInfo"
 			}
 		}
 
+       local.railoversion = StructKeyExists(dataToSend, "railo_version") ? dataToSend['railo_version']: "";
+
+        if(!checkField("versionNumber",  local.railoversion)){
+            variables.fw.redirect("extension.edit?name=#rc.name#&error=The Railo version number must be in the format 4.0.0.0");
+        }
+
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
 		rc.message = "The information has been saved to the extension";
 		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
 	}
-	
+
+
+
 	
 	function delete(any rc) {
 		// do not delete? 
@@ -128,8 +129,7 @@ component extends="services.ExtensionsInfo"
 
 	}
 	
-	function edit(any rc)
-	{
+	function edit(any rc) {
 		// get info whether this ext installs an application.
 		rc.info.hasApplication = hasApplication(rc.name);
 
@@ -308,7 +308,10 @@ component extends="services.ExtensionsInfo"
 		///need to load up from XML file
 		rc.config_xml = variables.man.getFileContent(rc.name, "", "config.xml");
 	}
-	
+
+    function editinstall(any rc){
+        rc.install_cfc =  variables.man.getFileContent(rc.name, "", "Install.cfc");
+    }
 	
 	function saveconfig(any rc){
 		variables.man.setConfig(rc.name, XMLParse(rc.config_xml));
@@ -517,53 +520,7 @@ component extends="services.ExtensionsInfo"
 		variables.fw.redirect("extension.add#arguments.type#s?name=#rc.name#&message=The #arguments.type# file is updated");
 	}
 
-	function _uploadFile(any rc, String formField, String type, String allowedExtensions, Boolean doRedirect=true)
-	{
-		rc.response = "";
-		// check if upload file exists
-		if (not structKeyExists(rc, formField) or rc[formField] eq "")
-		{
-			rc.response = "You have not uploaded a file!";
-			if (doRedirect)
-			{
-				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
-			}
-			rc.uploadFailed = 1;
-			return;
-		}
-		// upload file
-		file action="upload" destination="#GetTempDirectory()#" filefield="#formField#" result="local.uploadresult" nameconflict="overwrite";
-		var appPath = "#uploadresult.serverdirectory##server.separator.file##uploadresult.serverfile#";
-		// check for valid extension / iszipfile
-		if (allowedExtensions neq "")
-		{
-			if (allowedExtensions eq "zip" and not isZipFile(appPath))
-			{
-				rc.response = "You can only upload zip files!";
-			} else if (not listFindNoCase(allowedExtensions, uploadresult.serverfileext))
-			{
-				rc.response = "You can only add files with the following extension#listlen(allowedExtensions) gt 1 ? 's':''#: #replace(uCase(allowedExtensions), ',', ', ', 'all')#";
-			}
-			if (rc.response neq "")
-			{
-				fileDelete(appPath);
-				if (doRedirect)
-				{
-					variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
-				}
-				rc.uploadFailed = 1;
-				return;
-			}
-		}
-		// add the file
-		variables.man.addFile(rc.name, appPath,  "#type#s");
-		rc.response = "The #type# has been added";
-		if (doRedirect)
-		{
-			variables.fw.redirect("extension.add#type#s?name=#rc.name#&message=#rc.response#");
-		}
-		return;
-	}
+
 
 	private Array function _getAvailableExtensions()
 	{
