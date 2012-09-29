@@ -5,6 +5,8 @@
 		variables.label = "__LABEL__";
 		variables.tags = ListToArray("__TAGS__");
 		variables.functions = ListToArray("__FUNCTIONS__");
+        variables.plugins = ListToArray("__PLUGINS__");
+        variables.railo_version = "__RAILO_VERSION__";
 		variables.jars = ListToArray("__JARS__");
 		variables.appl = "__APPS__";
 	</cfscript>
@@ -30,7 +32,14 @@
     	<cfargument name="error" type="struct">
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
-		
+
+
+         <!---
+         <cfif Len(Trim(variables.railo_version)) AND (server.railo.version LT variables.railo_version)>
+            <cfset error.common="To install this extension you need at least Railo version [#variables.railo_version#], your version is [#server.railo.version#]">
+            <cfreturn>
+        </cfif>
+         --->
 		
 		<cfif FileExists("before_install.cfm")>
 			<cfinclude template="before_install.cfm">
@@ -95,6 +104,72 @@
 				</cfif>
 			</cfloop>
 		</cfif>
+
+
+        <!--- Extract any plugins --->
+		<cfif ArrayLen(variables.plugins)>
+
+            <!--- make sure this is actually correct... --->
+			<cfset var installpath = _createInstallPathFromXML(arguments.path, arguments.config) />
+
+			<!--- loop over the plugin list (should be one item) --->
+			<cfloop array="#variables.plugins#" index="local.plugin">
+            	<!--- download the file? --->
+                <cfset local.pluginName = listDeleteAt(local.plugin, ListLen(local.plugin, "."), ".")>
+
+
+				<cfif listLast(local.plugin, '.') eq "lnk">
+					<cfset local.dlURL = fileRead('#path#plugins/#local.plugin#') />
+					<cfhttp url="#local.dlURL#" timeout="9999"
+						getasbinary="auto" result="local.httpData" throwonerror="true" path="#getTempDirectory()#" file="#local.pluginName#.zip" />
+					<!--- check if file is a zip file --->
+                    <cfset local.zipfile = getTempDirectory() & local.pluginName & ".zip">
+
+					<cfif not isZipFile(local.zipfile)>
+						<cfthrow message="The file downloaded from [#local.dlURL#] is not a valid zip file!" />
+					</cfif>
+
+                    <!---
+                          MD:
+                          Github actually gives you a zip file with a folder inside it, we should check if there is ONE folder and there isnt an
+                          Action.cfc in the root and then attempt to use the first folder
+
+                          Hence this code is a bit nuts.
+                     ---->
+
+                    <!--- github check --->
+                    <cfscript>
+                        local.isGithubZip= false;
+                        local.zippath = "zip://" & zipfile & "!";
+                        local.filesInRoot = DirectoryList(zippath, false, "name");
+                        local.isGithubZip = !arrayFindNoCase(filesInRoot, "Action.cfc") AND ArrayLen(filesInRoot) IS 1;
+                        local.rootDir = local.filesInRoot[1];
+                        local.pluginPath = local.zipfile;
+                        if(isGithubZip){
+                            //Create a folder to unzip stuff into
+                             if(!directoryExists("#getTempDirectory()#/github_#rootDir#")){
+                                DirectoryCreate("#getTempDirectory()#/github_#rootDir#");
+                             }
+                             //Get the stuff from the uploaded zip and move the directory into the zip
+                              DirectoryCopy("#zippath#/#rootDir#", "#getTempDirectory()#/github_#rootDir#/#rootDir#");
+                              zip file="#getTempDirectory()#/#rootDir#.zip" source="#getTempDirectory()#/github_#rootDir#/#rootDir#" ;
+                              pluginPath = getTempDirectory() & "/" & rootDir & ".zip" ;
+                              //Now delete the directory we removed it.
+                              DirectoryDelete("#getTempDirectory()#/github_#rootDir#", true);
+                        }
+                    </cfscript>
+
+
+
+
+				<cfelse>
+					<cfset local.pluginPath = "#path#plugins/#local.plugin#" />
+				</cfif>
+
+				<cfset  updatePlugin(local.pluginPath,local.pluginName)>
+			</cfloop>
+		</cfif>
+
 
 		<cfset message ="#variables.label# has been successfully installed">
 		
@@ -165,7 +240,8 @@
     </cffunction>
 
 
-	<cffunction name="getContextPath" access="private" returntype="string">
+	<cffunction name="getContextPath" access="private" returntype="string"
+        hint="Returns the path to install stuff, web or server">
 
 		<cfswitch expression="#request.adminType#">
 			<cfcase value="web">
@@ -179,7 +255,8 @@
 	</cffunction>
 
 
-	<cffunction name="listDatasources" returntype="void" output="no" hint="called from form generator to create dynamic forms">
+	<cffunction name="listDatasources" returntype="void" output="no"
+            hint="called from form generator to create dynamic forms">
 		<cfargument name="item" required="yes" hint="item cfc">
 		<cfset var datasources="">
 		<cfadmin action="getDatasources" type="#request.adminType#" password="#session["password"&request.adminType]#" returnVariable="datasources">
@@ -292,5 +369,38 @@
 		</cfif>
 		<cfreturn installpath />
 	</cffunction>
-	
+
+
+    <cffunction name="updatePlugin" returntype="string" output="no" access="private"
+        hint="Installs a plugin locally">
+
+		<cfargument name="path" type="string" hint="The path where the zip containing the plugin is">
+		<cfargument name="name" type="string" hint="The name of the plugin to install">
+
+        <cftry>
+
+        <!--- add it ot the railoconfig. xml? --->
+        <cfadmin
+            action="updatePlugin"
+            type="#request.adminType#"
+            password="#session["password"&request.adminType]#"
+
+            source="#path#">
+            <cffinally>
+            	<!---<cffile action="delete" file="#target#">--->
+            </cffinally>
+        </cftry>
+
+
+
+    </cffunction>
+
+     <cffunction name="removePlugin" returntype="string" output="no" access="private">
+		<cfargument name="name" type="string">
+        <cfadmin
+            action="removePlugin"
+            type="#request.adminType#"
+            password="#session["password"&request.adminType]#"
+            name="#name#">
+    </cffunction>
 </cfcomponent>

@@ -22,7 +22,8 @@
         <div class="container-fluid">
           <a class="brand" href="#buildURL("main.default")#">Railo Extension Builder</a>
           <div class="nav-collapse">
-            <ul class="nav">
+
+<ul class="nav">
              <li class="">
                 <a href="#buildURL("extension")#">My Extensions</a>
               </li>

@@ -1,8 +1,18 @@
-component extends="ExtensionsInfo"
+component
 {
 /* This component provides some nice functions to be able to read from the extension zip files */
 	
 	variables.cdata = "description"; //In case we add more
+
+
+    function init(ExtensionsInfo){
+        variables.validExtensionFields  = ExtensionsInfo.getValidExtensionFields();
+
+    }
+
+    function getValidExtensionFields(){
+        return  variables.validExtensionFields;
+    }
 	
 	function getConfig(String extensionName){
 		var config = FileRead("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml")
@@ -92,7 +102,14 @@ component extends="ExtensionsInfo"
 		var lFunc = "";
 		var lJars = "";
 		var lApps = "";
+        var minVersion = "";
+
 		var configXML = XMLParse(FileRead(extPath & "/config.xml"));
+
+        if(structKeyExists(configXML.config.info, "railo_version")){
+            minVersion = configXML.config.info.railo_version.XMLText;
+        }
+
 		if(DirectoryExists(extPath & "/tags/")){
 		var qTAGS = DirectoryList(extPath & "/tags/",false,"query");
 			lTags = ValueList(qTAGS.name);
@@ -106,20 +123,28 @@ component extends="ExtensionsInfo"
 		var qJARS = DirectoryList(extPath & "/jars/",false,"query");
 			lJars = ValueList(qJARS.name);
 		}
-		
-		
+
 		if(DirectoryExists(extPath & "/applications/")){
 		var qApps = DirectoryList(extPath & "/applications/", false, "query");
 			lApps = ValueList(qApps.name);
 		}
+
+        if(directoryExists(extPath & "/plugins/")){
+        var qPlugins = DirectoryList(extPath & "/plugins/", false, "query");
+            lPlugins = ValueList(qPlugins.name);
+        }
+
 		installString = Replace(installString, "__NAME__", extensionName, "all");
 		installString = Replace(installString, "__LABEL__", configXML.config.info.label.XMLText, "all");
 		installString = Replace(installString, "__TAGS__", lTags, "all");
 		installString = Replace(installString, "__FUNCTIONS__", lFunc, "all");
 		installString = Replace(installString, "__JARS__", lJars, "all");
-		installString = Replace(installString, "__APPS__", lApps, "all");		
-		
-		
+		installString = Replace(installString, "__APPS__", lApps, "all");
+        installString = Replace(installString, "__RAILO_VERSION__", minVersion, "all")
+		installString = Replace(installString, "__PLUGINS__", lPlugins, "all")
+
+
+
 		FileWrite(extPath & "/Install.cfc", installString);
 	}
 	

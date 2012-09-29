@@ -1,6 +1,7 @@
 <cfoutput><div class="hero-unit">
 	<h1>Railo Extension Builder</h1>
 	<p>With the Railo Extension Builder you can build your own extensions that can be installed in the Railo Administrator</p>
+
 </div>
 
 <hr>
