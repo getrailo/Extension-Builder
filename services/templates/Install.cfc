@@ -69,6 +69,8 @@
 		<!--- Extract any applications --->
 		<cfif variables.appl neq "">
 			<cfset var installpath = _createInstallPathFromXML(arguments.path, arguments.config) />
+			<!--- remember the install path for update/uninstall --->
+			<cfset arguments.config.mixed.applicationInstallPath = installpath />
 
 			<!--- loop over the applications list (should be one item) --->
 			<cfloop list="#variables.appl#" index="local.app">
@@ -171,7 +173,7 @@
 		</cfif>
 
 
-		<cfset message ="#variables.label# has been successfully installed">
+		<cfset var message ="#variables.label# has been successfully installed">
 		
 		<cfif ArrayLen(variables.jars) OR ArrayLen(variables.tags) OR ArrayLen(variables.functions)>
 			<cfset message &="<br> <strong>You need to restart Railo Server for the changes to take effect</strong>">
@@ -190,10 +192,10 @@
     	<cfargument name="error" type="struct">
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
-        <cfset uninstall(path,config)>
+        <cfset var uninstallMessage = uninstall(path,config)>
 		<cfif FileExists("update.cfm")>
-				<cfinclude template="update.cfm">
-			</cfif>   
+			<cfinclude template="update.cfm">
+		</cfif>
 		<cfreturn install(argumentCollection=arguments)>
     </cffunction>
 
@@ -202,6 +204,8 @@
     	hint="called from Railo to uninstall application">
     	<cfargument name="path" type="string">
         <cfargument name="config" type="struct">
+		<cfset var message = "" />
+	    <cfset var errors = "" />
 
 		<cfif FileExists("before_uninstall.cfm")>
 			<cfinclude template="before_uninstall.cfm">
@@ -209,28 +213,31 @@
 
 		<!--- Delete any tags we may have installed --->
 		<cfloop array="#variables.tags#" index="local.tag">
-			<cfif FileExists("#getContextPath()#/library/tag/#tag#")>
-				<cfset FileDelete("#getContextPath()#/library/tag/#tag#")>
+			<cfset local.ret = deleteIfExists("#getContextPath()#/library/tag/#tag#") />
+			<cfif local.ret neq "">
+				<cfset local.errors &= "<br />" & local.ret />
 			</cfif>
 		</cfloop>
 		
 		<!--- Delete any functions we may have installed --->
 		<cfloop array="#variables.functions#" index="local.func">
-			<cfif FileExists("#getContextPath()#/library/function/#func#")>
-				<cfset FileDelete("#getContextPath()#/library/function/#func#")>
+			<cfset local.ret = deleteIfExists("#getContextPath()#/library/function/#func#") />
+			<cfif local.ret neq "">
+				<cfset local.errors &= "<br />" & local.ret />
 			</cfif>
 		</cfloop>
-		<!--- TODO: Add a throw exception in case it fails on Windows --->
-		
-		<!--- Check MD5 of JAR files for replacement
+
+		<!--- Todo: Check MD5 of JAR files for replacement
 			Throw error if it can't be uninstalled, and has to be installed manually
 		 --->
 		<!--- Delete any jars we may have installed --->
 		<cfloop array="#variables.jars#" index="local.jar">
-			<cfif FileExists("#getContextPath()#/lib/#jar#")>
-				<cfset FileDelete("#getContextPath()#/lib/#jar#")>
+			<cfset local.ret = deleteIfExists("#getContextPath()#/lib/#jar#") />
+			<cfif local.ret neq "">
+				<cfset local.errors &= "<br />" & local.ret />
 			</cfif>
 		</cfloop>
+
 
 
         <!--- delete any plugins we may have installed --->
@@ -242,11 +249,25 @@
          </cfloop>
 
 		
+
+		<!--- Todo: check if there is a way to ask for confirmation if the user wants to remove appl. files --->
+		<cfif variables.appl neq "">
+			<cfset message &= "<br />The application files have not been removed. You will need to do this manually." />
+		</cfif>
+
+		<cfset message &= '#variables.label# has been successfully uninstalled.' />
+
+		<cfif errors neq "">
+			<cfset message = "One or more errors were reported during uninstall:<div class='error'>#errors#</div><br /><br />#message#" />
+		</cfif>
+
+
 		<cfif FileExists("after_uninstall.cfm")>
 			<cfinclude template="after_uninstall.cfm">
 		</cfif>
-		
-        <cfreturn '#variables.name# has been succesfully uninstalled' />
+
+
+        <cfreturn message />
     </cffunction>
 
 
@@ -413,4 +434,19 @@
             password="#session["password"&request.adminType]#"
             name="#name#">
     </cffunction>
+
+
+	<cffunction name="deleteIfExists" returntype="string" output="no" access="private" hint="I try to delete a file if it exists, and return an optional error message">
+		<cfargument name="filepath" type="string" required="true" />
+		<cfif FileExists(arguments.filePath)>
+			<cftry>
+				<cfset FileDelete(arguments.filepath) />
+				<cfcatch>
+					<cfreturn "The file [#arguments.filepath#] could not be deleted: #cfcatch.message#" />
+				</cfcatch>
+			</cftry>
+		</cfif>
+		<cfreturn "" />
+	</cffunction>
+
 </cfcomponent>
