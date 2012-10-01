@@ -5,7 +5,6 @@
 
 
 <cfparam name="rc.availableActions" default="#[]#">
-
 <cfoutput><form action="#buildURL("extension.saveactions")#" method="post">
 
 	<input type='hidden' name="name" value='#rc.name#'>
@@ -15,7 +14,12 @@
 	<cfset counter = 0>
 	<cfloop array="#rc.availableActions#" index="act">
 		<cfset class = counter EQ 0 ? "active" : "">
-		<li class="#class#" style="text-transform:capitalize;"><a href="###act#" data-toggle="tab">#Replace(act, "_", " ", "all")#</a></li>
+		<li class="#class#" style="text-transform:capitalize;"><a href="###act#" data-toggle="tab">#Replace(act, "_", " ", "all")#  <cfif Len(rc[act])>
+                <i class="icon-pencil"></i>
+            </cfif></a>
+
+
+        </li>
 		<cfset counter++>
 	</cfloop>
   </ul>

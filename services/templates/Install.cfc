@@ -151,8 +151,8 @@
                                 DirectoryCreate("#getTempDirectory()#/github_#rootDir#");
                              }
                              //Get the stuff from the uploaded zip and move the directory into the zip
-                              DirectoryCopy("#zippath#/#rootDir#", "#getTempDirectory()#/github_#rootDir#/#rootDir#");
-                              zip file="#getTempDirectory()#/#rootDir#.zip" source="#getTempDirectory()#/github_#rootDir#/#rootDir#" ;
+                              DirectoryCopy("#zippath#/#rootDir#", "#getTempDirectory()#/github_#rootDir#/#local.pluginName#");
+                              zip file="#getTempDirectory()#/#local.pluginName#.zip" source="#getTempDirectory()#/github_#rootDir#/#local.pluginName#" ;
                               pluginPath = getTempDirectory() & "/" & rootDir & ".zip" ;
                               //Now delete the directory we removed it.
                               DirectoryDelete("#getTempDirectory()#/github_#rootDir#", true);
@@ -231,6 +231,16 @@
 				<cfset FileDelete("#getContextPath()#/lib/#jar#")>
 			</cfif>
 		</cfloop>
+
+
+        <!--- delete any plugins we may have installed --->
+
+
+         <cfloop array="#variables.plugins#" index="local.plugin">
+            <cfset local.pluginName = listDeleteAt(local.plugin, ListLen(local.plugin, "."), ".")>
+             <cfset removePlugin(local.pluginName)>
+         </cfloop>
+
 		
 		<cfif FileExists("after_uninstall.cfm")>
 			<cfinclude template="after_uninstall.cfm">
