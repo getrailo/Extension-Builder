@@ -35,11 +35,23 @@
 				};
 			}).filter(':first').triggerHandler('click');
 		});
+
+		$(function(){
+			$('##editform').submit(function(e){
+				var rv = $('##railo_version').val();
+				if (rv != '' && !rv.match(/^([0-9]+\.){3}[0-9]+$/))
+				{
+					alert('The required Railo version number must be in the format \'4.0.0.0\'.');
+					e.preventDefault();
+					return false;
+				}
+			})
+		})
 	</script>
 </cfsavecontent>
 <cfset arrayAppend(rc.js, js) />
 
-<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data">
+<form action="#buildURL("extension.saveinfo")#" method="post" enctype="multipart/form-data" id="editform">
 	<h1>Edit #v("label")#</h1>
 	<hr/>
 	<div class="row-fluid">
