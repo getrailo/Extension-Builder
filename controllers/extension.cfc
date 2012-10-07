@@ -496,7 +496,7 @@ component extends="basecontroller"
 		_updateTextFile(rc, "tag");
 	}
 	function savefunction(any rc){
-		_updateTextFile(rc, "functions");
+		_updateTextFile(rc, "function");
 	}
 
 		
