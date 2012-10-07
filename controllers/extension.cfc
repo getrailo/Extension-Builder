@@ -1,7 +1,7 @@
 component extends="basecontroller"
 {
 
-	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation,before_uninstall,after_uninstall");
+	variables.availableActions = ListToArray("validation,before_install,after_install,update,before_uninstall,after_uninstall,additional_functions");
 
 	function init(any fw){
 		variables.fw  = fw;
