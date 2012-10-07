@@ -34,7 +34,7 @@ redirect="no" throwonerror="no">
 		<cfhttpparam type="formfield" name="gadgetID" value="#structKeyExists(rc.info, 'storeID') ? rc.info.storeID : ''#" />
 	</cfhttp>
 	<!--- save the gadgetID, if we don't have one now --->
-	<cfif not structKeyExists(rc.info, 'storeID') or rc.info.storeID eq "">
+	<cfif (not structKeyExists(rc.info, 'storeID') or rc.info.storeID eq "") and structKeyExists(cfhttp, "filecontent")>
 		<cfset var theID = rematch('GADGETID_FOR_SDK:[^ ]+', cfhttp.filecontent) />
 		<cfif arrayLen(theID)>
 			<cfset variables.man.saveInfo(rc.name, {name:rc.name, "storeID":listRest(theID[1], ':')}) />
