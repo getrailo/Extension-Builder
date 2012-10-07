@@ -555,6 +555,7 @@ component extends="basecontroller"
 			var ext = {};
 			ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
 			ext.capabilities = variables.man.getCapability(ext.info.name);
+			ext.datelastmodified = variables.man.getDLM(ext.info.name);
 			ArrayAppend(ret, ext);
 		}
 		return ret;
