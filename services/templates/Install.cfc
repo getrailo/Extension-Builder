@@ -22,7 +22,13 @@
         <cfargument name="config" type="struct">
         <cfargument name="step" type="numeric">
 
-		<cfif FileExists("validation.cfm")>
+	    <!--- same code is at install, in case there are no install steps --->
+	    <cfif Len(Trim(variables.railo_version)) AND (server.railo.version LT variables.railo_version)>
+		    <cfset error.common="To install this extension you need at least Railo version [#variables.railo_version#], your version is [#server.railo.version#]. You can <a href='server.cfm?action=services.update'>update your Railo Server here</a>.">
+		    <cfreturn>
+	    </cfif>
+
+	    <cfif FileExists("validation.cfm")>
 			<cfinclude template="validation.cfm">
 		</cfif>
     </cffunction>
@@ -33,13 +39,12 @@
         <cfargument name="path" type="string">
         <cfargument name="config" type="struct">
 
-         <!---
-         <cfif Len(Trim(variables.railo_version)) AND (server.railo.version LT variables.railo_version)>
-            <cfset error.common="To install this extension you need at least Railo version [#variables.railo_version#], your version is [#server.railo.version#]">
+		<!--- same code is at validate --->
+		<cfif Len(Trim(variables.railo_version)) AND (server.railo.version LT variables.railo_version)>
+            <cfset error.common="To install this extension you need at least Railo version [#variables.railo_version#], your version is [#server.railo.version#]. You can <a href='server.cfm?action=services.update'>update your Railo Server here</a>.">
             <cfreturn>
         </cfif>
-         --->
-		
+
 		<cfif FileExists("before_install.cfm")>
 			<cfinclude template="before_install.cfm">
 		</cfif>
