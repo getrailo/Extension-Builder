@@ -8,14 +8,14 @@
 		<type>${type}</type>
 		<label>${label}</label>
 		<description><![CDATA[ ${description} ]]></description>
-		<created>${created}</created> 
+		<created>${created}</created>
 		<category>${category}</category>
 		<author>${author}</author>
 		<image>${image}</image>
 		<mailinglist>${mailinglist}</mailinglist>
 		<support>${support}</support>
 		<documentation>${support}</documentation>
-		<paypal>${paypal}</paypal>		
+		<paypal>${paypal}</paypal>
 	</info>
 
 </config>
