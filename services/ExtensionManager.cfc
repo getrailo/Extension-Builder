@@ -159,9 +159,6 @@ component
 	
 	function createNewExtension(String extensionName, String extensionLabel){
 		//Need to create the config.xml from the information provided
-		
-
-		
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XML config

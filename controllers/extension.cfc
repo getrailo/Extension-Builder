@@ -35,8 +35,8 @@ component extends="basecontroller"
 		}
 		
 		if(ArrayLen(rc.errors)){
-				variables.fw.setView("extension.new");
-				return;
+			variables.fw.setView("extension.new");
+			return;
 		}
 		var man = application.di.getBean("ExtensionManager");
 		rc.info = man.createNewExtension( rc.name, rc.label);
