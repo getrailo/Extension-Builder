@@ -90,38 +90,33 @@ component extends="basecontroller"
 			}
 		}
 
-		/* check if the railo-version is in correct format. If not, save the data and then send the error.
-		 * Since the sent data cannot be easily sent back to the edit page, and we'd otherwise loose all entered data.
-		*/
+		/* check if the railo-version is in correct format */
 		local.railoversion = StructKeyExists(dataToSend, "railo_version") ? dataToSend['railo_version']: "";
         if(!checkField("versionNumber",  local.railoversion)){
-	        local.railoversionERROR = 1;
-	        structDelete(dataToSend, "railo_version");
+	        rc.error = "The Railo version number must be in the format 4.0.0.0";
+	        edit(arguments.rc);
+			variables.fw.setView("extension.edit");
+	        /* copy current form data to rc.info */
+	        for (local.key in rc.info)
+	        {
+		        if (structkeyexists(rc, local.key))
+		        {
+			        rc.info[local.key] = rc[local.key];
+		        }
+	        }
+	        return;
         }
 
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
 		rc.message = "The information has been saved to the extension";
-
-		if(structKeyExists(local, "railoversionERROR"))
-		{
-			variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#&error=The Railo version number must be in the format 4.0.0.0");
-		}
 
 		/* check if a license already exists. if not, go there. */
 		if (variables.man.getLicenseText(rc.name) eq "")
 		{
 			variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
 		}
-		/* check to see if any of the Item types have been added. If so, go there */
-		loop list="applications,tags,functions,jars,plugins" index="local.type"
-		{
-			if (not arrayIsEmpty(variables.man.listFolderContents(rc.name, local.type)))
-			{
-				variables.fw.redirect("extension.add#local.type#?name=#rc.name#&message=#rc.message#");
-			}
-		}
-		/* no items added yet. Go to Add Application */
-		variables.fw.redirect("extension.addApplications?name=#rc.name#&message=#rc.message#");
+
+		variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#");
 	}
 
 
