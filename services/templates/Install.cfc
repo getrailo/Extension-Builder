@@ -432,7 +432,7 @@
 		<cfset local.ret = {zipFileExtractPath=""} />
 		<cfset local.zipFileName = createUUID() & ".zip" />
 
-		<cfhttp url="#arguments.zipURL#" timeout="9999" getasbinary="auto" result="local.httpData"
+		<cfhttp url="#arguments.zipURL#" getasbinary="auto" result="local.httpData"
 			throwonerror="true" path="#getTempDirectory()#" file="#local.zipFileName#" />
 
 		<!--- check if file is a zip file --->
