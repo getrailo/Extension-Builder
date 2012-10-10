@@ -11,8 +11,8 @@
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" type="submit" >Save</button>
+				<a class="btn btn-cancel" href="#buildURL("extension.edit")#&name=#rc.name#">Cancel</a>
 			</div>
 		</fieldset>
 	</form>
-
 </cfoutput>
