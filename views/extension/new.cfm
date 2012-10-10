@@ -82,14 +82,17 @@
 		<input type="text" name="label" value="" id="label" placeholder="My Great Extension" data-required="true" data-error="Please enter a label for your extension, this will be the displayed name in the extension store">
 		<span class="help-inline hide" id="name_help"></span>	
 	</div>
-	
-	
+
+
+	<input type="hidden" name="name" id="name" value="" />
+<!---
 	<div class="control-group" id="name_control">
  		<label>Short Name:</label>
  		<input type="text" name="name" id="name" placeholder="MyExtension" data-required="true" data-error="Please enter a name for your extension"/>
 		<span class="help-inline hide" id="label_help"></span>	
  	</div>
-	
+--->
+
 	<div class="form-actions">
        <button type="submit" class="btn btn-primary">Create Extension</button>
        <button class="btn" type="reset">Cancel</button>
