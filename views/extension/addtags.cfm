@@ -3,7 +3,7 @@
 
 <cfparam name="rc.tags" default="#[]#">
 	<h1>Add Tags</h1>
-	<p>You can add custom tags that will be part of the core Railo Server. These custom tags will be called as <code>&lt;cfcustomtag&gt;</code> rather than <code>&lt;f_customtag&gt;</code> </p>
+	<p>You can add custom tags that will be part of the core Railo Server. These custom tags will be called as <code>&lt;cfcustomtag&gt;</code> rather than <code>&lt;cf_customtag&gt;</code> </p>
 	<form action="#buildURL("extension.addtag")#" class="well form-inline <!--- progressuploader --->" method="post" enctype="multipart/form-data">
 	<label>Tag to upload</label>
 	  <input type="hidden" name="name" value="#rc.name#">
