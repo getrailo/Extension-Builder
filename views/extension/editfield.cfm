@@ -51,11 +51,15 @@
 			<item type="text" name="windowsroot" label="Path to the Windows installation directory (i.e. C:\Windows\)"></item>
 --->
 			<div>
-				<label>Label</label>
-				<input type="text" name="label" value="#v('label')##v('description')#">
+				<label>Label
+					<i class="icon-question-sign" data-content="This will be displayed left of the input field" title="Label"></i>
+				</label>
+				<input type="text" name="label" value="#v('label')##v('description')#" placeholder="First name" />
 			</div>
 			<div>
-				<label>Field type</label>
+				<label>Field type
+					<i class="icon-question-sign" data-content="What kind of form field you want to be displayed" title="Field type"></i>
+				</label>
 				<select name="type" id="type">
 					<cfloop list="text,select,radio,checkbox,password,datasource selection" index="type">
 						<option value="#type#"<cfif v('type') eq variables.type> selected</cfif>>#type#</option>
@@ -63,18 +67,24 @@
 				</select>
 			</div>
 			<div>
-				<label>Field name</label>
-				<input type="text" name="field_name" value="#v('name')#">
+				<label>Field name
+					<i class="icon-question-sign" data-content="You can use this Field name for your own custom validation, in section 'Installer actions'." title="Field name"></i>
+				</label>
+				<input type="text" name="field_name" value="#v('name')#" placeholder="fld_firstname" />
 			</div>
 			<div id="field_value">
 				<label for="field_value">Default value</label>
-				<input type="text" name="field_value" id="field_value_fld" value="#v('defaultvalue')#">
+				<input type="text" name="field_value" id="field_value_fld" value="#v('defaultvalue')#" placeholder="anonymous" />
 			</div>
 			<div id="field_options">
 				<label style="display:inline">List of option values</label>
 				<i class="icon-question-sign" data-content="One item per line. Start with the value, then '|', and then the displayed label:<br /><i>1|First place<br />*2|Second place</i><br />Start the line with an * to make it the default value." title="Information"></i>
 				<br />
-				<textarea name="options" rows="6" cols="100" class="span4">#v('options')#</textarea>
+				<textarea name="options" rows="6" cols="100" class="span4" placeholder="xs|Extra-small
+							s|Small
+							m|Medium
+							*l|Large
+							xl|Extra-large">#v('options')#</textarea>
 			</div>
 		</fieldset>
 		<fieldset>

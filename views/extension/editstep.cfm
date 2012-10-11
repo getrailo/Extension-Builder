@@ -17,11 +17,11 @@
 			<input type="hidden" name="step" value="#rc.step#">
 			<div>
 				<label>Label</label>
-				<input type="text" name="label" value="#rc.label#" class="span5">
+				<input type="text" name="label" value="#rc.label#<cfif rc.label eq ''>Step #rc.step#</cfif>" class="span5">
 			</div>
 			<div>
 				<label>Description</label>
-				<input type="text" name="description" value="#rc.description#" class="span7">
+				<input type="text" name="description" value="#rc.description#" class="span7" placeholder="In this step, you can add your personal details" />
 			</div>
 			<div class="form-actions">
 				<button class="btn btn-primary" type="submit" >Save</button>
