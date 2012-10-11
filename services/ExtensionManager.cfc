@@ -47,6 +47,13 @@ component
 			capability.jars = DirectoryExists(extPath & "jars") ? ArrayLen(DirectoryList(extPath & "jars",false,"name")) : 0;	
 		return capability;
 	}
+
+	public Date function getDLM(String extensionName)
+	{
+		var extPath = expandPath("/ext/#extensionName#.zip");
+		var fileObj = createObject("java","java.io.File").init(extPath);
+		return createObject("java","java.util.Date").init(fileObj.lastModified());
+	}
 	
 	function saveInfo(String extensionName, Struct info){
 		saveInfoToXML(extensionName, info);
@@ -152,9 +159,6 @@ component
 	
 	function createNewExtension(String extensionName, String extensionLabel){
 		//Need to create the config.xml from the information provided
-		
-
-		
 		var uuid = CreateUUID();
 		var created = Now();
 		//Create THE XML config

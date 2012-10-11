@@ -1,7 +1,7 @@
 component extends="basecontroller"
 {
 
-	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation,before_uninstall,after_uninstall");
+	variables.availableActions = ListToArray("validation,before_install,after_install,update,before_uninstall,after_uninstall,additional_functions");
 
 	function init(any fw){
 		variables.fw  = fw;
@@ -35,8 +35,8 @@ component extends="basecontroller"
 		}
 		
 		if(ArrayLen(rc.errors)){
-				variables.fw.setView("extension.new");
-				return;
+			variables.fw.setView("extension.new");
+			return;
 		}
 		var man = application.di.getBean("ExtensionManager");
 		rc.info = man.createNewExtension( rc.name, rc.label);
@@ -90,15 +90,33 @@ component extends="basecontroller"
 			}
 		}
 
-       local.railoversion = StructKeyExists(dataToSend, "railo_version") ? dataToSend['railo_version']: "";
-
+		/* check if the railo-version is in correct format */
+		local.railoversion = StructKeyExists(dataToSend, "railo_version") ? dataToSend['railo_version']: "";
         if(!checkField("versionNumber",  local.railoversion)){
-            variables.fw.redirect("extension.edit?name=#rc.name#&error=The Railo version number must be in the format 4.0.0.0");
+	        rc.error = "The Railo version number must be in the format 4.0.0.0";
+	        edit(arguments.rc);
+			variables.fw.setView("extension.edit");
+	        /* copy current form data to rc.info */
+	        for (local.key in rc.info)
+	        {
+		        if (structkeyexists(rc, local.key))
+		        {
+			        rc.info[local.key] = rc[local.key];
+		        }
+	        }
+	        return;
         }
 
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
 		rc.message = "The information has been saved to the extension";
-		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+
+		/* check if a license already exists. if not, go there. */
+		if (variables.man.getLicenseText(rc.name) eq "")
+		{
+			variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+		}
+
+		variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#");
 	}
 
 
@@ -473,7 +491,7 @@ component extends="basecontroller"
 		_updateTextFile(rc, "tag");
 	}
 	function savefunction(any rc){
-		_updateTextFile(rc, "functions");
+		_updateTextFile(rc, "function");
 	}
 
 		
@@ -532,6 +550,7 @@ component extends="basecontroller"
 			var ext = {};
 			ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
 			ext.capabilities = variables.man.getCapability(ext.info.name);
+			ext.datelastmodified = variables.man.getDLM(ext.info.name);
 			ArrayAppend(ret, ext);
 		}
 		return ret;

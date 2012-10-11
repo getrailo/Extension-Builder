@@ -10,7 +10,8 @@
 	  <label>Content</label>
 	  <textarea class="span10" rows="20" name="content">#HTMLeditformat(rc.functioncontent)#</textarea>
 	  <div class="form-actions">
-      	<button type="submit" class="btn btn-primary">Save</button>
+		  <button type="submit" class="btn btn-primary">Save</button>
+		  <a class="btn btn-cancel" href="#buildURL("extension.addfunctions")#&name=#rc.name#">Cancel</a>
 	  </div>
 	</form>
 </cfoutput>
