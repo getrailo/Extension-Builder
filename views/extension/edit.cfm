@@ -8,16 +8,30 @@
 	<cfreturn StructKeyExists(rc.info, f) ? Trim(rc.info[f]) : "">
 </cffunction>
 
+<cfset variables.storeCats = "Admin plugin,Application,Built-in function,Built-in tag,CMS,Database & Cache,Forum,Framework,Railo Core" />
+
 <cfoutput>
-	
 <!--- JavaScript --->
 <cfsavecontent variable="js">
 	<script type="text/javascript">
-		var categories ="Framework,CMS,Core,Gateway,Database,Forum,E-Commerce,Demo".split(",");
+		var categories ="#variables.storeCats#".split(",");
 		
-		$('.typeahead').typeahead({
+		$('##category').typeahead({
 			source:categories
-		});
+		}).blur(function(){
+			if ($(this).val() == '')
+			{
+				return;
+			}
+			var isStoreCat = $.inArray($(this).val(), categories) > -1;
+			if (!isStoreCat)
+			{
+				$('##nostorecat').show('slow');
+			} else
+			{
+				$('##nostorecat').hide();
+			}
+		}).trigger('blur');
 
 
 		$('##imgtypeurl,##imgtypefile').click(function(){
@@ -150,42 +164,16 @@
 							<!---<legend>Extension details</legend>--->
 							<div class="control-group">
 								<label for="category">Category
-									<i class="icon-question-sign" data-content="You can define the category that your extension belongs to. Certain categories will be reflected in the Railo Extension Store" title="Category"></i>
+									<i class="icon-question-sign" data-content="You can define the category that your extension belongs to.<br>The following are used in the Railo Extension Store: <i>#replace(replace(variables.storeCats, ' ', '&nbsp;', 'all'), ',', ', ', 'all')#</i>" title="Category"></i>
 								</label>
-								<input type="text" name="category" class="typeahead span4" value="#v("category")#" id="category" placeholder="Gateway">
+								<input type="text" name="category" class="typeahead span4" value="#v("category")#" id="category" placeholder="Application" autocomplete="off" />
+								<div id="nostorecat" class="comment" style="display: none"><i>This category does not exist in the Extension Store</i></div>
 							</div>
-
-							<div class="control-group">
-								<cfset imgtype = isvalid('url', v("image")) ? 'url':'file' />
-
-								<label id="image">Image
-									<i class="icon-question-sign" data-content="Upload an image, or provide an absolute URL to the image that is the logo for your Extension" title="Image"></i>
-								</label>
-								<cfif imgtype eq 'file' and v('image') neq "">
-									<input type="hidden" name="oldimage" value="#v('image')#" />
-									<label>
-										Current uploaded file: <a href="/ext#v('image')#" title="Click to view full size"><img src="/ext#v('image')#" alt="Logo file" style="height:30px;" /></a>
-									</label>
-								</cfif>
-								<div>
-									<label style="float:left;">
-										<input type="radio" name="imgtype" style="display:inline;" id="imgtypeurl" value="url"<cfif imgtype eq 'url'> checked</cfif> />
-										URL &nbsp; &nbsp;
-									</label>
-									<label style="float:left;">
-										or &nbsp; <input type="radio" name="imgtype" style="display:inline;" id="imgtypefile" value="file"<cfif imgtype eq 'file'> checked</cfif> />
-										<cfif v("image") neq "" and imgtype eq "file">New file<cfelse>File</cfif>
-									</label>
-									<br clear="all" />
-								</div>
-								<input type="text" name="image" value="<cfif imgtype eq 'url'>#v("image")#</cfif>" id="imageurl" class="span4" placeholder="http://mydomain.com/image.png">
-								<input type="file" name="image" id="imagefile" class="span4" />
-							</div>
-						</fieldset>
+						<!---</fieldset>
 
 
 						<fieldset>
-							<legend>Technical information</legend>
+							<legend>Technical information</legend>--->
 			                <div class="control-group">
 								<cfif rc.info.hasApplication>
 									<label for="type">Admin type
@@ -213,6 +201,37 @@
 			                    </label>
 			                    <input type="text" name="railo_version" value="#v("railo_version")#" id="railo_version" placeholder="4.0.0.0" class="span4" />
 			                </div>
+
+							<div class="control-group">
+								<cfset imgtype = isvalid('url', v("image")) ? 'url':'file' />
+								<div class="row">
+									<div class="span4">
+										<label id="image">Image
+											<i class="icon-question-sign" data-content="Upload an image, or provide an absolute URL to the image that is the logo for your Extension. Square images preferably" title="Image"></i>
+										</label>
+										<label style="float:left;">
+											<input type="radio" name="imgtype" style="display:inline;" id="imgtypeurl" value="url"<cfif imgtype eq 'url'> checked</cfif> />
+											URL &nbsp; &nbsp;
+										</label>
+										<label style="float:left;">
+											or &nbsp; <input type="radio" name="imgtype" style="display:inline;" id="imgtypefile" value="file"<cfif imgtype eq 'file'> checked</cfif> />
+											<cfif v("image") neq "" and imgtype eq "file">New file<cfelse>File</cfif>
+										</label>
+										<input type="text" name="image" value="<cfif imgtype eq 'url'>#v("image")#</cfif>" id="imageurl" class="span4" placeholder="http://mydomain.com/image.png">
+										<input type="file" name="image" id="imagefile" class="span4" />
+									</div>
+									<div class="span2">
+										<label>Current image</label>
+										<div class="well">
+											<cfif v('image') neq "">
+												<img src="/ext#v('image')#" alt="Logo file" />
+											<cfelse>
+												<img src="img/icon-gadget.png" alt="default image" />
+											</cfif>
+										</div>
+									</div>
+								</div>
+							</div>
 						</fieldset>
 
 					</div>
@@ -227,17 +246,17 @@
 							<legend>Resource links</legend>
 						    <div class="control-group">
 								<label for="mailinglist">Mailing List</label>
-								<input type="text" name="mailinglist" value="#v("mailinglist")#" class="span4" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
+								<input type="text" name="mailinglist" value="#v("mailinglist")#" class="span5" id="mailinglist" placeholder="http://groups.google.com/group/railo-beta">
 							</div>
 
 							<div class="control-group">
 								<label for="support">Support URL</label>
-								<input type="text" name="support" value="#v("support")#" id="support" class="span4" placeholder="http://groups.google.com/group/railo-beta">
+								<input type="text" name="support" value="#v("support")#" id="support" class="span5" placeholder="http://groups.google.com/group/railo-beta">
 							</div>
 
 							<div class="control-group">
 								<label for="documentation">Documentation URL</label>
-								<input type="text" name="documentation" value="#v("documentation")#" class="span4" id="documentation" placeholder="http://groups.google.com/group/railo-beta">
+								<input type="text" name="documentation" value="#v("documentation")#" class="span5" id="documentation" placeholder="http://groups.google.com/group/railo-beta">
 							</div>
 						</fieldset>
 					</div>

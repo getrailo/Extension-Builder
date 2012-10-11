@@ -26,3 +26,7 @@ ul#fieldusage { list-style:none }
 ::-webkit-input-placeholder {
 	color: #bbb !important;
 }
+
+legend {
+	margin-bottom: 0px;
+}
