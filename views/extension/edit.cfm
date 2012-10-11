@@ -223,8 +223,10 @@
 									<div class="span2">
 										<label>Current image</label>
 										<div class="well">
-											<cfif v('image') neq "">
-												<img src="/ext#v('image')#" alt="Logo file" />
+											<cfif isValid('url', v('image'))>
+												<img src="#v('image')#" alt="Logo file" />
+											<cfelseif v('image') neq "">
+												<img src="ext#v('image')#" alt="Logo file" />
 											<cfelse>
 												<img src="img/icon-gadget.png" alt="default image" />
 											</cfif>
