@@ -45,15 +45,12 @@
 						</label>
 						<br clear="all" />
 					</div>
-
-
-                    <div class="control-group">
-                        <label for="label"> Name <i class="icon-question-sign" title="Plugin Name" data-content="This is the unique name of your plugin. It will be displayed in the navigation" ></i></label>
-                        <input type="text" name="pluginName" value="" class="span4" id="pluginName" placeholder="MyPlugin">
-                    </div>
-
 					<input type="text" name="pluginurl" value="" id="pluginurl" class="span6" placeholder="http://mydomain.com/plugin.zip" />
 					<input type="file" name="pluginzip" id="pluginzip" class="span4" />
+				</div>
+				<div class="control-group">
+					<label for="pluginName">Name <i class="icon-question-sign" title="Plugin Name" data-content="This is the unique name of your plugin. It will be displayed in the Administrator navigation"></i></label>
+					<input type="text" name="pluginName" value="" class="span4" id="pluginName" placeholder="MyPlugin">
 				</div>
 			</div>
 		</div>
