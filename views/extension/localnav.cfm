@@ -1,7 +1,6 @@
 <cfsavecontent variable="nav">
 	<cfoutput>
 		<div class="well sidebar-nav">
-<cfoutput>	<div class="well sidebar-nav">
 			<ul class="nav nav-list">
 				<li class="nav-header nowrap">Extension</li>
 				<li class="nowrap"><a href="#buildURL("extension.edit?name=#rc.name#")#">Main Info <i class="icon-question-sign" data-content="Allows you to edit the main information about this extension" title="Information"></i></a></li>
