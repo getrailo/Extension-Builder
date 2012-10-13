@@ -205,6 +205,9 @@
 							<div class="control-group">
 								<cfset imgtype = isvalid('url', v("image")) ? 'url':'file' />
 								<div class="row">
+									<cfif imgtype eq 'file' and v('image') neq "">
+										<input type="hidden" name="oldimage" value="#v('image')#" />
+									</cfif>
 									<div class="span4">
 										<label id="image">Image
 											<i class="icon-question-sign" data-content="Upload an image, or provide an absolute URL to the image that is the logo for your Extension. Square images preferably" title="Image"></i>
