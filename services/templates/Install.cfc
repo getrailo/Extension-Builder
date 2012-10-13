@@ -144,9 +144,9 @@
 			<cfset message &="<br><strong>You need to <a href='server.cfm?action=services.restart' title='Go to the Railo Server admin restart page'>restart Railo Server</a> before you can use the new tags and/or functions.</strong>">
 		</cfif>
 		<!--- PK Todo: This info message is still a bit tricky, since it might be that the entry path for the installed app isn't at root level. --->
-		<cfif variables.appl neq "" and findNoCase(expandPath('/'), arguments.config.mixed.applicationInstallPath)
+		<cfif variables.appl neq "" and findNoCase(expandPath('/'), arguments.config.mixed.applicationInstallPath & server.separator.file)
 		and (fileExists(arguments.config.mixed.applicationInstallPath & "/index.cfm") or fileExists(arguments.config.mixed.applicationInstallPath & "/Application.cfc"))>
-			<cfset local.relativePath = replaceNoCase(arguments.config.mixed.applicationInstallPath, expandPath('/'), '/') />
+			<cfset local.relativePath = rereplace(replaceNoCase(arguments.config.mixed.applicationInstallPath & server.separator.file, expandPath('/'), '/'), '[\\/]+', '/', 'all') />
 			<cfset local.appURL = "http#cgi.remote_port eq 443 ? 's':''#://#cgi.http_host##local.relativePath#" />
 			<cfset message &="<br> <strong>You can check the new application by going to </strong><a href='#local.appURL#'><strong>#local.appURL#</strong></a>" />
 		</cfif>
