@@ -23,6 +23,10 @@
 				<cfif isDefined("variables.rc.info.author") and variables.rc.info.author neq "">
 					<li class="nav-header nowrap">Publish</li>
 					<li class="nowrap"><a href="#buildURL("extension.publish?name=#rc.name#")#">Extension Store <i class="icon-question-sign" data-content="Publish your extension in the Railo Extension Store, to make it available for all Railo Administrators around the world" title="Extension Store"></i></a></li>
+					<cfif rc.hasLinkFiles>
+						<li class="nowrap"><a href="#buildURL("extension.autoupdatecheck?name=#rc.name#")#">Auto-update
+							<i class="icon-question-sign" data-content="Since you added one or more URLs in your application, you can create an auto-update script for it" title="Auto-update check"></i></a></li>
+					</cfif>
 				</cfif>
 
 			</ul>

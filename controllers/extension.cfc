@@ -1,4 +1,4 @@
-component extends="basecontroller"
+component extends="baseextension"
 {
 
 	variables.availableActions = ListToArray("validation,before_install,after_install,update,before_uninstall,after_uninstall,additional_functions");
@@ -494,6 +494,121 @@ component extends="basecontroller"
 		_updateTextFile(rc, "function");
 	}
 
+	/*
+		Update checker
+	*/
+	public function checkUpdates(any rc)
+	{
+		/* check if store details have been filled in */
+		local.storeInfo = _getEncryptedData();
+		if (not structKeyExists(local.storeInfo, "getrailo_pass"))
+		{
+			throw('You can only run the update-check after you added your getrailo.org login details on the Publish page.');
+		}
+
+		/* If the extension was not set as auto_version_update, set that setting now */
+		if (not structKeyExists(rc.info, "auto_version_update") or rc.info.auto_version_update eq false)
+		{
+			rc.info = variables.man.saveInfo(rc.name, {name:rc.name, auto_version_update:1, version:rc.info.version & ".0"});
+		}
+
+		loop list="applications,plugins" index="local.type"
+		{
+			var aLinks = getLinkFiles(rc.name, local.type);
+			for (local.link in aLinks)
+			{
+				if (checkFileUpdated(rc, local.link, local.type))
+				{
+					publishnow(rc);
+					abort;
+				}
+			}
+		}
+	}
+
+	public void function autoupdatecheck(any rc)
+	{
+		local.scheduledTaskName = "auto-update-#rc.name#-extension";
+		if (structKeyExists(rc, "enableautoupdate"))
+		{
+			/* save the current version number */
+			rc.info = variables.man.saveInfo(rc.name, {name:rc.name, version:rc.version});
+
+			if (rc.enableautoupdate eq 0)
+			{
+				schedule action="delete" task="#local.scheduledTaskName#";
+				rc.message = "The auto-update check has been successfully removed.";
+				local.saveData = {};
+			} else
+			{
+ 				local.starttime = "#rc.start_hours#:#rc.start_minutes#:#rc.start_seconds#";
+				local.startDate = createDate(year(now()), month(now()), day(now()));
+				if (rc.frequency eq "every")
+				{
+					rc.frequency = createTimespan(0, rc.every_hours, rc.every_minutes, rc.every_seconds);
+				} else if (rc.frequency eq "daily")
+				{
+					rc.frequency = "daily";
+				} else if (find('weekly-', rc.frequency))
+				{
+					local.weekday = listLast(rc.frequency, '-');
+					// today==day 3, weekday=1 >> today + (1-3) == today + -2
+					// today==day 2, weekday=6 >> today + (6-2) == today + 4
+					local.startDate = local.startDate + (local.weekday - dayOfWeek(local.startDate));
+					rc.frequency = "weekly";
+				}
+				schedule action="update" interval="#rc.frequency#" startdate="#local.startDate#"
+					starttime="#local.starttime#" task="#local.scheduledTaskName#"
+					URL="http://#cgi.http_host##cgi.script_name#?action=extension.checkUpdates&name=#rc.name#";
+				rc.message = "The auto-update settings have been saved.";
+
+				local.saveData = structCopy(form);
+				structDelete(local.saveData, "formfields", false);
+			}
+			/* save the schedule data: it cannot be retrieved with cfschedule it seems :-/ */
+			variables.man.saveInfo(rc.name, {name:rc.name, autoupdatesettings: serialize(local.saveData)});
+		}
+		/* get the scheduled task info, if any */
+		if (structKeyExists(rc.info, "autoupdatesettings"))
+		{
+			structAppend(rc, evaluate(rc.info.autoupdatesettings), false);
+		}
+	}
+
+	public Boolean function checkFileUpdated(any rc, String fileurl, String ziptype)
+	{
+		local.fileCheckInfoKey = "";
+		/* check if the zip file has a new content-length or etag */
+		http method="GET" url="#arguments.fileurl#" throwonerror="no" result="local.HTTPData";
+		/* did the http succeed? */
+		if (structKeyExists(local, "HTTPdata") and structKeyExists(local.HTTPdata, "statuscode")
+			and find('200', local.HTTPdata.statuscode))
+		{
+			/* try to get new filesize or etag or DLM */
+			loop list="Last-Modified,Etag,Content-Length" index="local.key"
+			{
+				if (structKeyExists(local.HTTPData.responseheader, local.key))
+				{
+					local.fileCheckInfoKey &= "updatecheck-#rereplace(fileurl, '[^a-zA-Z0-9-]+', '_', 'all')#-#local.key#";
+					local.fileCheckInfoData = local.HTTPData.responseheader[local.key];
+					break;
+				}
+			}
+			if (local.fileCheckInfoKey neq "")
+			{
+				/* if there's no updateCheck info in the zip file, or the content has changed*/
+				if (not structKeyExists(rc.info, local.fileCheckInfoKey)
+					or rc.info[local.fileCheckInfoKey] neq local.fileCheckInfoData)
+				{
+					local.saveData = {name:rc.name};
+					local.saveData[local.fileCheckInfoKey] = local.fileCheckInfoData;
+					rc.info = variables.man.saveInfo(rc.name, local.saveData);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 		
 	/*
 		Helper functions

@@ -47,4 +47,4 @@ redirect="no" throwonerror="no">
 	<cfset rc.loginFailed = 1 />
 </cfif>
 
-<cfcatch><cfdump var="#cfcatch#" abort /></cfcatch></cftry>
+<cfcatch><cfdump var="#cfcatch#" /></cfcatch></cftry>

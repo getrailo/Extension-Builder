@@ -1,4 +1,5 @@
-component extends="basecontroller"{
+component extends="baseextension"
+{
 	
 	function init(any fw){
 		variables.fw  = fw;
