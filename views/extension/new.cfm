@@ -95,7 +95,7 @@
 
 	<div class="form-actions">
        <button type="submit" class="btn btn-primary">Create Extension</button>
-       <button class="btn" type="reset">Cancel</button>
+       <button class="btn" type="reset">Reset form</button>
      </div>
  </fieldset>
 

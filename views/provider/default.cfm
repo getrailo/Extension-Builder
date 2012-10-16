@@ -19,7 +19,7 @@
 			
 				<div class="form-actions">
 					<button type="submit" class="btn btn-primary">Install Provider</button>
-					<button class="btn" type="reset">Cancel</button>
+					<button class="btn" type="reset">Reset form</button>
 				 </div>
 			</form>
 

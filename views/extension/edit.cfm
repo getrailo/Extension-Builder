@@ -296,7 +296,7 @@
 		<div class="span12">
 			<div class="form-actions">
             <button type="submit" class="btn btn-primary">Save Information</button>
-            <button class="btn" type="reset">Cancel</button>
+            <button class="btn" type="reset">Reset form</button>
  	        </div>
 		</div>
 	</div>

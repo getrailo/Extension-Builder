@@ -3,7 +3,7 @@
 <cffunction name="v" output="false">
 	<cfargument name="f">
 	<cfreturn structKeyExists(rc.storeInfo, f) ? trim(rc.storeInfo[f]) : StructKeyExists(rc.info, f) ? Trim(rc.info[f]) : "" />
-</cffunction>	
+</cffunction>
 
 <cfoutput>
 	<h1>Publish your extension in the Railo Extension Store</h1>
