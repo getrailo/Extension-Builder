@@ -320,7 +320,7 @@ component output="false"{
 		}
 		
 		//Has to have the full name
-		itemPath  = itemPath & ListLast(source, "/");
+		itemPath  = itemPath & ListLast(source, SERVER.separator.file);
 		
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
