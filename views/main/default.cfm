@@ -32,7 +32,7 @@
 	We have tried to provide all the functionality you need to get started, if you want to digg deeper, why not check out the documentation. 
 	</p>
 	<p>
-	<a class="btn btn-info" href="https://github.com/getrailo/Railo-Extension-Builder-SDK/wiki">Documentation</a>
+	<a class="btn btn-info" href="https://github.com/getrailo/Extension-Builder/wiki">Documentation</a>
 	</p>
 </div>
 </div>
