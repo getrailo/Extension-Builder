@@ -1,36 +1,22 @@
-component {
-	variables.availableActions = ListToArray("before_install,after_install,additional_functions,update,validation, before_uninstall, after_uninstall");
+component extends="baseextension"
+{
+
+	variables.availableActions = ListToArray("validation,before_install,after_install,update,before_uninstall,after_uninstall,additional_functions");
+
 	function init(any fw){
 		variables.fw  = fw;
 		variables.man =  application.di.getBean("ExtensionManager");
+        variables.validExtensionFields =  variables.man.getValidExtensionFields();
+
 	}
 	
-	function before(any rc){
-		//Called on every request before anything happens
-		param name="rc.errors" default=[];
-		param name="rc.js" default=[];
-		param name="rc.message" default="";
-		
-		//test if we are getting a specific extension
-		if(StructKeyExists(rc, "name") AND ListLast(rc.action, ".") != "create"){
-			rc.info = variables.man.getInfo(rc.name);
-		}
-	}
+
+    //before() moved to basecontroller
 
 	function default(any rc){
-		var ep = new ExtensionProvider();
-		var remoteExtensions = ep.listApplications();
-
-		rc.extensions = [];
-
-		loop query="remoteExtensions"{
-				var ext = {};
-					ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
-					ext.capabilities = variables.man.getCapability(ext.info.name);
-				ArrayAppend(rc.extensions, ext);
-		}
+		rc.extensions = _getAvailableExtensions();
 	}
-	
+
 	function new(any rc) {
 		rc.info = {};
 		//variables.fw.setView("extension.edit");
@@ -49,8 +35,8 @@ component {
 		}
 		
 		if(ArrayLen(rc.errors)){
-				variables.fw.setView("extension.new");
-				return;
+			variables.fw.setView("extension.new");
+			return;
 		}
 		var man = application.di.getBean("ExtensionManager");
 		rc.info = man.createNewExtension( rc.name, rc.label);
@@ -62,9 +48,7 @@ component {
 	
 	function saveInfo(any rc) {
 		param name="rc.auto_version_update" default="false";
-		
-		var validFields = "author,category,support,description,mailinglist,name,documentation,image,label,type,version,paypal,packaged-by,licenseTemplate,StoreID,auto_version_update";
-		
+
 		var dataToSend = duplicate(rc);
 		
 		// upload image?
@@ -101,16 +85,42 @@ component {
 		for (var i=listlen(list); i>0; i--)
 		{
 			c = listGetAt(list, i);
-			if(!ListFindNoCase(validFields,c)){
+			if(!ListFindNoCase(variables.validExtensionFields, c)){
 				StructDelete(dataToSend, c);
 			}
 		}
 
+		/* check if the railo-version is in correct format */
+		local.railoversion = StructKeyExists(dataToSend, "railo_version") ? dataToSend['railo_version']: "";
+        if(!checkField("versionNumber",  local.railoversion)){
+	        rc.error = "The Railo version number must be in the format 4.0.0.0";
+	        edit(arguments.rc);
+			variables.fw.setView("extension.edit");
+	        /* copy current form data to rc.info */
+	        for (local.key in rc.info)
+	        {
+		        if (structkeyexists(rc, local.key))
+		        {
+			        rc.info[local.key] = rc[local.key];
+		        }
+	        }
+	        return;
+        }
+
 		rc.info = variables.man.saveInfo(rc.name, dataToSend);
 		rc.message = "The information has been saved to the extension";
-		variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+
+		/* check if a license already exists. if not, go there. */
+		if (variables.man.getLicenseText(rc.name) eq "")
+		{
+			variables.fw.redirect("extension.license?name=#rc.name#&message=#rc.message#");
+		}
+
+		variables.fw.redirect("extension.edit?name=#rc.name#&message=#rc.message#");
 	}
-	
+
+
+
 	
 	function delete(any rc) {
 		// do not delete? 
@@ -140,8 +150,17 @@ component {
 	function edit(any rc) {
 		// get info whether this ext installs an application.
 		rc.info.hasApplication = hasApplication(rc.name);
+
+		rc.extensions = _getAvailableExtensions();
+
+		// option to pre-fill form with values of existing extension
+		if (structKeyExists(rc, "prefillfrom") && rc.prefillfrom neq "")
+		{
+			rc.overrideData = variables.man.getInfo(rc.prefillfrom);
+			_overrideEmptyValues(rc.info, rc.overrideData);
+		}
 	}
-	
+
 	function hasApplication(string name)
 	{
 		var extFile = 'zip://#expandPath("/ext/#arguments.name#.zip")#';
@@ -168,7 +187,7 @@ component {
 		variables.man.saveInfo(rc.name, {name:rc.name, licenseTemplate:replace(rc.licenseTemplate, '.txt', '')});
 		variables.man.setLicenseText(rc.name, rc.license);
 		rc.message = "Your license text has been saved to the extension";
-		variables.fw.redirect("extension.installactions?name=#rc.name#&message=#rc.message#");
+		variables.fw.redirect("extension.addApplications?name=#rc.name#&message=#rc.message#");
 	}
 	
 	
@@ -211,7 +230,18 @@ component {
 		rc.jars = variables.man.listFolderContents(rc.name, "jars");	
 	}
 	function addApplications(rc){
-		rc.application = variables.man.listFolderContents(rc.name, "applications");	
+		var apps = variables.man.listFolderContents(rc.name, "applications");
+		rc.application = [];
+		for (var app in apps)
+		{
+			if (listLast(app, '.') eq "lnk")
+			{
+				arrayAppend(rc.application, {type:"URL", name:app, url:variables.man.getFileContent(rc.name, "applications", app)});
+			} else
+			{
+				arrayAppend(rc.application, {type:"file", name:app});
+			}
+		}
 		rc.steps = XMLSearch(variables.man.getConfig(rc.name), "//step");
 	}
 	
@@ -229,22 +259,38 @@ component {
 		_uploadFile(rc, "jarUpload", "jar", "jar");
 	}
 	function uploadapplication(any rc) {
-		// upload, but do not redirect yet
 		var type = "application";
-		_uploadFile(rc, "appzip", "application", "zip", false);
-		if (structKeyExists(rc, "uploadFailed"))
+
+		if (rc.apptype eq "url")
 		{
-			variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
+			if (isValid("url", rc.appurl))
+			{
+				var appname = listLast(rc.appurl, "/");
+				var filepath = "#getTempDirectory()##appname#.lnk";
+				fileWrite(filepath, rc.appurl);
+				variables.man.addFile(rc.name, filepath, "#type#s");
+				rc.response = "The #type# URL has been added";
+			} else
+			{
+				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#urlencodedformat('The URL [#rc.appurl#] you provided is not valid')#");
+			}
 		} else
 		{
-			// update the install type of the extension to Web
-			if (rc.info.type neq "web")
+			// upload, but do not redirect yet
+			_uploadFile(rc, "appzip", "application", "zip", false);
+			if (structKeyExists(rc, "uploadFailed"))
 			{
-				variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
-				rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
 			}
-			variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 		}
+
+		// update the install type of the extension to Web
+		if (rc.info.type neq "web")
+		{
+			variables.man.saveInfo(rc.name, {name:rc.name, type:"web"});
+			rc.response &= "<br /><br />The Admin type for this extension is now changed from [#rc.info.type#] to [web], because an application can only be installed for a web context.";
+		}
+		variables.fw.redirect("extension.addapplications?name=#rc.name#&message=#rc.response#");
 	}
 	
 	
@@ -280,7 +326,10 @@ component {
 		///need to load up from XML file
 		rc.config_xml = variables.man.getFileContent(rc.name, "", "config.xml");
 	}
-	
+
+    function editinstall(any rc){
+        rc.install_cfc =  variables.man.getFileContent(rc.name, "", "Install.cfc");
+    }
 	
 	function saveconfig(any rc){
 		variables.man.setConfig(rc.name, XMLParse(rc.config_xml));
@@ -317,7 +366,13 @@ component {
 		variables.man.saveStep(rc.name, rc.step, rc.label, rc.description);
 		variables.fw.redirect("extension.steps?name=#rc.name#");
 	}
-	
+
+	function removeStep(any rc)
+	{
+		variables.man.removeStep(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&message=The step has been removed");
+	}
+
 	function editGroup(any rc){
 		var stepXML = variables.man.getConfig(rc.name);
 		if (!structKeyExists(rc, "group"))
@@ -336,13 +391,19 @@ component {
 		rc.label = isDefined("rc.groupxml.XmlAttributes.label") ? rc.groupxml.XmlAttributes.label : "";
 		rc.description = isDefined("rc.groupxml.XmlAttributes.description") ? rc.groupxml.XmlAttributes.description : "";
 	}
-	
+
 	function saveGroup(any rc){
 		variables.man.saveGroup(rc.name, rc.step, rc.group, rc.label, rc.description);
 		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	}
-	
-	
+
+	function removeGroup(any rc)
+	{
+		variables.man.removeGroup(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&message=The group has been removed");
+	}
+
+
 	function editField(any rc){
 		var stepXML = variables.man.getConfig(rc.name);
 		if (!structKeyExists(rc, "field"))
@@ -384,7 +445,12 @@ component {
 		variables.man.saveField(rc);
 		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#");
 	}
-	
+
+	function removefield(any rc)
+	{
+		variables.man.removeField(rc);
+		variables.fw.redirect("extension.steps?name=#rc.name#&step=#rc.step#&group=#rc.group#&message=The field has been removed");
+	}
 	
 	/*
 		Publish to ext store
@@ -425,16 +491,131 @@ component {
 		_updateTextFile(rc, "tag");
 	}
 	function savefunction(any rc){
-		_updateTextFile(rc, "functions");
+		_updateTextFile(rc, "function");
 	}
 
+	/*
+		Update checker
+	*/
+	public function checkUpdates(any rc)
+	{
+		/* check if store details have been filled in */
+		local.storeInfo = _getEncryptedData();
+		if (not structKeyExists(local.storeInfo, "getrailo_pass"))
+		{
+			throw('You can only run the update-check after you added your getrailo.org login details on the Publish page.');
+		}
+
+		/* If the extension was not set as auto_version_update, set that setting now */
+		if (not structKeyExists(rc.info, "auto_version_update") or rc.info.auto_version_update eq false)
+		{
+			rc.info = variables.man.saveInfo(rc.name, {name:rc.name, auto_version_update:1, version:rc.info.version & ".0"});
+		}
+
+		loop list="applications,plugins" index="local.type"
+		{
+			var aLinks = getLinkFiles(rc.name, local.type);
+			for (local.link in aLinks)
+			{
+				if (checkFileUpdated(rc, local.link, local.type))
+				{
+					publishnow(rc);
+					abort;
+				}
+			}
+		}
+	}
+
+	public void function autoupdatecheck(any rc)
+	{
+		local.scheduledTaskName = "auto-update-#rc.name#-extension";
+		if (structKeyExists(rc, "enableautoupdate"))
+		{
+			/* save the current version number */
+			rc.info = variables.man.saveInfo(rc.name, {name:rc.name, version:rc.version});
+
+			if (rc.enableautoupdate eq 0)
+			{
+				schedule action="delete" task="#local.scheduledTaskName#";
+				rc.message = "The auto-update check has been successfully removed.";
+				local.saveData = {};
+			} else
+			{
+ 				local.starttime = "#rc.start_hours#:#rc.start_minutes#:#rc.start_seconds#";
+				local.startDate = createDate(year(now()), month(now()), day(now()));
+				if (rc.frequency eq "every")
+				{
+					rc.frequency = createTimespan(0, rc.every_hours, rc.every_minutes, rc.every_seconds);
+				} else if (rc.frequency eq "daily")
+				{
+					rc.frequency = "daily";
+				} else if (find('weekly-', rc.frequency))
+				{
+					local.weekday = listLast(rc.frequency, '-');
+					// today==day 3, weekday=1 >> today + (1-3) == today + -2
+					// today==day 2, weekday=6 >> today + (6-2) == today + 4
+					local.startDate = local.startDate + (local.weekday - dayOfWeek(local.startDate));
+					rc.frequency = "weekly";
+				}
+				schedule action="update" interval="#rc.frequency#" startdate="#local.startDate#"
+					starttime="#local.starttime#" task="#local.scheduledTaskName#"
+					URL="http://#cgi.http_host##cgi.script_name#?action=extension.checkUpdates&name=#rc.name#";
+				rc.message = "The auto-update settings have been saved.";
+
+				local.saveData = structCopy(form);
+				structDelete(local.saveData, "formfields", false);
+			}
+			/* save the schedule data: it cannot be retrieved with cfschedule it seems :-/ */
+			variables.man.saveInfo(rc.name, {name:rc.name, autoupdatesettings: serialize(local.saveData)});
+		}
+		/* get the scheduled task info, if any */
+		if (structKeyExists(rc.info, "autoupdatesettings"))
+		{
+			structAppend(rc, evaluate(rc.info.autoupdatesettings), false);
+		}
+	}
+
+	public Boolean function checkFileUpdated(any rc, String fileurl, String ziptype)
+	{
+		local.fileCheckInfoKey = "";
+		/* check if the zip file has a new content-length or etag */
+		http method="GET" url="#arguments.fileurl#" throwonerror="no" result="local.HTTPData";
+		/* did the http succeed? */
+		if (structKeyExists(local, "HTTPdata") and structKeyExists(local.HTTPdata, "statuscode")
+			and find('200', local.HTTPdata.statuscode))
+		{
+			/* try to get new filesize or etag or DLM */
+			loop list="Last-Modified,Etag,Content-Length" index="local.key"
+			{
+				if (structKeyExists(local.HTTPData.responseheader, local.key))
+				{
+					local.fileCheckInfoKey &= "updatecheck-#rereplace(fileurl, '[^a-zA-Z0-9-]+', '_', 'all')#-#local.key#";
+					local.fileCheckInfoData = local.HTTPData.responseheader[local.key];
+					break;
+				}
+			}
+			if (local.fileCheckInfoKey neq "")
+			{
+				/* if there's no updateCheck info in the zip file, or the content has changed*/
+				if (not structKeyExists(rc.info, local.fileCheckInfoKey)
+					or rc.info[local.fileCheckInfoKey] neq local.fileCheckInfoData)
+				{
+					local.saveData = {name:rc.name};
+					local.saveData[local.fileCheckInfoKey] = local.fileCheckInfoData;
+					rc.info = variables.man.saveInfo(rc.name, local.saveData);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 		
 	/*
 		Helper functions
 	*/
 	function _getEncryptedData()
 	{
-		var file = expandPath('/SDKdata/secureddata.txt');
+		var file = expandPath('/localdata/secureddata.txt');
 		if (!fileExists(file))
 		{
 			return {};
@@ -446,14 +627,14 @@ component {
 		// file might have been moved to a new web context or been tampered with; delete it
 		} catch(any)
 		{
-//			fileDelete(file);
+			fileDelete(file);
 			return {};
 		}
 	}
 
 	function _setEncryptedData(struct data)
 	{
-		var file = expandPath('/SDKdata/secureddata.txt');
+		var file = expandPath('/localdata/secureddata.txt');
 		var data = serialize(data);
 		data = encrypt(data, getRailoID().web.id, "CFMX_COMPAT", "Base64");
 		fileWrite(file, data);
@@ -472,51 +653,33 @@ component {
 		variables.fw.redirect("extension.add#arguments.type#s?name=#rc.name#&message=The #arguments.type# file is updated");
 	}
 
-	function _uploadFile(any rc, String formField, String type, String allowedExtensions, Boolean doRedirect=true)
+
+
+	private Array function _getAvailableExtensions()
 	{
-		rc.response = "";
-		// check if upload file exists
-		if (not structKeyExists(rc, formField) or rc[formField] eq "")
-		{
-			rc.response = "You have not uploaded a file!";
-			if (doRedirect)
-			{
-				variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
-			}
-			rc.uploadFailed = 1;
-			return;
+		var ret = [];
+		var ep = new ExtensionProvider();
+		var remoteExtensions = ep.listApplications();
+
+		loop query="remoteExtensions"{
+			var ext = {};
+			ext.info = QuerySlice(remoteExtensions,remoteExtensions.currentrow,1);
+			ext.capabilities = variables.man.getCapability(ext.info.name);
+			ext.datelastmodified = variables.man.getDLM(ext.info.name);
+			ArrayAppend(ret, ext);
 		}
-		// upload file
-		file action="upload" destination="#GetTempDirectory()#" filefield="#formField#" result="local.uploadresult" nameconflict="overwrite";
-		var appPath = "#uploadresult.serverdirectory##server.separator.file##uploadresult.serverfile#";
-		// check for valid extension / iszipfile
-		if (allowedExtensions neq "")
-		{
-			if (allowedExtensions eq "zip" and not isZipFile(appPath))
-			{
-				rc.response = "You can only upload zip files!";
-			} else if (not listFindNoCase(allowedExtensions, uploadresult.serverfileext))
-			{
-				rc.response = "You can only add files with the following extension#listlen(allowedExtensions) gt 1 ? 's':''#: #replace(uCase(allowedExtensions), ',', ', ', 'all')#";
-			}
-			if (rc.response neq "")
-			{
-				fileDelete(appPath);
-				if (doRedirect)
-				{
-					variables.fw.redirect("extension.add#type#s?name=#rc.name#&error=#rc.response#");
-				}
-				rc.uploadFailed = 1;
-				return;
-			}
-		}
-		// add the file
-		variables.man.addFile(rc.name, appPath,  "#type#s");
-		rc.response = "The #type# has been added";
-		if (doRedirect)
-		{
-			variables.fw.redirect("extension.add#type#s?name=#rc.name#&message=#rc.response#");
-		}
-		return;
+		return ret;
 	}
+
+	private void function _overrideEmptyValues(required Struct old, required Struct new)
+	{
+		for (var key in arguments.new)
+		{
+			if (not structKeyExists(arguments.old, key) or arguments.old[key] eq "")
+			{
+				arguments.old[key] = arguments.new[key];
+			}
+		}
+	}
+
 }
