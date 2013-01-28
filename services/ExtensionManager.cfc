@@ -1,7 +1,18 @@
-component output="false"{
+component
+{
 /* This component provides some nice functions to be able to read from the extension zip files */
 	
 	variables.cdata = "description"; //In case we add more
+
+
+    function init(ExtensionsInfo){
+        variables.validExtensionFields  = ExtensionsInfo.getValidExtensionFields();
+
+    }
+
+    function getValidExtensionFields(){
+        return  variables.validExtensionFields;
+    }
 	
 	function getConfig(String extensionName){
 		var config = FileRead("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml")
@@ -36,6 +47,13 @@ component output="false"{
 			capability.jars = DirectoryExists(extPath & "jars") ? ArrayLen(DirectoryList(extPath & "jars",false,"name")) : 0;	
 		return capability;
 	}
+
+	public Date function getDLM(String extensionName)
+	{
+		var extPath = expandPath("/ext/#extensionName#.zip");
+		var fileObj = createObject("java","java.io.File").init(extPath);
+		return createObject("java","java.util.Date").init(fileObj.lastModified());
+	}
 	
 	function saveInfo(String extensionName, Struct info){
 		saveInfoToXML(extensionName, info);
@@ -48,9 +66,8 @@ component output="false"{
 	
 	function saveInfoToXML(String extensionName, Struct info)
 	{
-		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml";
-		var extXML = XMLParse(FileRead(extPath));
-		
+		var extXML = getConfig(extensionName);
+
 		// add uploaded image file info the extension zip file
 		if (structKeyExists(info, "image") and info.image neq "" and not isValid("url", info.image) and fileExists(info.image))
 		{
@@ -66,7 +83,8 @@ component output="false"{
 		}
 		var infoItem = extXML.config.info;
 		
-		loop collection="#info#" item="local.i"{
+		loop collection="#info#" item="local.i"
+		{
 			var itemIndex = XMLChildPos(infoItem, i, 1);
 			var item = infoItem.XMLChildren[itemIndex];
 			if(itemIndex LT 0){
@@ -80,7 +98,7 @@ component output="false"{
 				item.XMLText = info[i];
 			}	
 		}
-		FileWrite(extPath, toString(extXML));
+		setConfig(extensionName, toString(extXML));
 	}
 	
 	
@@ -91,7 +109,15 @@ component output="false"{
 		var lFunc = "";
 		var lJars = "";
 		var lApps = "";
+		var lPlugins = "";
+		var minVersion = "";
+
 		var configXML = XMLParse(FileRead(extPath & "/config.xml"));
+
+        if(structKeyExists(configXML.config.info, "railo_version")){
+            minVersion = configXML.config.info.railo_version.XMLText;
+        }
+
 		if(DirectoryExists(extPath & "/tags/")){
 		var qTAGS = DirectoryList(extPath & "/tags/",false,"query");
 			lTags = ValueList(qTAGS.name);
@@ -105,49 +131,58 @@ component output="false"{
 		var qJARS = DirectoryList(extPath & "/jars/",false,"query");
 			lJars = ValueList(qJARS.name);
 		}
-		
-		
+
 		if(DirectoryExists(extPath & "/applications/")){
 		var qApps = DirectoryList(extPath & "/applications/", false, "query");
 			lApps = ValueList(qApps.name);
 		}
+
+        if(directoryExists(extPath & "/plugins/")){
+        var qPlugins = DirectoryList(extPath & "/plugins/", false, "query");
+            lPlugins = ValueList(qPlugins.name);
+        }
+
 		installString = Replace(installString, "__NAME__", extensionName, "all");
 		installString = Replace(installString, "__LABEL__", configXML.config.info.label.XMLText, "all");
 		installString = Replace(installString, "__TAGS__", lTags, "all");
 		installString = Replace(installString, "__FUNCTIONS__", lFunc, "all");
 		installString = Replace(installString, "__JARS__", lJars, "all");
-		installString = Replace(installString, "__APPS__", lApps, "all");		
-		
-		
+		installString = Replace(installString, "__APPS__", lApps, "all");
+        installString = Replace(installString, "__RAILO_VERSION__", minVersion, "all")
+		installString = Replace(installString, "__PLUGINS__", lPlugins, "all")
+
+
+
 		FileWrite(extPath & "/Install.cfc", installString);
 	}
 	
 	
 	function createNewExtension(String extensionName, String extensionLabel){
 		//Need to create the config.xml from the information provided
-		
-
-		
 		var uuid = CreateUUID();
 		var created = Now();
-		//Create THE XMML config
+		//Create THE XML config
 
-		var validFields = ListToArray("author,category,support,description,mailinglist,documentation,image,paypal,packaged-by,licenseTemplate");
 		var xmlConfig = XMLNew(true);
 		xmlConfig.XMLRoot = XMLElemNew(xmlConfig, "config");
 		var infoel = XMLElemNew(xmlConfig.XMLRoot, "info");
 		
-			//Add some default values
-			addElementsToInfo(infoel, "name", extensionName);
-			addElementsToInfo(infoel, "label", extensionLabel);
-			addElementsToInfo(infoel, "id", CreateUUID());
-			addElementsToInfo(infoel, "type", "server");
-			addElementsToInfo(infoel, "version", "1.0.0");
-			addElementsToInfo(infoel, "created", Now());
-			//Now add the rest of the tags
-			loop array="#validFields#" index="v"{
-				addElementsToInfo(infoel, v, "");
+		//Add some default values
+		addElementsToInfo(infoel, "name", extensionName);
+		addElementsToInfo(infoel, "label", extensionLabel);
+		addElementsToInfo(infoel, "id", CreateUUID());
+		addElementsToInfo(infoel, "type", "server");
+		addElementsToInfo(infoel, "version", "1.0.0");
+		addElementsToInfo(infoel, "created", Now());
+		//Now add the rest of the tags
+		loop list="#variables.validExtensionFields#" index="local.v"
+		{
+			if (not structKeyExists(infoel, local.v))
+			{
+				addElementsToInfo(infoel, local.v, "");
 			}
+		}
+
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
 		if(!DirectoryExists(expandPath("ext/"))){
@@ -191,8 +226,7 @@ component output="false"{
 	}
 	
 	function getFileContent(String extensionName, String folder, String filename){
-		var ret = "";
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder##folder eq '' ? '':'/'##filename#";
 		if(!fileExists(itemPath)){
 				return "";
 		}
@@ -219,8 +253,20 @@ component output="false"{
 
 		checkAutoVersionUpdate(extensionName);
 	}
-	
-	
+
+	function removeStep(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		arrayDeleteAt(configXML.config.step, rc.step);
+
+		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(rc.name);
+	}
+
+
+
+
 	function saveGroup(String extensionName, Numeric step=0, Numeric group=0, String label, String description=""){
 		var configXML = getConfig(extensionName);
 		
@@ -256,6 +302,16 @@ component output="false"{
 		checkAutoVersionUpdate(extensionName);
 	}
 
+	function removeGroup(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		arrayDeleteAt(configXML.config.step[rc.step].group, rc.group);
+
+		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(rc.name);
+	}
+
 
 	function saveField(any rc)
 	{
@@ -282,9 +338,9 @@ component output="false"{
 		newItem.XMLAttributes['replacestring'] = rc.replacestring;
 		newItem.XMLAttributes['replacefilenames'] = rereplace(trim(rc.replacefilenames), '[\r\n]+', ',', 'all');
 		newItem.XMLAttributes['fieldusage'] = rc.fieldusage;
-		
-		// for later: add an optional description for the field
-		//	newItem.XMLAttributes['description'] = rc.label;
+
+// for later: add an optional description for the field
+//	newItem.XMLAttributes['description'] = rc.label;
 
 		if (rc.type eq "password" or rc.type eq "text")
 		{
@@ -312,7 +368,17 @@ component output="false"{
 		checkAutoVersionUpdate(rc.name);
 	}
 
-	
+
+	function removeField(any rc)
+	{
+		var configXML = getConfig(rc.name);
+		arrayDeleteAt(configXML.config.step[rc.step].group[rc.group].item, rc.field);
+		setConfig(rc.name, configXML);
+
+		checkAutoVersionUpdate(rc.name);
+	}
+
+
 	function addFile(String extensionName, String source, String folder){
 		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
 		if(!DirectoryExists(itemPath)){
@@ -320,7 +386,7 @@ component output="false"{
 		}
 		
 		//Has to have the full name
-		itemPath  = itemPath & ListLast(source, SERVER.separator.file);
+		itemPath  = itemPath & ListLast(source, "/");
 		
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
@@ -362,12 +428,7 @@ component output="false"{
 	
 	function getLicenseText(String extensionName)
 	{
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
-		if (fileExists(itemPath))
-		{
-			return fileRead(itemPath);
-		}
-		return "";
+		return getFileContent(extensionName, "", "License.txt");
 	}
 
 	function setLicenseText(String extensionName, String licenseText)
