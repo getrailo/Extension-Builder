@@ -1,6 +1,6 @@
 component extends="org.corfield.framework" {
 	
-	this.name = "Extension Builder SDK";
+	this.name = "Railo Extension Builder";
 	
 	variables.framework = {
 		reloadApplicationOnEveryRequest = true,
