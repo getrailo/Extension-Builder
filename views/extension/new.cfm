@@ -2,14 +2,14 @@
 <cfsavecontent variable="pageScripts">
 <script>
 	$(function(){
-		var myregexp = new RegExp("[\W]");
 		$("#label").keyup(function(){
-			
-			var cleanName = $(this).val().toLowerCase().replace(/ /g,"-");
-			cleanName = cleanName.replace("/", "-");
-		
+			// replace all non-A-Z and 0-9 to dashes
+			var cleanName = $(this).val().toLowerCase().replace(/[^0-9a-z]+/g,"-");
+			// remove dashes at start and end
+			cleanName = cleanName.replace(/(^-|-$)/g, "");
+
 			$("#name").val(cleanName);
-		});
+		}).triggerHandler('keyup');
 		
 		//Setup the error handling for items that have a data-required attribute
 		
@@ -82,17 +82,20 @@
 		<input type="text" name="label" value="" id="label" placeholder="My Great Extension" data-required="true" data-error="Please enter a label for your extension, this will be the displayed name in the extension store">
 		<span class="help-inline hide" id="name_help"></span>	
 	</div>
-	
-	
+
+
+	<input type="hidden" name="name" id="name" value="" />
+<!---
 	<div class="control-group" id="name_control">
  		<label>Short Name:</label>
  		<input type="text" name="name" id="name" placeholder="MyExtension" data-required="true" data-error="Please enter a name for your extension"/>
 		<span class="help-inline hide" id="label_help"></span>	
  	</div>
-	
+--->
+
 	<div class="form-actions">
        <button type="submit" class="btn btn-primary">Create Extension</button>
-       <button class="btn" type="reset">Cancel</button>
+       <button class="btn" type="reset">Reset form</button>
      </div>
  </fieldset>
 

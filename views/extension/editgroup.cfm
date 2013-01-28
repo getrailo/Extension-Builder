@@ -19,15 +19,18 @@
 			<input type="hidden" name="group" value="#rc.group#">
 			<div>
 				<label>Label</label>
-				<input type="text" name="label" value="#rc.label#" class="span2" placeholder="e.g.: Location">
+				<input type="text" name="label" value="#rc.label#" class="span2" placeholder="Name and email" />
 			</div>
 			<div>
 				<label>Description</label>
-				<input type="text" name="description" value="#rc.description#" class="span5" placeholder="">
+				<input type="text" name="description" value="#rc.description#" class="span5" placeholder="Please enter your registration details" />
 			</div>
 			<div class="form-actions">
-				<button class="btn btn-primary" type="submit" >Save</button>
-			</div>
+				<button class="btn btn-primary" type="submit">Save</button>
+				<cfif rc.label neq "">
+					<a class="btn btn-danger" href="#buildURL('extension.removegroup?name=#rc.name#&step=#rc.step#&group=#rc.group#')#"><i class="icon-trash icon-white"></i> Delete</a>
+				</cfif>
+	</div>
 		</fieldset>
 	</form>
 <!---
