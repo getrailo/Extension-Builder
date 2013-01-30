@@ -77,7 +77,8 @@ component extends="org.corfield.framework" {
 		//request.context.startTime = getTickCount();
 
 		request.absRootPath = getDirectoryFromPath(getCurrentTemplatePath());
-		request.webrootPath = replace(request.absRootPath, expandPath('/'), "/");
+		request.webRootPath = replace(replace(request.absRootPath, expandPath('/'), "/"), "\", "/", "all");
+		request.cfcRootPath = replace(replace(request.webRootPath, "/", ""), "/", ".", "all");
 
 		loadBeans();
 	}
