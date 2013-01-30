@@ -61,7 +61,7 @@ component {
 		
 		// check if it still works
 		try {
-			var temp = new ExtensionProvider();
+			var temp = createObject("component", "#request.cfcRootPath#ExtensionProvider");
 		}
 		catch (any e)
 		{

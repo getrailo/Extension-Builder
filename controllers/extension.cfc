@@ -657,7 +657,7 @@ component extends="baseextension"
 	private Array function _getAvailableExtensions()
 	{
 		var ret = [];
-		var ep = new ExtensionProvider();
+		var ep = createObject("component", "#request.cfcRootPath#ExtensionProvider");
 		var remoteExtensions = ep.listApplications();
 
 		loop query="remoteExtensions"{

@@ -20,7 +20,8 @@ component
 	}
 	
 	public function setConfig(String extensionName, XML xmlDocument){
-		var prettyXml = new services.XMLFunctions().indentXML(xmlDocument);
+		var xmlFunctionsObj = createObject("component", "#request.cfcRootPath#services.XMLFunctions");
+		var prettyXml = xmlFunctionsObj.indentXML(xmlDocument);
 		fileWrite("zip://#request.absRootPath#ext/#extensionName#.zip!/config.xml", prettyXml);
 	}
 	
