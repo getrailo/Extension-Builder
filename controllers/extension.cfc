@@ -5,7 +5,8 @@ component extends="baseextension"
 
 	function init(any fw){
 		variables.fw  = fw;
-		variables.man =  application.di.getBean("ExtensionManager");
+		// variables.man =  application.di.getBean("ExtensionManager");
+		variables.man =  createObject("component", "#request.cfcRootPath#ExtensionManager");
         variables.validExtensionFields =  variables.man.getValidExtensionFields();
 
 	}
@@ -38,8 +39,7 @@ component extends="baseextension"
 			variables.fw.setView("extension.new");
 			return;
 		}
-		var man = application.di.getBean("ExtensionManager");
-		rc.info = man.createNewExtension( rc.name, rc.label);
+		rc.info = variables.man.createNewExtension( rc.name, rc.label);
 		
 		//All going well so far, redirect them to the edit page
 		variables.fw.redirect("extension.edit?name=#rc.name#");

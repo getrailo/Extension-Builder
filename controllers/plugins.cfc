@@ -3,7 +3,8 @@ component extends="baseextension"
 	
 	function init(any fw){
 		variables.fw  = fw;
-		variables.man =  application.di.getBean("ExtensionManager");
+		// variables.man =  application.di.getBean("ExtensionManager");
+		variables.man = createObject("component", "#request.cfcRootPath#ExtensionManager");
 	}
 	
 	/*

@@ -80,11 +80,13 @@ component extends="org.corfield.framework" {
 		request.webRootPath = replace(replace(request.absRootPath, expandPath('/'), "/"), "\", "/", "all");
 		request.cfcRootPath = replace(replace(request.webRootPath, "/", ""), "/", ".", "all");
 
-		loadBeans();
+		// PK: Mark, be my guest to re-add it.
+		// It's not used atm, since it threw errors when the REB wasn't installed in the webroot
+		// loadBeans();
 	}
 	
 	
-	function loadBeans(){
+	/*function loadBeans(){
 		application.di = new org.corfield.ioc("/services");
-	}
+	}*/
 }
