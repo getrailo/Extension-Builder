@@ -322,26 +322,26 @@
 		</cfif>
 	</cffunction>
 	
-	
-	<cffunction name="_moveDirectoryContents" returntype="void" access="private">
+	<cffunction name="_moveDirectoryContents" returntype="void" access="private" output="no">
 		<cfargument name="from" type="string" />
 		<cfargument name="to" type="string" />
 		<cfargument name="copy" type="boolean" default="false" />
 		<cfset var fileAction = arguments.copy ? "copy":"move" />
 		<cfset var qMove = "" />
 		<cfdirectory action="list" name="qMove" directory="#arguments.from#" recurse="yes" sort="dir" />
-		<cfset var startdir = qMove.directory />
+		<cfset var startdir = _trailingSlash(qMove.directory) />
 		<cfloop query="qMove">
-			<cfset var toDir = replace(qMove.directory, startdir, arguments.to) />
+			<cfset var toDir = replace(_trailingSlash(qMove.directory), startdir, arguments.to) />
+			
 			<cfif qMove.type eq "dir">
 				<cfif not DirectoryExists(todir & qMove.name)>
-					<cfdirectory action="create" directory="#todir#/#qMove.name#" recurse="yes" mode="777" />
+					<cfdirectory action="create" directory="#todir##qMove.name#" recurse="yes" mode="777" />
 				</cfif>
 			<cfelse>
 				<cfif fileExists("#todir##qMove.name#")>
-					<cffile action="delete" file="#todir#/#qMove.name#" />
+					<cffile action="delete" file="#todir##qMove.name#" />
 				</cfif>
-				<cffile action="#fileAction#" source="#qMove.directory#/#qmove.name#" destination="#todir#/#qMove.name#" mode="755" />
+				<cffile action="#fileAction#" source="#_trailingSlash(qMove.directory)##qmove.name#" destination="#todir##qMove.name#" mode="755" />
 			</cfif>
 		</cfloop>
 		<cfif not arguments.copy>
@@ -485,5 +485,13 @@
 		</cfif>
 	</cffunction>
 
+
+	<cffunction name="_trailingSlash" access="private" returntype="string" output="no">
+		<cfargument name="path" type="string" required="true" />
+		<cfif right(arguments.path, 1) neq server.separator.file>
+			<cfreturn arguments.path & server.separator.file />
+		</cfif>
+		<cfreturn arguments.path />
+	</cffunction>
 
 </cfcomponent>
