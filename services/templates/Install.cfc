@@ -326,6 +326,7 @@
 		<cfargument name="from" type="string" />
 		<cfargument name="to" type="string" />
 		<cfargument name="copy" type="boolean" default="false" />
+		<cfset arguments.to = _trailingSlash(arguments.to) />
 		<cfset var fileAction = arguments.copy ? "copy":"move" />
 		<cfset var qMove = "" />
 		<cfdirectory action="list" name="qMove" directory="#arguments.from#" recurse="yes" sort="dir" />
@@ -464,10 +465,10 @@
 		<cfargument name="zipFileExtractPath" type="string" required="true" default="" />
 
 		<cfif arguments.zipFileExtractPath neq "">
-			<cfset local.tempDir = getTempDirectory() & createUUID() & "/" />
+			<cfset local.tempDir = getTempDirectory() & createUUID() & server.separator.file />
 			<cfzip action="unzip" file="#arguments.file#"
 			destination="#local.tempDir#" overwrite="true" recurse="true" />
-			<cfset _moveDirectoryContents("#local.tempDir##zipFileExtractPath#/", arguments.destination, false) />
+			<cfset _moveDirectoryContents("#local.tempDir##zipFileExtractPath##server.separator.file#", arguments.destination, false) />
 
 			<!--- PK: I give up.
 			There just isn't a way, it seems, to recursively extract only a sub-subfolder from a zip, without it being written into the original zipped path.
