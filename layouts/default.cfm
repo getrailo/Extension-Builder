@@ -30,8 +30,8 @@
              <li class="<!--- active --->">
                 <a href="#buildURL("provider")#">Extension Provider</a>
               </li>
-			  <li><a href="https://github.com/getrailo/Railo-Extension-Builder-SDK/wiki" target="_blank">Documentation</a></li>
-		      <li><a href="https://github.com/getrailo/Railo-Extension-Builder-SDK/issues" target="_blank">Issues</a></li>
+			  <li><a href="https://github.com/getrailo/Extension-Builder/wiki" target="_blank">Documentation</a></li>
+		      <li><a href="https://github.com/getrailo/Extension-Builder/issues" target="_blank">Issues</a></li>
 <!--- 			  <li><a href="#buildURL("resources")#">Resources</a></li> --->
             </ul>
           </div>

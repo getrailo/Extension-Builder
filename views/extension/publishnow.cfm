@@ -6,7 +6,9 @@
 	<!--- show the result of the upload --->
 	<cfset fileWrite('#request.absRootPath#temp-storeresult.html', rc.publishresult, 'utf-8') />
 	<h3><em>Please review the result:</em></h3>
-	<iframe width="100%" height="400" frameborder="1" src="#request.webRootPath#temp-storeresult.html">Wow, your browser does not support frames?!</iframe>
+	<cfoutput>
+		<iframe width="100%" height="400" frameborder="1" src="#request.webRootPath#temp-storeresult.html">Wow, your browser does not support frames?!</iframe>
+	</cfoutput>
 <cfelseif structKeyExists(rc, "loginFailed")>
 	<div class="error">Login did not succeed!</div>
 <cfelse>

@@ -1,7 +1,8 @@
 <cfcomponent output="false">
 	
 	<cfset request.absRootPath = getDirectoryFromPath(getCurrentTemplatePath()) />
-	<cfset request.webrootPath = replace(request.absRootPath, expandPath('/'), "/") />
+	<cfset request.webRootPath = replace(replace(request.absRootPath, expandPath('/'), "/"), "\", "/", "all") />
+	<cfset request.cfcRootPath = replace(replace(request.webRootPath, "/", ""), "/", ".", "all") />
 
 	<!--- please note: this cfset can be overwritten by the REB --->
 	<cfset variables.extensionInfo = {

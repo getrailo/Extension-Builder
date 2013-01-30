@@ -38,8 +38,7 @@ component extends="baseextension"
 			variables.fw.setView("extension.new");
 			return;
 		}
-		var man = application.di.getBean("ExtensionManager");
-		rc.info = man.createNewExtension( rc.name, rc.label);
+		rc.info = variables.man.createNewExtension( rc.name, rc.label);
 		
 		//All going well so far, redirect them to the edit page
 		variables.fw.redirect("extension.edit?name=#rc.name#");
@@ -658,7 +657,7 @@ component extends="baseextension"
 	private Array function _getAvailableExtensions()
 	{
 		var ret = [];
-		var ep = new ExtensionProvider();
+		var ep = createObject("component", "#request.cfcRootPath#ExtensionProvider");
 		var remoteExtensions = ep.listApplications();
 
 		loop query="remoteExtensions"{
