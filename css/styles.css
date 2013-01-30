@@ -3,17 +3,17 @@
 }
 
 ol li.step {
-	list-style-image: url("/img/application.png");
+	list-style-image: url("../img/application.png");
 }	
-ol li.group {list-style-image: url("/img/application_form.png");}
-ol li.item {list-style-image: url("/img/textfield.png");}
+ol li.group {list-style-image: url("../img/application_form.png");}
+ol li.item {list-style-image: url("../img/textfield.png");}
 
 /* editing a field: 'what usage' list*/
 ul#fieldusage { list-style:none }
 
 .hero-unit {
 	padding-left: 200px;
-	background: #f5f5f5 url("/img/magicwand-100.gif") no-repeat 50px 70px;
+	background: #f5f5f5 url("../img/magicwand-100.gif") no-repeat 50px 70px;
 }
 
 /* PK: making the placeholders less obtrusive. It is now often unclear whether it is a filled-in value!

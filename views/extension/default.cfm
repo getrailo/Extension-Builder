@@ -36,7 +36,7 @@
 				<td><cfif ext.capabilities.jars><i class="icon-ok"></i></cfif></td>
 				<td><a class="btn btn-primary" href="#buildURL("#me#.edit?name=#ext.info.name#")#"><i class="icon-edit icon-white"></i> Edit</a></td>
 				<td><a class="btn" href="#buildURL("#me#.publish?name=#ext.info.name#")#"><i class="icon-shopping-cart"></i> Publish</a></td>
-				<td><a class="btn btn-success" href="/ext/#ext.info.name#.zip"><i class="icon-download icon-white"></i> Download</a></td>
+				<td><a class="btn btn-success" href="#request.webRootPath#ext/#ext.info.name#.zip"><i class="icon-download icon-white"></i> Download</a></td>
 				<td><a class="btn btn-danger" href="#buildURL("#me#.delete?name=#ext.info.name#")#"><i class="icon-trash icon-white"></i> Delete</a></td>
 			</tr>
 		</cfloop>

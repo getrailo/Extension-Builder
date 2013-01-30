@@ -65,6 +65,6 @@
 	<hr />
 	<h3>Publish manually</h3>
 	<p>If you prefer to add your extension to the store manually, then just <a href="http://www.getrailo.org/index.cfm/extensions" target="_blank" title="Link opens new window">go to the Store</a>, and use this zip file:
-		<br /><a href="/ext/#rc.name#.zip"><em>#expandPath('/ext/#rc.name#.zip')#</em></a>
+		<br /><a href="#request.webRootPath#ext/#rc.name#.zip"><em>#request.absRootPath#ext/#rc.name#.zip</em></a>
 	</p>
 </cfoutput>

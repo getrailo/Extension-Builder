@@ -5,16 +5,16 @@ component {
 	}
 
 	function default(any rc){
-		rc.baseurl = "http://#CGI.http_host#";
+		rc.baseurl = "http://#CGI.http_host##request.webRootPath#";
 		
-		rc.extproviderURL = rc.baseurl & "/ExtensionProvider.cfc";
+		rc.extproviderURL = rc.baseurl & "ExtensionProvider.cfc";
 		rc.extInfo = _getExtensionInfo();
 	}
 	
 	function _getExtensionInfo()
 	{
 		var data = {};
-		var extProvFilePath = expandPath('/ExtensionProvider.cfc');
+		var extProvFilePath = '#request.absRootPath#ExtensionProvider.cfc';
 		// get the raw cfml data from the extension provider (needed because we want to show '#cgi.http_host#' instead of 'www.test.me')
 		var rawData = reMatch('<c'&'fset variables.extensionInfo([^>]|\r|\n)+>', fileRead(extProvFilePath));
 		// data not found?
@@ -54,7 +54,7 @@ component {
 			cfmText &= "#server.separator.line#		#++keynum gt 1 ? ',':' '# #lCase(key)#: '" & replaceList(data[key], "<,>,'", "&lt;,&gt;,''") & "'";
 		}
 		var cfmText &= "#server.separator.line#	} />";
-		var extProvFilePath = expandPath('/ExtensionProvider.cfc');
+		var extProvFilePath = '#request.absRootPath#ExtensionProvider.cfc';
 		var origExtProvCode = fileRead(extProvFilePath);
 		var newExtProvCode = rereplace(origExtProvCode, '<c'&'fset variables.extensionInfo([^>]|\r|\n)+>', cfmText);
 		fileWrite(extProvFilePath, newExtProvCode);
@@ -77,10 +77,10 @@ component {
 		param name="rc.serverpass" default="";
 		param name="rc.webpass" default="";
 
-		var extproviderURL = "http://#CGI.http_host#";
+		var extproviderURL = "http://#CGI.http_host##request.absRootPath#";
 	
 		
-		extproviderURL &= "/ExtensionProvider.cfc";
+		extproviderURL &= "ExtensionProvider.cfc";
 			
 		admin action="updateExtensionProvider" type="server" password="#rc.serverpass#" url="#extproviderURL#";
 		

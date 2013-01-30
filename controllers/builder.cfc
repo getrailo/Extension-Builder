@@ -25,7 +25,7 @@ component {
 		}
 		
 		//Create a new file name after the name
-		zip action="zip" file="#expandpath("/ext/#rc.name#.zip")#"{
+		zip action="zip" file="#request.absRootPath#ext/#rc.name#.zip"{
 			zipparam content=xmlConfig entrypath="config.xml";
 		}
 		//Now forward to the edit screen... 

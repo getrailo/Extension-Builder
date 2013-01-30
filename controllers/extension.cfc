@@ -62,8 +62,8 @@ component extends="baseextension"
 				if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
 				{
 					try {
-						file action="delete" file="zip://#expandPath("/ext/#rc.name#.zip")#!#rc.oldimage#";
-						file action="delete" file="#expandpath('/ext#rc.oldimage#')#";
+						file action="delete" file="zip://#request.absRootPath#ext/#rc.name#.zip!#rc.oldimage#";
+						file action="delete" file="#request.absRootPath#ext/#rc.oldimage#";
 					} catch(any E) {}
 				}
 			} else if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
@@ -74,8 +74,8 @@ component extends="baseextension"
 			else if (structKeyExists(rc, "oldimage") and not isValid('url', rc.oldimage))
 			{
 				try {
-					file action="delete" file="zip://#expandPath("/ext/#rc.name#.zip")#!#rc.oldimage#";
-					file action="delete" file="#expandpath('/ext#rc.oldimage#')#";
+					file action="delete" file="zip://#request.absRootPath#ext/#rc.name#.zip!#rc.oldimage#";
+					file action="delete" file="#request.absRootPath#ext/#rc.oldimage#";
 				} catch(any E) {}
 			}
 		}
@@ -136,11 +136,11 @@ component extends="baseextension"
 		if (structKeyExists(rc, "sure"))
 		{
 			// check for the accompanying img
-			if (rc.info.image neq "" and not isValid('url', rc.info.image) and fileExists(expandPath('/ext/#rc.info.image#')))
+			if (rc.info.image neq "" and not isValid('url', rc.info.image) and fileExists(request.absRootPath & 'ext/#rc.info.image#'))
 			{
-				fileDelete(expandPath('/ext/#rc.info.image#'));
+				fileDelete('#request.absRootPath#ext/#rc.info.image#');
 			}
-			fileDelete(expandPath('/ext/#rc.name#.zip'));
+			fileDelete('#request.absRootPath#ext/#rc.name#.zip');
 			rc.message = "The extension has been deleted.";
 			variables.fw.redirect("extension?message=#rc.message#");
 		}
@@ -163,7 +163,7 @@ component extends="baseextension"
 
 	function hasApplication(string name)
 	{
-		var extFile = 'zip://#expandPath("/ext/#arguments.name#.zip")#';
+		var extFile = 'zip://#request.absRootPath#ext/#arguments.name#.zip';
 		return directoryExists(extFile & "!/applications") and arrayLen(directoryList(extFile & "!/applications",false,"name")) gt 0;
 	}
 	
@@ -615,7 +615,7 @@ component extends="baseextension"
 	*/
 	function _getEncryptedData()
 	{
-		var file = expandPath('/localdata/secureddata.txt');
+		var file = request.absRootPath & 'localdata/secureddata.txt';
 		if (!fileExists(file))
 		{
 			return {};
@@ -634,7 +634,7 @@ component extends="baseextension"
 
 	function _setEncryptedData(struct data)
 	{
-		var file = expandPath('/localdata/secureddata.txt');
+		var file = request.absRootPath & 'localdata/secureddata.txt';
 		var data = serialize(data);
 		data = encrypt(data, getRailoID().web.id, "CFMX_COMPAT", "Base64");
 		fileWrite(file, data);

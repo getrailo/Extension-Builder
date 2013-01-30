@@ -75,7 +75,10 @@ component extends="org.corfield.framework" {
 	function setupRequest() {
 		// use setupRequest to do initialization per request
 		//request.context.startTime = getTickCount();
-		
+
+		request.absRootPath = getDirectoryFromPath(getCurrentTemplatePath());
+		request.webrootPath = replace(request.absRootPath, expandPath('/'), "/");
+
 		loadBeans();
 	}
 	
