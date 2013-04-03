@@ -37,7 +37,10 @@
 			<p>
 				The provider url for the Builder is: <code>#rc.extproviderURL#</code>
 			</p>
-		
+			<h2>Location of Extensions</h2>
+			<p>
+				The actual extensions are stored in: <code>#expandPath("/ext")#</code>
+			</p>
 			<h2>Edit the Extension Provider info</h2>
 			<p>When you are viewing extension details or the Providers list in the Railo Administrator,
 				you will see details about the Provider.
