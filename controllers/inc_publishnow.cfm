@@ -27,7 +27,7 @@ redirect="no" throwonerror="no">
 			<cfset cook = trim(listfirst(cook, ';')) />
 			<cfhttpparam type="cookie" name="#listfirst(cook, '=')#" value="#listrest(cook, '=')#" />
 		</cfloop>
-		<cfhttpparam type="file" name="gadgetFile" file="#expandPath('/ext/#rc.name#.zip')#" />
+		<cfhttpparam type="file" name="gadgetFile" file="#request.absRootPath#ext/#rc.name#.zip" />
 		<cfhttpparam type="formfield" name="tac" value="1" />
 		<cfhttpparam type="formfield" name="gadgetDisplay" value="1" />
 		

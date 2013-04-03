@@ -75,12 +75,16 @@ component extends="org.corfield.framework" {
 	function setupRequest() {
 		// use setupRequest to do initialization per request
 		//request.context.startTime = getTickCount();
-		
+
+		request.absRootPath = getDirectoryFromPath(getCurrentTemplatePath());
+		request.webRootPath = replace(replace(request.absRootPath, expandPath('/'), "/"), "\", "/", "all");
+		request.cfcRootPath = replace(replace(request.webRootPath, "/", ""), "/", ".", "all");
+
 		loadBeans();
 	}
 	
 	
 	function loadBeans(){
-		application.di = new org.corfield.ioc("/services");
+		application.di = new org.corfield.ioc("services");
 	}
 }

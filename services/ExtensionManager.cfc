@@ -15,20 +15,21 @@ component
     }
 	
 	function getConfig(String extensionName){
-		var config = FileRead("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml")
+		var config = FileRead("zip://#request.absRootPath#ext/#extensionName#.zip!/config.xml")
 		return XMLParse(config);
 	}
 	
 	public function setConfig(String extensionName, XML xmlDocument){
-		var prettyXml = new services.XMLFunctions().indentXML(xmlDocument);
-		fileWrite("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml", prettyXml);
+		var xmlFunctionsObj = createObject("component", "#request.cfcRootPath#services.XMLFunctions");
+		var prettyXml = xmlFunctionsObj.indentXML(xmlDocument);
+		fileWrite("zip://#request.absRootPath#ext/#extensionName#.zip!/config.xml", prettyXml);
 	}
 	
 	function getInfo(extensionName){
 		//Read the config.xml/config/info xml from the /ext/#extensionName#.zip file
 
 			var info = {};
-			var config = FileRead("zip://#expandPath("/ext/#extensionName#.zip")#!/config.xml")
+			var config = FileRead("zip://#request.absRootPath#ext/#extensionName#.zip!/config.xml")
 				config = XMLParse(config);
 			var infoXML = XMLSearch(config, "//info");
 
@@ -40,7 +41,7 @@ component
 	
 	function getCapability(String extensionName){
 		var capability = {};
-		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/";
+		var extPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/";
 			capability.tags = DirectoryExists(extPath & "tags") ? ArrayLen(DirectoryList(extPath & "tags",false,"name")) : 0;
 			capability.functions = DirectoryExists(extPath & "functions") ? ArrayLen(DirectoryList(extPath & "functions",false,"name")) : 0;	
 			capability.applications = DirectoryExists(extPath & "applications") ? ArrayLen(DirectoryList(extPath & "applications",false,"name")) : 0;	
@@ -50,7 +51,7 @@ component
 
 	public Date function getDLM(String extensionName)
 	{
-		var extPath = expandPath("/ext/#extensionName#.zip");
+		var extPath = "#request.absRootPath#ext/#extensionName#.zip";
 		var fileObj = createObject("java","java.io.File").init(extPath);
 		return createObject("java","java.util.Date").init(fileObj.lastModified());
 	}
@@ -72,9 +73,9 @@ component
 		if (structKeyExists(info, "image") and info.image neq "" and not isValid("url", info.image) and fileExists(info.image))
 		{
 			var extImageName = rereplace(getFileFromPath(info.image), "[^a-zA-Z0-9\-_\.]", "_", "all");
-			file action="copy" source="#info.image#" destination="zip://#expandPath("/ext/#extensionName#.zip")#!/#extImageName#";
+			file action="copy" source="#info.image#" destination="zip://#request.absRootPath#ext/#extensionName#.zip!/#extImageName#";
 			// keep a local copy as well, for display purposes
-			file action="copy" source="#info.image#" destination="#expandPath("/ext/")##extImageName#";
+			file action="copy" source="#info.image#" destination="#request.absRootPath#ext/#extImageName#";
 			info.image = "/" & extImageName;
 		}
 		
@@ -103,8 +104,8 @@ component
 	
 	
 	function updateInstaller(String extensionName){
-		var installString = FileRead("/services/templates/Install.cfc");
-		var extPath = "zip://#expandPath("/ext/#extensionName#.zip")#!";
+		var installString = FileRead("#request.absRootPath#services/templates/Install.cfc");
+		var extPath = "zip://#request.absRootPath#ext/#extensionName#.zip!";
 		var lTags = "";
 		var lFunc = "";
 		var lJars = "";
@@ -185,12 +186,12 @@ component
 
 		ArrayAppend(xmlConfig.XMLRoot.XMLChildren, infoel);
 		
-		if(!DirectoryExists(expandPath("ext/"))){
-			DirectoryCreate(expandPath("ext/"));
+		if(!DirectoryExists(request.absRootPath & "ext/")){
+			DirectoryCreate(request.absRootPath & "ext/");
 		}
 		
 		//Create a new file name after the name
-		zip action="zip" file="#expandpath("ext/#extensionName#.zip")#"{
+		zip action="zip" file="#request.absRootPath#ext/#extensionName#.zip"{
 			zipparam content=toString(xmlConfig) entrypath="config.xml";
 		}
 		
@@ -200,7 +201,7 @@ component
 	function listFolderContents(String extensionName, String folder){
 		var items = [];
 		
-		var itemdir = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
+		var itemdir = "zip://#request.absRootPath#ext/#extensionName#.zip!/#folder#/";
 		
 		if(!DirectoryExists(itemdir)){
 				return items;
@@ -216,7 +217,7 @@ component
 	}
 	
 	function addTextFile(String extensionName, String folder, String filename, String Content){
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
+		var itemPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/#folder#/";
 		if(!DirectoryExists(itemPath)){
 				Directorycreate(itemPath);
 		}
@@ -226,7 +227,7 @@ component
 	}
 	
 	function getFileContent(String extensionName, String folder, String filename){
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder##folder eq '' ? '':'/'##filename#";
+		var itemPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/#folder##folder eq '' ? '':'/'##filename#";
 		if(!fileExists(itemPath)){
 				return "";
 		}
@@ -380,7 +381,7 @@ component
 
 
 	function addFile(String extensionName, String source, String folder){
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/";
+		var itemPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/#folder#/";
 		if(!DirectoryExists(itemPath)){
 				Directorycreate(itemPath);
 		}
@@ -409,7 +410,7 @@ component
 	}
 	
 	function removeFile(String extensionName, String folder, String filename){
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		var itemPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/#folder#/#filename#";
 		if(FileExists(itemPath)){
 			FileDelete(itemPath);
 		}
@@ -418,7 +419,7 @@ component
 	}
 	
 	function removeBinaryFile(String extensionName, String folder, String filename){
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/#folder#/#filename#";
+		var itemPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/#folder#/#filename#";
 		if(FileExists(itemPath)){
 			FileDelete(itemPath);
 		}
@@ -433,14 +434,14 @@ component
 
 	function setLicenseText(String extensionName, String licenseText)
 	{
-		var itemPath = "zip://#expandPath("/ext/#extensionName#.zip")#!/license.txt";
+		var itemPath = "zip://#request.absRootPath#ext/#extensionName#.zip!/license.txt";
 		file action="write" file="#itempath#" output="#licenseText#";
 
 		checkAutoVersionUpdate(extensionName);
 	}
 	
 	function getLicense(LicenseName){
-		return FileRead("/licenses/#LicenseName#");
+		return FileRead("#request.absRootPath#licenses/#LicenseName#");
 	}
 
 

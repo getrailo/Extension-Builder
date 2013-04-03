@@ -1,11 +1,15 @@
 <cfcomponent output="false">
 	
+	<cfset request.absRootPath = getDirectoryFromPath(getCurrentTemplatePath()) />
+	<cfset request.webRootPath = replace(replace(request.absRootPath, expandPath('/'), "/"), "\", "/", "all") />
+	<cfset request.cfcRootPath = replace(replace(request.webRootPath, "/", ""), "/", ".", "all") />
+
 	<!--- please note: this cfset can be overwritten by the REB --->
 	<cfset variables.extensionInfo = {
 		  title: 'Extension Builder Provider (#cgi.http_host#)'
 		, description: 'Provider for locally built extensions by the Railo Extension Builder'
 		, image: ''
-		, url: 'http://#cgi.http_host#'
+		, url: 'http://#cgi.http_host##request.webrootPath#'
 		, mode: 'develop'
 	} />
 	
@@ -21,12 +25,12 @@
     
 	<cffunction name="populate" access="private" returntype="void" output="false">
     	<cfargument name="apps" type="query" required="yes">
-		<cfset var extensionPath = expandPath('/ext')>
-		<cfset var rootURL=getInfo().url & "/">
+		<cfset var extensionPath = request.absRootPath & 'ext'>
+		<cfset var rootURL=getInfo().url>
 		<cfset var extensions = DirectoryList(extensionPath, false,"name","*.zip")>
 		
 		<cfloop array="#extensions#" index="local.ext">
-			<cffile action="read" file="zip://#expandPath("/ext/#local.ext#")#!/config.xml" variable="config">
+			<cffile action="read" file="zip://#request.absRootPath#ext/#local.ext#!/config.xml" variable="config">
 			<cfset info = XMLParse(config)>
 			
 	        <cfset QueryAddRow(apps)>

@@ -16,7 +16,7 @@
 					{
 						$.ajax({
 							type:"GET"
-							, url: "/licenses/" + $(this).val()
+							, url: "#request.webRootPath#licenses/" + $(this).val()
 							, dataType:"text"
 							, complete: function(data) {
 								$('##license').val(data.responseText).animate({opacity:1}, 1000)
