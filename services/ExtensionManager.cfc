@@ -387,7 +387,7 @@ component
 		}
 		
 		//Has to have the full name
-		itemPath  = itemPath & ListLast(source, "/");
+		itemPath  = itemPath & ListLast(source, "/\");
 		
 		FileMove(source, itemPath);
 		updateInstaller(extensionName);
