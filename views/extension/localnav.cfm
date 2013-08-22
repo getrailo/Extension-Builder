@@ -11,7 +11,9 @@
 				<li class="nowrap"><a href="#buildURL("extension.addTags?name=#rc.name#")#">Custom Tags <i class="icon-question-sign" data-content="Allows you to add custom tags and use them as you would use built in tags" title="Custom Tags"></i></a></li>
 				<li class="nowrap"><a href="#buildURL("extension.addFunctions?name=#rc.name#")#">Functions <i class="icon-question-sign" data-content="Allows you to add functions and use them as you would use built in functions" title="Functions"></i></a></li>
 				<li class="nowrap"><a href="#buildURL("extension.addJars?name=#rc.name#")#">Java Libraries <i class="icon-question-sign" data-content="Allows you to add any Java libraries you want to deploy with your extension" title="Java Libraries"></i></a></li>
-            <li class="nowrap"><a href="#buildURL("plugins.default?name=#rc.name#")#">Plugins <i class="icon-question-sign" title="Administrator Plugins" data-content="Allows you to add any Railo Web and Server Administrator plugins with your extension"></i></a></li>
+           	 	<li class="nowrap"><a href="#buildURL("plugins.default?name=#rc.name#")#">Plugins <i class="icon-question-sign" title="Administrator Plugins" data-content="Allows you to add any Railo Web and Server Administrator plugins with your extension"></i></a></li>
+           	 	<li class="nowrap"><a href="#buildURL("cli.default?name=#rc.name#")#">CLI Modules <i class="icon-question-sign" title="CLIModules Plugins" data-content="Allows you to add modules that are used by the Railo CLI comoponent"></i></a></li>
+
 
 
 				<li class="nav-header nowrap">Install Settings</li>

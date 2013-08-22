@@ -46,6 +46,7 @@ component
 			capability.functions = DirectoryExists(extPath & "functions") ? ArrayLen(DirectoryList(extPath & "functions",false,"name")) : 0;	
 			capability.applications = DirectoryExists(extPath & "applications") ? ArrayLen(DirectoryList(extPath & "applications",false,"name")) : 0;	
 			capability.jars = DirectoryExists(extPath & "jars") ? ArrayLen(DirectoryList(extPath & "jars",false,"name")) : 0;	
+			capability.plugins = DirectoryExists(extPath & "plugins") ? ArrayLen(DirectoryList(extPath & "plugins",false,"name")) : 0;	
 		return capability;
 	}
 

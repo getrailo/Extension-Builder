@@ -29,7 +29,9 @@
 		<cfset var rootURL=getInfo().url>
 		<cfset var extensions = DirectoryList(extensionPath, false,"name","*.zip")>
 		
+		
 		<cfloop array="#extensions#" index="local.ext">
+
 			<cffile action="read" file="zip://#request.absRootPath#ext/#local.ext#!/config.xml" variable="config">
 			<cfset info = XMLParse(config)>
 			

@@ -16,6 +16,13 @@
 			<b>Template:</b> #request.exception.TagContext[1].template#<br/>
 			<b>Line:</b> #request.exception.TagContext[1].line#<br/>
 			<b>Code:</b> <pre>#request.exception.TagContext[1].codePrintHTML#</pre>
+			
+		 	<cfif request.exception.type EQ "FW1.viewNotFound">
+		 		<cfset filePath = request.exception.Detail>
+		 		<cfset filePath = ReplaceNoCase(filePath, "' does not exist.", "")>
+		 		<cfset filePath = ReplaceNoCase(filePath, "'", "")>
+		 		Create View (<a href="subl://open/?url=file://#expandPath(filePath)#">#filePath#</a>)
+		 	</cfif>
 		</cfoutput>
 		<cfdump var="#request.exception#" label="">
 	</div>

@@ -9,6 +9,7 @@
         variables.railo_version = "__RAILO_VERSION__";
 		variables.jars = ListToArray("__JARS__");
 		variables.appl = "__APPS__";
+		variables.version = ""; 
 	</cfscript>
     
 	<cfif FileExists("additional_functions.cfm")>
@@ -65,9 +66,20 @@
 		
 		<!--- copy jars --->
 		<cfloop array="#variables.jars#" index="local.jar">
+
+
+			<cfadmin 
+           		action="updateJar"
+            	type="#request.adminType#"
+            	password="#session["password"&request.adminType]#"
+            	jar="#path#jars/#jar#">
+        
+        	<cfdump var="Installed #path#jars/#jar#">
+			<!--- souldn't we install them rather than copy them ?
 			<cffile action="copy"
 				source="#path#jars/#jar#"
 				destination="#getContextPath()#/lib/">
+			--->
 		</cfloop>
 		
 		<!--- Extract any applications --->
@@ -214,9 +226,22 @@
 		<!--- Delete any jars we may have installed --->
 		<cfloop array="#variables.jars#" index="local.jar">
 			<cfset local.ret = deleteIfExists("#getContextPath()#/lib/#jar#") />
+			
+  			<cfadmin 
+           		action="removeJar"
+            	type="#request.adminType#"
+            	password="#session["password"&request.adminType]#"
+           		jar="#getContextPath()#/lib/#jar#">
+        
+
 			<cfif local.ret neq "">
 				<cfset local.errors &= "<br />" & local.ret />
 			</cfif>
+
+
+
+
+
 		</cfloop>
 
         <!--- delete any plugins we may have installed --->
@@ -396,21 +421,37 @@
 		    <cfset arguments.path = local.tempZipPath />
 	    </cfif>
 
+		<cfset local.tempZipPath = getTempDirectory() & createUUID() & ".zip" />
+	    <cfset FileCopy(arguments.path, local.tempZipPath)>
+
+	    <cfdump var="#arguments.path#">
+	    <cfdump var="#local.tempZipPath#">
+	    <cfdump var="#expandPath("{temp-directory}")#">
+
+	    <cfdump var="#DirectoryList(arguments.path & "!")#">
+	    
+
         <!--- add it ot the railoconfig. xml? --->
         <cfadmin
             action="updatePlugin"
             type="#request.adminType#"
             password="#session["password"&request.adminType]#"
-            source="#arguments.path#" />
+            source="#local.tempZipPath#" />
     </cffunction>
 
      <cffunction name="removePlugin" returntype="string" output="no" access="private">
 		<cfargument name="name" type="string">
+
+		<cftry>
         <cfadmin
             action="removePlugin"
             type="#request.adminType#"
             password="#session["password"&request.adminType]#"
             name="#name#">
+            <cfcatch>
+            	<!--- this sis a silent catch  but we should handle the error. --->
+        	</cfcatch>
+        </cftry>
     </cffunction>
 
 

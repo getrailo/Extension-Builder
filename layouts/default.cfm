@@ -58,7 +58,7 @@
 	 <hr>
 	 <footer class="footer">
         <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>Designed and built by <a href="http://www.getrailo.org" target="_blank">Railo Technologies GMBH</a></p>
+        <p>Designed and built by <a href="http://www.getrailo.org" target="_blank"> The Railo Company Limited</a>, <a href="http://twitter.com/frinky">@frinky</a> and <a href="http://twitter.com/markdrew">@markdrew</a></p>
      </footer>
 		
 	</div>
