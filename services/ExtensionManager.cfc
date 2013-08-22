@@ -319,13 +319,7 @@ component
 		var group = xmlSearch(configXML, "/config/step[#rc.step#]/group[#rc.group#]")[1];
 		var field = xmlSearch(configXML, "/config/step[#rc.step#]/group[#rc.group#]/item[#rc.field#]");
 		var newItem = xmlElemNew(configXML, "item");
-		if (arrayLen(field))
-		{
-			group.XMLChildren[rc.field] = newItem;
-		} else
-		{
-			arrayAppend(group.xmlChildren, newItem);
-		}
+
 		if (rc.type == 'datasource selection')
 		{
 			newItem.XMLAttributes['type'] = "select";
@@ -363,6 +357,13 @@ component
 				opt.xmlText = listRest(options[i], '|');
 			}
 		}
+		if (arrayLen(field))
+		{
+			group.XMLChildren[rc.field] = newItem;
+		} else
+		{
+			arrayAppend(group.xmlChildren, newItem);
+		}		
 		setConfig(rc.name, configXML);
 
 		checkAutoVersionUpdate(rc.name);
